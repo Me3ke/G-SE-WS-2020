@@ -217,8 +217,8 @@
                     <repositoryLayout>flat</repositoryLayout>
                     <programs>
                         <program>
-                            <mainClass>de.techfak.se.template.Main</mainClass>
-                            <id>helloworld</id>
+                            <mainClass>de.techfak.se.mmoebius.Main</mainClass>
+                            <id>GSENochmal</id>
                         </program>
                     </programs>
                 </configuration>
