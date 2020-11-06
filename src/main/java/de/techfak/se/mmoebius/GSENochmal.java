@@ -1,11 +1,11 @@
-package de.techfak.se.template;
+package de.techfak.se.mmoebius;
 
 /**
  * The main class, contains just the main method to start the application.
  */
-public final class Main {
+public final class GSENochmal {
 
-    private Main() {
+    private GSENochmal() {
     }
 
     public static void main(final String... args) {
