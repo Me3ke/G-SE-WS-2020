@@ -9,7 +9,8 @@ public final class Encore {
     }
 
     public static void main(final String... args) {
-        System.out.println("Welcome to Encore");
+        Game g = new Game();
+        g.play();
     }
 
 }
