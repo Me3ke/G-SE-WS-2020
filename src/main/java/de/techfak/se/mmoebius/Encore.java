@@ -18,17 +18,21 @@ public final class Encore {
         Game game = new Game();
         game.play();
         if(args.length == 0) {
-            System.out.println("No programarguments given");
-            System.exit(100);
+            System.out.println("<100> No programarguments given. Type -f <filename>");
         }
         else if(args[0].equals("-f")){
-            //hier überprüfen ob datei korrekt
-            File file = new File(args[1]);
+                File file = new File(args[1]);
+                if(file.isFile())
+                {
+                    //Datei auslesen
+                    return;
+                }
+                System.out.println("<100> no valid file found with filename: "+file.getName());
         }
         else{
-            System.out.println("unknown programargument");
-            System.exit(100);
+            System.out.println("<100> unknown programargument. Type -f <filename>");
         }
+        System.exit(100);
     }
 
 }
