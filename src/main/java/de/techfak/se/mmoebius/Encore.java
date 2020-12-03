@@ -7,6 +7,8 @@ import java.io.*;
  */
 public final class Encore {
 
+    private static char[][] map = new char[7][15];
+
     private Encore() {
     }
 
@@ -19,6 +21,7 @@ public final class Encore {
             File file = new File(args[1]);
             if (file.isFile() && file.canRead()) {
                 readFile(file);
+                checkMap();
                 return;
             }
             System.out.println("<100> no valid file found with filename: " + file.getName());
@@ -30,15 +33,24 @@ public final class Encore {
 
     private static void readFile(File file) {
         String row;
+        int rowcount = 0;
+        int colcount;
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             while ((row = reader.readLine()) != null) {
-                System.out.println(row);
+                char temp;
+                for(colcount = 0; colcount < row.length(); colcount++){
+                    map[rowcount][colcount] = row.charAt(colcount);
+                }
+                rowcount++;
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IndexOutOfBoundsException e) {
+            System.out.println("given file is not valid");
             e.printStackTrace();
         } finally {
             if (reader != null)
@@ -46,6 +58,17 @@ public final class Encore {
                     reader.close();
                 } catch (IOException e) {
                 }
+        }
+    }
+
+    private static void checkMap() {
+        for(int i = 0; i< map.length; i++) {
+            for (int j = 0; j < map[0].length; j++) {
+                if(map[i][j] == 'b' ||map[i][j] == 'g' ||map[i][j] == 'o' || map[i][j] == 'r' || map[i][j] == 'y'){ }
+                else {
+                    System.out.println("sourcefile is not valid. Check Dokumentation for further information");
+                }
+            }
         }
     }
 }
