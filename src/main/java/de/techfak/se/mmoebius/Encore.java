@@ -5,9 +5,13 @@ import java.io.*;
 /**
  * The main class, contains just the main method to start the application.
  */
+
+//TODO for Task #19799 create Classfile Board and other
 public final class Encore {
 
-    private static char[][] map = new char[7][15];
+    /* default */
+    static final int SYS_EXIT_FAILED = 100;
+    static final char[][] map = new char[7][15];
 
     private Encore() {
     }
@@ -22,51 +26,62 @@ public final class Encore {
             if (file.isFile() && file.canRead()) {
                 readFile(file);
                 checkMap();
+                printMap();
                 return;
             }
             System.out.println("<100> no valid file found with filename: " + file.getName());
         } else {
             System.out.println("<100> unknown program argument. Type -f <filename>");
         }
-        System.exit(100);
+        System.exit(SYS_EXIT_FAILED);
     }
 
+    @SuppressWarnings("PMD.AvoidFileStream")
     private static void readFile(File file) {
         String row;
-        int rowcount = 0;
-        int colcount;
+        int rowCount = 0;
+        int colCount = 0;
         BufferedReader reader = null;
         try {
             reader = new BufferedReader(new FileReader(file));
             while ((row = reader.readLine()) != null) {
-                char temp;
-                for(colcount = 0; colcount < row.length(); colcount++){
-                    map[rowcount][colcount] = row.charAt(colcount);
+                for(colCount = 0; colCount < row.length(); colCount++){
+                    map[rowCount][colCount] = row.charAt(colCount);
                 }
-                rowcount++;
+                rowCount++;
             }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IndexOutOfBoundsException e) {
-            System.out.println("given file is not valid");
-            e.printStackTrace();
+            System.out.println("Row Count: " + rowCount);
+            System.out.println("Column Count: " + colCount);
+            System.out.println("The size of the board is therefore valid");
+        } catch (IOException|IndexOutOfBoundsException e) {
+            System.out.println("Source file is not valid. Check documentation for further information");
         } finally {
             if (reader != null)
                 try {
                     reader.close();
                 } catch (IOException e) {
+                    e.printStackTrace();
                 }
+        }
+    }
+
+    private static void printMap() {
+        System.out.println("A B C D E F G H I J K L M N O");
+        for(int i = 0; i< map.length; i++) {
+            System.out.print(i+ " ");
+            for (int j = 0; j < map[0].length; j++) {
+                System.out.print(map[i][j]+ " ");
+            }
+            System.out.println();
         }
     }
 
     private static void checkMap() {
         for(int i = 0; i< map.length; i++) {
             for (int j = 0; j < map[0].length; j++) {
-                if(map[i][j] == 'b' ||map[i][j] == 'g' ||map[i][j] == 'o' || map[i][j] == 'r' || map[i][j] == 'y'){ }
-                else {
-                    System.out.println("sourcefile is not valid. Check Dokumentation for further information");
+                if(map[i][j] != 'b' && map[i][j] != 'g' && map[i][j] != 'o' && map[i][j] != 'r' && map[i][j] != 'y'){
+                    System.out.println("Source file is not valid. Check documentation for further information");
+                    return;
                 }
             }
         }
