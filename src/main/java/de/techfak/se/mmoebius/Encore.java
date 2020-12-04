@@ -7,6 +7,7 @@ import java.io.*;
  */
 
 //TODO for Task #19799 create Classfile Board and other
+    //TODO test if file throws exception if parameter is digit or symbol
 public final class Encore {
 
     /* default */
@@ -25,8 +26,8 @@ public final class Encore {
             File file = new File(args[1]);
             if (file.isFile() && file.canRead()) {
                 readFile(file);
-                checkMap();
-                printMap();
+                Board board = new Board(map);
+                board.printBoard();
                 return;
             }
             System.out.println("<100> no valid file found with filename: " + file.getName());
@@ -45,7 +46,7 @@ public final class Encore {
         try {
             reader = new BufferedReader(new FileReader(file));
             while ((row = reader.readLine()) != null) {
-                for(colCount = 0; colCount < row.length(); colCount++){
+                for (colCount = 0; colCount < row.length(); colCount++) {
                     map[rowCount][colCount] = row.charAt(colCount);
                 }
                 rowCount++;
@@ -53,7 +54,7 @@ public final class Encore {
             System.out.println("Row Count: " + rowCount);
             System.out.println("Column Count: " + colCount);
             System.out.println("The size of the board is therefore valid");
-        } catch (IOException|IndexOutOfBoundsException e) {
+        } catch (IOException | IndexOutOfBoundsException e) {
             System.out.println("Source file is not valid. Check documentation for further information");
         } finally {
             if (reader != null)
@@ -62,28 +63,6 @@ public final class Encore {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-        }
-    }
-
-    private static void printMap() {
-        System.out.println("A B C D E F G H I J K L M N O");
-        for(int i = 0; i< map.length; i++) {
-            System.out.print(i+ " ");
-            for (int j = 0; j < map[0].length; j++) {
-                System.out.print(map[i][j]+ " ");
-            }
-            System.out.println();
-        }
-    }
-
-    private static void checkMap() {
-        for(int i = 0; i< map.length; i++) {
-            for (int j = 0; j < map[0].length; j++) {
-                if(map[i][j] != 'b' && map[i][j] != 'g' && map[i][j] != 'o' && map[i][j] != 'r' && map[i][j] != 'y'){
-                    System.out.println("Source file is not valid. Check documentation for further information");
-                    return;
-                }
-            }
         }
     }
 }
