@@ -1,8 +1,8 @@
 package de.techfak.se.mmoebius;
 
 public class Board {
-    private int rowCount,colCount;
-    private Tile[][] floor;
+    public int rowCount,colCount;
+    public final Tile[][] floor;
 
     public Board(char[][] map) {
         rowCount = map.length;
@@ -25,7 +25,7 @@ public class Board {
     }
 
     public void printBoard() {
-        System.out.println("A B C D E F G H I J K L M N O");
+        System.out.println("  A B C D E F G H I J K L M N O");
         for(int i = 0; i< floor.length; i++) {
             System.out.print(i+ " ");
             for (int j = 0; j < floor[0].length; j++) {
