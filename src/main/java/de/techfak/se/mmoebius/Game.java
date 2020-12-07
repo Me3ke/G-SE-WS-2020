@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Game {
     String[] args;
@@ -14,8 +15,8 @@ public class Game {
         this.args = args;
     }
 
-    public void play(){
-        System.out.println("Welcome to Encore!");
+    public void createBoard(){
+        System.out.println("Welcome to encore");
         if (args.length == 0) {
             System.out.println("<100> No program arguments given. Type -f <filename>");
         } else if (args[0].equals("-f")) {
@@ -61,6 +62,15 @@ public class Game {
             System.out.println("<100> unknown program argument. Type -f <filename>");
         }
         System.exit(SYS_EXIT_FAILED);
+    }
+
+    public void play() {
+        Player player1 = new Player(1);
+        System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
+        boolean escParameter = false;
+        do {
+            escParameter = player1.playmove();
+        }while(escParameter);
     }
 }
 
