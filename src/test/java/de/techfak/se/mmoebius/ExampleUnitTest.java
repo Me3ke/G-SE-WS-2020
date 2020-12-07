@@ -1,4 +1,4 @@
-package de.techfak.se.template;
+package de.techfak.se.mmoebius;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
