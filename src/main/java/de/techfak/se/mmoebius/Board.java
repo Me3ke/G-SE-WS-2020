@@ -13,12 +13,13 @@ public class Board {
             for(int colNr = 0;colNr < colCount; colNr++){
                 char mapCell = mapRow.charAt(colNr);
                 Tile tile = null;
-                if(mapCell == 'b') tile = new Tile(Color.BLUE,rowNr,colNr);
-                else if(mapCell == 'g') tile = new Tile(Color.GREEN,rowNr,colNr);
-                else if(mapCell == 'o') tile = new Tile(Color.ORANGE,rowNr,colNr);
-                else if(mapCell == 'r') tile = new Tile(Color.RED,rowNr,colNr);
-                else if(mapCell == 'y') tile = new Tile(Color.YELLOW,rowNr,colNr);
-                else System.out.println("Unexpected Source file Error"); // Exception here Us1
+                if(mapCell == 'b' || mapCell == 'B') tile = new Tile(Color.BLUE,rowNr,colNr);
+                else if(mapCell == 'g'|| mapCell == 'G') tile = new Tile(Color.GREEN,rowNr,colNr);
+                else if(mapCell == 'o'|| mapCell == 'O') tile = new Tile(Color.ORANGE,rowNr,colNr);
+                else if(mapCell == 'r'|| mapCell == 'R') tile = new Tile(Color.RED,rowNr,colNr);
+                else if(mapCell == 'y'|| mapCell == 'Y') tile = new Tile(Color.YELLOW,rowNr,colNr);
+                else if(mapCell == '\n') System.out.println("new line char detected");
+                else throw new InvalidField("Invalid Field <101>");
                 floor[rowNr][colNr] = tile;
             }
         }
