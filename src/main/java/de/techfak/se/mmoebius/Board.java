@@ -28,7 +28,7 @@ public class Board {
     public void printBoard() {
         System.out.println("  A B C D E F G H I J K L M N O");
         for(int i = 0; i< floor.length; i++) {
-            System.out.print(i+ " ");
+            System.out.print((i+1)+ " ");
             for (int j = 0; j < floor[0].length; j++) {
                 Color color = floor[i][j].getColor();
                 if(color.equals(Color.BLUE)) System.out.print("b ");
@@ -39,6 +39,10 @@ public class Board {
             }
             System.out.println();
         }
+    }
+
+    public void update(int row, int col) {
+
     }
 
 }

@@ -10,6 +10,7 @@ public class Game {
     String[] args;
     static final int SYS_EXIT_FAILED = 100;
     static final char[][] map = new char[7][15];
+    Board board;
 
     public Game(String ... args) {
         this.args = args;
@@ -54,6 +55,7 @@ public class Game {
                     }
                 }
                 Board board = new Board(map);
+                this.board = board;
                 board.printBoard();
                 return;
             }
@@ -65,7 +67,7 @@ public class Game {
     }
 
     public void play() {
-        Player player1 = new Player(1);
+        Player player1 = new Player(1,board);
         System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
         boolean escParameter = false;
         do {
