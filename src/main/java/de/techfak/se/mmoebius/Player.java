@@ -43,6 +43,9 @@ public class Player {
                 System.out.println("Turn is valid");
                 printIndex++;
             }
+            else{
+                System.out.println("Turn is not valid");
+            }
         }
         return printIndex;
     }
