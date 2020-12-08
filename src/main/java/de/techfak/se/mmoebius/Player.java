@@ -19,22 +19,10 @@ public class Player {
             <= 2 means there were updates on the board which are not shown yet -> print
             0 means the game was terminated */
         int printIndex = 1;
-        String input = playMove.next();
-        System.out.println(input);
-        if(!input.contains(",")){
-            if(input.length() != 2){
-                System.out.println("Wrong input format. Try e.g. H4,H5,G5,G4");
-            } else {
-                first = (int) input.charAt(0) - 65;
-                second = input.charAt(1) - 49;
-                System.out.println(first + " " + second);
-                if (first < 0 || first > 14 || second < 0 || second > 6) {
-                    System.out.println("Unknown Symbol. Try e.g. H4,H5,G5,G4");
-                } else {
-                    printIndex += board.update(first,second);
-                }
-            }
-
+        String input = playMove.nextLine();
+        if(input.equals("")){
+            printIndex = 0;
+            System.out.println("Terminating program...");
         } else {
             String[] inputArr = input.split(",");
             for (int i = 0; i < inputArr.length; i++) {
@@ -44,7 +32,6 @@ public class Player {
                 } else {
                     first = (int) inputArr[i].charAt(0) - 65;
                     second = inputArr[i].charAt(1) - 49;
-                    System.out.println(first + " " + second);
                     if (first < 0 || first > 14 || second < 0 || second > 6) {
                         System.out.println("Unknown Symbol. Try e.g. H4,H5,G5,G4");
                         break;

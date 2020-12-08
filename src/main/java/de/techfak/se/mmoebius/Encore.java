@@ -1,7 +1,5 @@
 package de.techfak.se.mmoebius;
 
-import java.io.*;
-
 /**
  * The main class, contains just the main method to start the application.
  */
