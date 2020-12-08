@@ -1,5 +1,7 @@
 package de.techfak.se.mmoebius;
 
+
+//TODO show tile which is not valid
 public class Board {
     public int rowCount,colCount;
     public final Tile[][] floor;
@@ -48,65 +50,66 @@ public class Board {
         }
     }
 
-    public int updateTile(int row, int col) {
+    public void updateTile(int row, int col) {
         Tile tile = floor[row][col];
         tile.setCrossed(true);
         if(tile.hasLeftNeighbour) floor[row][col-1].setHasCrossedNeighbour(true);
         if(tile.hasRightNeighbour) floor[row][col+1].setHasCrossedNeighbour(true);
         if(tile.hasUpNeighbour) floor[row-1][col].setHasCrossedNeighbour(true);
         if(tile.hasDownNeighbour) floor[row+1][col].setHasCrossedNeighbour(true);
-        return 0;
     }
 
     public boolean validate(int[] row, int[] col) {
-        Tile firstTile = floor[row[0]][col[0]];
-        int tester = 0;
-        if(firstTile.isCrossed) {
-            System.out.print(Character.toString((char) col[0] + 65));
-            System.out.print(Character.toString((char) row[0] + 49));
-            System.out.println(" is already ticked");
-            return false;
-        }
-        if(firstTile.hasCrossedNeighbour || firstTile.getColNr() == 7) {
-            System.out.print(Character.toString((char) col[0] + 65));
-            System.out.print(Character.toString((char) row[0] + 49));
-            System.out.println(" is in Column H or has crossed Neighbour first cross is valid, validating other inputs now");
-            Tile[] tileArr = new Tile[row.length];
-            tileArr[0] = firstTile;
-            tester++;
-            for(int i = 1; i < row.length; i++){
-                Tile tile = floor[row[i]][col[i]];
-                if(tile.isCrossed){
-                    System.out.print(Character.toString((char) col[i] + 65));
-                    System.out.print(Character.toString((char) row[i] + 49));
-                    System.out.println(" is already ticked");
-                    return false;
-                }
-                for(int count = 0; count < tester; count++) {
-                    if (firstTile.getColor().equals(tile.getColor()) && tile.isNeighbourTo(tileArr[count])) {
-                        System.out.print(Character.toString((char) col[i] + 65));
-                        System.out.print(Character.toString((char) row[i] + 49));
-                        System.out.println(" is valid");
-                        tileArr[i] = tile;
-                        tester++;
-                        break;
+        try {
+            Tile firstTile = floor[row[0]][col[0]];
+            int tester = 0;
+            String c1,c2;
+            if (firstTile.isCrossed) {
+                c1 = Character.toString((char) col[0] + 65);
+                c2 = Character.toString((char) row[0] + 49);
+                throw new InvalidTurn("InvalidTurnException: "+c1+c2+" is already ticked");
+            }
+            if (firstTile.hasCrossedNeighbour || firstTile.getColNr() == 7) {
+                System.out.print(Character.toString((char) col[0] + 65));
+                System.out.print(Character.toString((char) row[0] + 49));
+                System.out.println(" is in Column H or has crossed Neighbour first cross is valid, validating other inputs now...");
+                Tile[] tileArr = new Tile[row.length];
+                tileArr[0] = firstTile;
+                tester++;
+                for (int i = 1; i < row.length; i++) {
+                    Tile tile = floor[row[i]][col[i]];
+                    if (tile.isCrossed) {
+                        c1 = Character.toString((char) col[i] + 65);
+                        c2 = Character.toString((char) row[i] + 49);
+                        throw new InvalidTurn("InvalidTurnException: "+c1+c2+" is already ticked");
+                    }
+                    for (int count = 0; count < tester; count++) {
+                        if (firstTile.getColor().equals(tile.getColor()) && tile.isNeighbourTo(tileArr[count])) {
+                            System.out.print(Character.toString((char) col[i] + 65));
+                            System.out.print(Character.toString((char) row[i] + 49));
+                            System.out.println(" is valid");
+                            tileArr[i] = tile;
+                            tester++;
+                            break;
+                        }
                     }
                 }
-                //TODO show tile which is not valid ist
-            }
-            if(tester == row.length){
-                System.out.println("All crosses valid");
-                for(int j = 0; j < tileArr.length ; j++){
-                    updateTile(tileArr[j].getRowNr(),tileArr[j].getColNr());
-                }
+                if (tester == row.length) {
+                    System.out.println("All crosses valid");
+                    for (int j = 0; j < tileArr.length; j++) {
+                        updateTile(tileArr[j].getRowNr(), tileArr[j].getColNr());
+                    }
                     return true;
+                } else {
+                    throw new InvalidTurn("InvalidTurnException: Some crosses were not valid");
+                }
+            } else {
+                c1 = Character.toString((char) col[0] + 65);
+                c2 = Character.toString((char) row[0] + 49);
+                throw new InvalidTurn("InvalidTurnException: "+c1+c2+" does not have a crossed Neighbour and is not in Column H");
             }
-            else {
-                System.out.println("Some crosses were not valid turn is invalid");
-                return false;
-            }
-        } else {
-            System.out.println("Does not have a crossed Neighbour and is not in Column H");
+        } catch (InvalidTurn e) {
+            System.out.println(e);
             return false;
         }
     }
