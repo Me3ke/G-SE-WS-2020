@@ -71,6 +71,9 @@ public class Game {
         do {
             System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
             escParameter = player1.playMove();
+            if(escParameter > 1) {
+                board.printBoard();
+            }
         }while(escParameter != 0);
     }
 }

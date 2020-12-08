@@ -13,7 +13,7 @@ public class Player {
 
     public int playMove() {
         Scanner playMove = new Scanner(System.in);
-        int first, second;
+        int col, row;
         /* printIndex is used to show the necessity of a print after a move. (if format is wrong for example)
             1 means there is no need for printing the board
             <= 2 means there were updates on the board which are not shown yet -> print
@@ -27,16 +27,16 @@ public class Player {
             String[] inputArr = input.split(",");
             for (int i = 0; i < inputArr.length; i++) {
                 if (inputArr[i].length() != 2) {
-                    System.out.println("Wrong input format. Try e.g. H4,H5,G5,G4");
+                    System.out.println("Wrong input format. Try something like H4,H5,G5,G4");
                     break;
                 } else {
-                    first = (int) inputArr[i].charAt(0) - 65;
-                    second = inputArr[i].charAt(1) - 49;
-                    if (first < 0 || first > 14 || second < 0 || second > 6) {
-                        System.out.println("Unknown Symbol. Try e.g. H4,H5,G5,G4");
+                    col = (int) inputArr[i].charAt(0) - 65;
+                    row = inputArr[i].charAt(1) - 49;
+                    if (col < 0 || col > 14 || row < 0 || row > 6) {
+                        System.out.println("Unknown Symbol. Try something like H4,H5,G5,G4");
                         break;
                     }
-                    printIndex += board.update(first,second);
+                    printIndex += board.update(row,col);
                 }
             }
         }

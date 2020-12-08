@@ -46,7 +46,15 @@ public class Board {
     }
 
     public int update(int row, int col) {
-        return 0;
+        Tile tile = floor[row][col];
+        if(tile.isCrossed){
+            System.out.print(Character.toString((char)col+65));
+            System.out.print(Character.toString((char)row+49));
+            System.out.println(" is already ticked");
+            return 0;
+        } else {
+            tile.setCrossed(true);
+            return 1;
+        }
     }
-
 }
