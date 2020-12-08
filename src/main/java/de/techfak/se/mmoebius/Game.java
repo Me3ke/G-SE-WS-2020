@@ -67,12 +67,14 @@ public class Game {
 
     public void play() {
         Player player1 = new Player(1,board);
+        Score score1 = new Score(player1);
         int escParameter;
         do {
             System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
             escParameter = player1.playMove();
             if(escParameter > 1) {
                 board.printBoard();
+                score1.calculatePoints(board);
             }
         }while(escParameter != 0);
     }
