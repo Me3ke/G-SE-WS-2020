@@ -30,12 +30,16 @@ public class Board {
         for(int i = 0; i< floor.length; i++) {
             System.out.print((i+1)+ " ");
             for (int j = 0; j < floor[0].length; j++) {
-                Color color = floor[i][j].getColor();
-                if(color.equals(Color.BLUE)) System.out.print("b ");
-                if(color.equals(Color.ORANGE)) System.out.print("o ");
-                if(color.equals(Color.GREEN)) System.out.print("g ");
-                if(color.equals(Color.RED)) System.out.print("r ");
-                if(color.equals(Color.YELLOW)) System.out.print("y ");
+                Tile tile = floor[i][j];
+                Color color = tile.getColor();
+                char current = '#';
+                if(color.equals(Color.BLUE)) current = 'b';
+                if(color.equals(Color.ORANGE)) current = 'g';
+                if(color.equals(Color.GREEN)) current = 'o';
+                if(color.equals(Color.RED)) current = 'r';
+                if(color.equals(Color.YELLOW)) current = 'y';
+                if(tile.isCrossed) current = Character.toUpperCase(current);
+                System.out.print(current + " ");
             }
             System.out.println();
         }
