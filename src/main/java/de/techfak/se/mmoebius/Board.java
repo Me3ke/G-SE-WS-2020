@@ -45,16 +45,28 @@ public class Board {
         }
     }
 
-    public int update(int row, int col) {
-        Tile tile = floor[row][col];
-        if(tile.isCrossed){
-            System.out.print(Character.toString((char)col+65));
-            System.out.print(Character.toString((char)row+49));
-            System.out.println(" is already ticked");
-            return 0;
-        } else {
-            tile.setCrossed(true);
-            return 1;
+    public int update(int[] row, int[] col) {
+        int temp = 0;
+        for(int i = 0; i<row.length;i++) {
+            Tile tile = floor[row[i]][col[i]];
+            if (tile.isCrossed) {
+                temp = 0;
+            } else {
+                tile.setCrossed(true);
+                temp++;
+            }
         }
+        return temp;
+    }
+
+    public boolean validate(int[] row, int[] col) {
+        Tile tile = floor[row[0]][col[0]];
+        if(tile.isCrossed) {
+            System.out.print(Character.toString((char) col[0] + 65));
+            System.out.print(Character.toString((char) row[0] + 49));
+            System.out.println(" is already ticked");
+            return false;
+        }
+        return true;
     }
 }
