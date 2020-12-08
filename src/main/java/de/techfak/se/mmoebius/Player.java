@@ -41,7 +41,6 @@ public class Player {
             }
             if(board.validate(row,col)) {
                 System.out.println("Turn is valid");
-                board.update(row,col);
                 printIndex++;
             }
         }

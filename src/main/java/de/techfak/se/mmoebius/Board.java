@@ -21,6 +21,10 @@ public class Board {
                 else if(mapCell == '\n') System.out.println("new line char detected");
                 else throw new InvalidField("Invalid Field <101>");
                 floor[rowNr][colNr] = tile;
+                if(tile.getColNr() == 0) tile.hasLeftNeighbour = false;
+                if(tile.getColNr() == colCount-1) tile.hasRightNeighbour = false;
+                if(tile.getRowNr() == 0) tile.hasUpNeighbour = false;
+                if(tile.getRowNr() == rowCount-1) tile.hasDownNeighbour = false;
             }
         }
     }
@@ -49,24 +53,30 @@ public class Board {
         int temp = 0;
         for(int i = 0; i<row.length;i++) {
             Tile tile = floor[row[i]][col[i]];
-            if (tile.isCrossed) {
-                temp = 0;
-            } else {
-                tile.setCrossed(true);
-                temp++;
-            }
+            tile.setCrossed(true);
+            if(tile.hasLeftNeighbour) floor[row[i]][col[i]-1].setHasCrossedNeighbour(true);
+            if(tile.hasRightNeighbour) floor[row[i]][col[i]+1].setHasCrossedNeighbour(true);
+            if(tile.hasUpNeighbour) floor[row[i]-1][col[i]].setHasCrossedNeighbour(true);
+            if(tile.hasDownNeighbour) floor[row[i]+1][col[i]].setHasCrossedNeighbour(true);
+            temp++;
         }
         return temp;
     }
 
     public boolean validate(int[] row, int[] col) {
-        Tile tile = floor[row[0]][col[0]];
-        if(tile.isCrossed) {
+        Tile firstTile = floor[row[0]][col[0]];
+        if(firstTile.isCrossed) {
             System.out.print(Character.toString((char) col[0] + 65));
             System.out.print(Character.toString((char) row[0] + 49));
             System.out.println(" is already ticked");
             return false;
         }
-        return true;
+        if(firstTile.hasCrossedNeighbour || firstTile.getColNr() == 7) {
+            System.out.println("is in Column H or has crossed Neighbour, validating other inputs now");
+            return true;
+        } else {
+            System.out.println("Does not have a crossed Neighbour and is not in Column H");
+            return false;
+        }
     }
 }
