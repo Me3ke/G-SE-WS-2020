@@ -42,7 +42,7 @@ public class Player {
         }
         return printIndex;
     }
-
+    //
     public int getPlayerNumber() {
         return playerNumber;
     }
