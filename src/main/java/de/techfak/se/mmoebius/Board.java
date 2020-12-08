@@ -41,8 +41,8 @@ public class Board {
         }
     }
 
-    public void update(int row, int col) {
-
+    public int update(int row, int col) {
+        return 0;
     }
 
 }

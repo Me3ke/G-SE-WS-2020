@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.Scanner;
 
 public class Game {
     String[] args;
@@ -68,11 +67,11 @@ public class Game {
 
     public void play() {
         Player player1 = new Player(1,board);
-        System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
-        boolean escParameter = false;
+        int escParameter;
         do {
-            escParameter = player1.playmove();
-        }while(escParameter);
+            System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
+            escParameter = player1.playMove();
+        }while(escParameter != 0);
     }
 }
 
