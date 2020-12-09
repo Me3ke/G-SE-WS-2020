@@ -5,10 +5,12 @@ import java.util.Scanner;
 public class Player {
     int playerNumber;
     Board board;
+    int points;
 
     public Player(int playerNumber,Board board) {
         this.playerNumber = playerNumber;
         this.board = board;
+        points = 0;
     }
 
     public int playMove() {
@@ -54,5 +56,13 @@ public class Player {
 
     public int getPlayerNumber() {
         return playerNumber;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
     }
 }

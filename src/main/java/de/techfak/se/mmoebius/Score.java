@@ -1,16 +1,38 @@
 package de.techfak.se.mmoebius;
 
 public class Score {
-    int points;
     Player player;
 
     public Score(Player player) {
-        points = 0;
         this.player = player;
     }
 
+    private int colorCount(Board board, Color color){
+        int counter = 0;
+        for(int i = 0; i < board.colCount; i++){
+            for(int j = 0; j < board.rowCount; j++){
+                if(board.floor[j][i].getColor().equals(color)){
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
 
-    public void calculatePoints(Board board) {
+    private int colorCountCrossed(Board board, Color color) {
+        int counter = 0;
+        for(int i = 0; i < board.colCount; i++){
+            for(int j = 0; j < board.rowCount; j++){
+                if(board.floor[j][i].getColor().equals(color) && board.floor[j][i].isCrossed){
+                    counter++;
+                }
+            }
+        }
+        return counter;
+    }
+
+    public int calculatePoints(Board board) {
+        int points = 0;
         int counter = 0;
         for(int i = 0; i < board.colCount; i++) {
             for (int j = 0; j < board.rowCount; j++) {
@@ -23,9 +45,15 @@ public class Score {
                 if(i >= 1 && i <= 3 || i >= 12 && i <= 14) {points += 3;}
                 if(i >= 4 && i <= 6 || i >= 8 && i <= 11) {points += 2;}
                 if(i == 7) {points += 1;}
-                counter = 0;
             }
+            counter = 0;
         }
+        if(colorCount(board,Color.RED) == colorCountCrossed(board,Color.RED)) points += 5;
+        if(colorCount(board,Color.BLUE) == colorCountCrossed(board,Color.BLUE)) points += 5;
+        if(colorCount(board,Color.GREEN) == colorCountCrossed(board,Color.GREEN)) points += 5;
+        if(colorCount(board,Color.ORANGE) == colorCountCrossed(board,Color.ORANGE)) points += 5;
+        if(colorCount(board,Color.YELLOW) == colorCountCrossed(board,Color.YELLOW)) points += 5;
+        return points;
     }
 }
 

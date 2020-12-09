@@ -74,7 +74,7 @@ public class Game {
             escParameter = player1.playMove();
             if(escParameter > 1) {
                 board.printBoard();
-                score1.calculatePoints(board);
+                player1.setPoints(score1.calculatePoints(board));
             }
         }while(escParameter != 0);
     }
