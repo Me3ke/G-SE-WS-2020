@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+/**
+ *
+ */
 public class Game {
 
     private static final int SYS_EXIT_FAILED = 100;
@@ -12,19 +15,27 @@ public class Game {
     private static final int COL_COUNT = 15;
     private static final char[][] MAP = new char[ROW_COUNT][COL_COUNT];
 
+    /**
+     * Game attributes:
+     * args: program arguments.
+     * board: the board to be played on.
+     */
     private String[] args;
     private Board board;
 
     /**
-     *
-     * @param args
+     * Constructor for a game.
+     * @param args the program arguments which should include a path to a playing field.
      */
     public Game(String... args) {
         this.args = args;
     }
 
     /**
-     *
+     * The createBoard method uses the program arguments to read in the given file
+     * and creates a 2-dim char array of it. Then a board is created from it an printed.
+     * If the parameters are not valid, the program exits with code 100.
+     * @throws InvalidBoardLayout if the file does not correspond to the specifications.
      */
     public void createBoard() {
         System.out.println("Welcome to encore");
@@ -41,7 +52,7 @@ public class Game {
                     reader = new BufferedReader(new FileReader(file));
                     while ((line = reader.readLine()) != null) {
                         if (line.length() != COL_COUNT) {
-                            throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long");
+                            throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long/short");
                         }
                         for (colCount = 0; colCount < line.length(); colCount++) {
                             MAP[rowCount][colCount] = line.charAt(colCount);
@@ -77,7 +88,10 @@ public class Game {
     }
 
     /**
-     *
+     * The play method is the basic loop to be played in.
+     * The play method asks for inputs and processes them.
+     * - validate, update, print, set points and test if finished.
+     * The escParameter is an indicator if the game has been canceled by user.
      */
     public void play() {
         Player playerOne = new Player(1, board);

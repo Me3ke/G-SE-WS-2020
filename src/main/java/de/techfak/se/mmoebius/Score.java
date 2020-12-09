@@ -1,5 +1,8 @@
 package de.techfak.se.mmoebius;
 
+/**
+ *
+ */
 public class Score {
     private static final int WIN_THRESHOLD = 2;
     private static final int POINTS_FOR_COLOR = 5;
@@ -20,21 +23,21 @@ public class Score {
     private static final int COL_K = 11;
     private static final int COL_H = 7;
 
+    /**
+     * Score attributes:
+     * player: is the player which the score belongs to.
+     */
     private Player player;
 
-    /**
-     *
-     * @param player
-     */
     public Score(Player player) {
         this.player = player;
     }
 
     /**
-     *
-     * @param board
-     * @param color
-     * @return
+     * The colorCount method counts the amount of tiles with the specific color given.
+     * @param board the board on which it should be counted.
+     * @param color the color of tiles to be counted.
+     * @return returns counter, the amount of tiles with the color.
      */
     private int colorCount(Board board, Color color) {
         int counter = 0;
@@ -49,10 +52,10 @@ public class Score {
     }
 
     /**
-     *
-     * @param board
-     * @param color
-     * @return
+     * The colorCountCrossed method counts the amount of ticked tiles with the specific color given.
+     * @param board the board on which it should be counted.
+     * @param color the color of tiles to be counted.
+     * @return returns counter, the amount of ticked tiles with the color.
      */
     private int colorCountCrossed(Board board, Color color) {
         int counter = 0;
@@ -67,9 +70,11 @@ public class Score {
     }
 
     /**
-     *
-     * @param board
-     * @return
+     * The calculatePoints method inspects the board and counts all completely ticked columns and
+     * distributes points for it. Additionally uses colorCount and colorCountCrossed to calculate
+     * points depending if all tiles of one color are ticked (->documentation)
+     * @param board the board on which the points should be calculated.
+     * @return returns the points calculated.
      */
     public int calculatePoints(Board board) {
         int points = 0;
@@ -97,9 +102,9 @@ public class Score {
     }
 
     /**
-     *
-     * @param board
-     * @return
+     * The testIfFinished method, tests if two (-> documentation) colors are completely ticked. (winning condition)
+     * @param board the board on which it should be tested.
+     * @return returns true if at least two colors are completely ticked.
      */
     public boolean testIfFinished(Board board) {
         int counter = 0;
@@ -115,25 +120,17 @@ public class Score {
     }
 
     /**
-     *
+     * prints the points of all players.
      */
     public void printPoints() {
         System.out.print("Player" + player.getPlayerNumber());
         System.out.println(" your current Score is: " + player.getPoints());
     }
 
-    /**
-     *
-     * @return
-     */
     public Player getPlayer() {
         return player;
     }
 
-    /**
-     *
-     * @param player
-     */
     public void setPlayer(Player player) {
         this.player = player;
     }

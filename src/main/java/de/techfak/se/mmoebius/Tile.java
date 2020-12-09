@@ -1,6 +1,22 @@
 package de.techfak.se.mmoebius;
 
+/**
+ *
+ */
 public class Tile {
+
+    /**
+     * Tile attributes:
+     * color: the color of the tile.
+     * rowNr: the row number of the tile.
+     * colNr: the column number of the tile.
+     * isCrossed: if the tile is crossed.
+     * hasCrossedNeighbour: if the tile has a crossed neighbour.
+     * hasRightNeighbour: if the tile has a right neighbour.
+     * hasLeftNeighbour: if the tile has a left neighbour.
+     * hasUpNeighbour: if the tile has a up neighbour.
+     * hasDownNeighbour: if the tile has a down neighbour.
+     */
     private Color color;
     private int rowNr;
     private int colNr;
@@ -12,10 +28,12 @@ public class Tile {
     private boolean hasDownNeighbour;
 
     /**
-     *
-     * @param color
-     * @param rowNr
-     * @param colNr
+     * Constructor for a tile.
+     * In the beginning a Tile is not crossed, has no crossed neighbour
+     * and has every neighbour.
+     * @param color the color of the tile.
+     * @param rowNr the row number of the tile.
+     * @param colNr the column number of the tile.
      */
     public Tile(Color color, int rowNr, int colNr) {
         this.color = color;
@@ -30,9 +48,9 @@ public class Tile {
     }
 
     /**
-     *
-     * @param other
-     * @return
+     * The isNeighbourTo method tests if the tile is a neighbour to another tile.
+     * @param other the other tile.
+     * @return returns true if its a neighbour field and false if not.
      */
     public boolean isNeighbourTo(Tile other) {
         if (other.hasDownNeighbour) {
@@ -50,146 +68,74 @@ public class Tile {
         return false;
     }
 
-    /**
-     *
-     * @return
-     */
     public Color getColor() {
         return color;
     }
 
-    /**
-     *
-     * @param color
-     */
     public void setColor(Color color) {
         this.color = color;
     }
 
-    /**
-     *
-     * @return
-     */
     public int getRowNr() {
         return rowNr;
     }
 
-    /**
-     *
-     * @param rowNr
-     */
     public void setRowNr(int rowNr) {
         this.rowNr = rowNr;
     }
 
-    /**
-     *
-     * @return
-     */
     public int getColNr() {
         return colNr;
     }
 
-    /**
-     *
-     * @param colNr
-     */
     public void setColNr(int colNr) {
         this.colNr = colNr;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean isCrossed() {
         return isCrossed;
     }
 
-    /**
-     *
-     * @param crossed
-     */
     public void setCrossed(boolean crossed) {
         isCrossed = crossed;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean hasCrossedNeighbour() {
         return hasCrossedNeighbour;
     }
 
-    /**
-     *
-     * @param hasCrossedNeighbour
-     */
     public void setHasCrossedNeighbour(boolean hasCrossedNeighbour) {
         this.hasCrossedNeighbour = hasCrossedNeighbour;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean hasRightNeighbour() {
         return hasRightNeighbour;
     }
 
-    /**
-     *
-     * @param hasRightNeighbour
-     */
     public void setHasRightNeighbour(boolean hasRightNeighbour) {
         this.hasRightNeighbour = hasRightNeighbour;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean hasLeftNeighbour() {
         return hasLeftNeighbour;
     }
 
-    /**
-     *
-     * @param hasLeftNeighbour
-     */
     public void setHasLeftNeighbour(boolean hasLeftNeighbour) {
         this.hasLeftNeighbour = hasLeftNeighbour;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean hasUpNeighbour() {
         return hasUpNeighbour;
     }
 
-    /**
-     *
-     * @param hasUpNeighbour
-     */
     public void setHasUpNeighbour(boolean hasUpNeighbour) {
         this.hasUpNeighbour = hasUpNeighbour;
     }
 
-    /**
-     *
-     * @return
-     */
     public boolean hasDownNeighbour() {
         return hasDownNeighbour;
     }
 
-    /**
-     *
-     * @param hasDownNeighbour
-     */
     public void setHasDownNeighbour(boolean hasDownNeighbour) {
         this.hasDownNeighbour = hasDownNeighbour;
     }

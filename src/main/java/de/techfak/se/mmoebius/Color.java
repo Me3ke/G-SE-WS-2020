@@ -1,8 +1,27 @@
 package de.techfak.se.mmoebius;
 
 /**
- *
+ * The Color class consists of the five colors in the game.
  */
 public enum Color {
-    BLUE, ORANGE, RED, GREEN, YELLOW
+    /**
+     * Blue.
+     */
+    BLUE,
+    /**
+     * Orange.
+     */
+    ORANGE,
+    /**
+     * Red.
+     */
+    RED,
+    /**
+     * Green.
+     */
+    GREEN,
+    /**
+     * Yellow.
+     */
+    YELLOW
 }
