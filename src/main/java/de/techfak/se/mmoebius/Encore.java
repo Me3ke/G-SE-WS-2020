@@ -8,11 +8,13 @@ package de.techfak.se.mmoebius;
 //TODO test if file throws exception if parameter is digit or symbol
 public final class Encore {
 
-    /* default */
-
     private Encore() {
     }
 
+    /**
+     *
+     * @param args
+     */
     public static void main(final String... args) {
         Game game = new Game(args);
         game.createBoard();

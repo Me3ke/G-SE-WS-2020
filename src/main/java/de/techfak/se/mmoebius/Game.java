@@ -6,34 +6,45 @@ import java.io.FileReader;
 import java.io.IOException;
 
 public class Game {
-    String[] args;
-    static final int SYS_EXIT_FAILED = 100;
-    static final char[][] map = new char[7][15];
-    Board board;
 
-    public Game(String ... args) {
+    private static final int SYS_EXIT_FAILED = 100;
+    private static final int ROW_COUNT = 7;
+    private static final int COL_COUNT = 15;
+    private static final char[][] MAP = new char[ROW_COUNT][COL_COUNT];
+
+    private String[] args;
+    private Board board;
+
+    /**
+     *
+     * @param args
+     */
+    public Game(String... args) {
         this.args = args;
     }
 
-    public void createBoard(){
+    /**
+     *
+     */
+    public void createBoard() {
         System.out.println("Welcome to encore");
         if (args.length == 0) {
             System.out.println("<100> No program arguments given. Type -f <filename>");
         } else if (args[0].equals("-f")) {
             File file = new File(args[1]);
             if (file.isFile() && file.canRead()) {
-                String row;
+                String line;
                 int rowCount = 0;
                 int colCount = 0;
                 BufferedReader reader = null;
                 try {
                     reader = new BufferedReader(new FileReader(file));
-                    while ((row = reader.readLine()) != null) {
-                        if(row.length() != 15) {
-                            throw new InvalidBoardLayout("Invalid Board Layout <101>");
+                    while ((line = reader.readLine()) != null) {
+                        if (line.length() != COL_COUNT) {
+                            throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long");
                         }
-                        for (colCount = 0; colCount < row.length(); colCount++) {
-                            map[rowCount][colCount] = row.charAt(colCount);
+                        for (colCount = 0; colCount < line.length(); colCount++) {
+                            MAP[rowCount][colCount] = line.charAt(colCount);
                         }
                         rowCount++;
                     }
@@ -43,7 +54,7 @@ public class Game {
                 } catch (IOException e) {
                     System.out.println("Source file is not valid. Check documentation for further information");
                 } catch (IndexOutOfBoundsException e) {
-                    throw new InvalidBoardLayout ("Invalid Board Layout <101>");
+                    throw new InvalidBoardLayout("Invalid Board Layout <101> row or column not suitable");
                 } finally {
                     if (reader != null) {
                         try {
@@ -53,36 +64,39 @@ public class Game {
                         }
                     }
                 }
-                Board board = new Board(map);
+                Board board = new Board(MAP);
                 this.board = board;
                 board.printBoard();
                 return;
             }
-            System.out.println("<100> no valid file found with filename: " + file.getName()); // Exception here?
+            System.out.println("<100> no valid file found with filename: " + file.getName());
         } else {
             System.out.println("<100> unknown program argument. Type -f <filename>");
         }
         System.exit(SYS_EXIT_FAILED);
     }
 
+    /**
+     *
+     */
     public void play() {
-        Player player1 = new Player(1,board);
-        Score score1 = new Score(player1);
+        Player playerOne = new Player(1, board);
+        Score scoreOne = new Score(playerOne);
         int escParameter;
         do {
-            System.out.println("Type in your play move Player"+ player1.getPlayerNumber() + ": ");
-            escParameter = player1.playMove();
-            if(escParameter > 1) {
+            System.out.println("Type in your play move Player" + playerOne.getPlayerNumber() + ": ");
+            escParameter = playerOne.playMove();
+            if (escParameter > 1) {
                 board.printBoard();
-                player1.setPoints(score1.calculatePoints(board));
-                score1.printPoints();
-                if(score1.testIfFinished(board)) {
+                playerOne.setPoints(scoreOne.calculatePoints(board));
+                scoreOne.printPoints();
+                if (scoreOne.testIfFinished(board)) {
                     System.out.println("Game is over. Final Scores:");
-                    score1.printPoints();
+                    scoreOne.printPoints();
                     break;
                 }
             }
-        }while(escParameter != 0);
+        } while (escParameter != 0);
     }
 }
 
