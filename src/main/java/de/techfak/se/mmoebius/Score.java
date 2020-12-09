@@ -56,6 +56,19 @@ public class Score {
         return points;
     }
 
+    public boolean testIfFinished(Board board) {
+        int counter = 0;
+        if(colorCount(board,Color.RED) == colorCountCrossed(board,Color.RED)) counter++;
+        if(colorCount(board,Color.BLUE) == colorCountCrossed(board,Color.BLUE)) counter++;
+        if(colorCount(board,Color.GREEN) == colorCountCrossed(board,Color.GREEN)) counter++;
+        if(colorCount(board,Color.ORANGE) == colorCountCrossed(board,Color.ORANGE)) counter++;
+        if(colorCount(board,Color.YELLOW) == colorCountCrossed(board,Color.YELLOW)) counter++;
+        if(counter >= 2) {
+            return true;
+        }
+        return false;
+    }
+
     public void printPoints() {
         System.out.print("Player" + player.getPlayerNumber());
         System.out.println(" your current Score is: " + player.getPoints());

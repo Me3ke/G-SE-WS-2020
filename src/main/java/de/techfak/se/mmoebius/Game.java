@@ -76,6 +76,10 @@ public class Game {
                 board.printBoard();
                 player1.setPoints(score1.calculatePoints(board));
                 score1.printPoints();
+                if(score1.testIfFinished(board)) {
+                    System.out.println("Game is over. Final Scores:");
+                    score1.printPoints();
+                }
             }
         }while(escParameter != 0);
     }
