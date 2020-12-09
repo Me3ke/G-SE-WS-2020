@@ -75,6 +75,7 @@ public class Game {
             if(escParameter > 1) {
                 board.printBoard();
                 player1.setPoints(score1.calculatePoints(board));
+                score1.printPoints();
             }
         }while(escParameter != 0);
     }

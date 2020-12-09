@@ -55,6 +55,11 @@ public class Score {
         if(colorCount(board,Color.YELLOW) == colorCountCrossed(board,Color.YELLOW)) points += 5;
         return points;
     }
+
+    public void printPoints() {
+        System.out.print("Player" + player.getPlayerNumber());
+        System.out.println(" your current Score is: " + player.getPoints());
+    }
 }
 
 
