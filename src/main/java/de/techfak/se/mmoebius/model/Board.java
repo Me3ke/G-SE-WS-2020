@@ -1,7 +1,12 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.model;
 
 
 //TODO class description
+
+import de.techfak.se.mmoebius.util.Color;
+import de.techfak.se.mmoebius.util.InvalidField;
+import de.techfak.se.mmoebius.util.InvalidTurn;
+
 /**
  *
  */

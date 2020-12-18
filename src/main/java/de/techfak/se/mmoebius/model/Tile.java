@@ -1,4 +1,6 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.model;
+
+import de.techfak.se.mmoebius.util.Color;
 
 /**
  *

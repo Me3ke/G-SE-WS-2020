@@ -38,6 +38,12 @@
             <version>5.7.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
+            <artifactId>javafx-fxml</artifactId>
+            <version>15</version>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -223,7 +229,7 @@
                     <repositoryLayout>flat</repositoryLayout>
                     <programs>
                         <program>
-                            <mainClass>de.techfak.se.mmoebius.Encore</mainClass>
+                            <mainClass>de.techfak.se.mmoebius.application.Encore</mainClass>
                             <id>Encore</id>
                         </program>
                     </programs>

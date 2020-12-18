@@ -1,4 +1,4 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.util;
 
 /**
  *

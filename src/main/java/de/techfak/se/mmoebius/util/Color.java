@@ -1,4 +1,4 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.util;
 
 /**
  * The Color class consists of the five colors in the game.

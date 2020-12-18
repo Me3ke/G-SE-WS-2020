@@ -1,4 +1,8 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.model;
+
+import de.techfak.se.mmoebius.model.Board;
+import de.techfak.se.mmoebius.model.Player;
+import de.techfak.se.mmoebius.util.Color;
 
 /**
  *

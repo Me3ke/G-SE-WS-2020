@@ -1,4 +1,6 @@
-package de.techfak.se.mmoebius;
+package de.techfak.se.mmoebius.model;
+
+import de.techfak.se.mmoebius.util.InvalidBoardLayout;
 
 import java.io.BufferedReader;
 import java.io.File;
