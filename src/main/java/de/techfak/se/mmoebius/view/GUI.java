@@ -1,10 +1,13 @@
-package de.techfak.se.mmoebius.application;
+package de.techfak.se.mmoebius.view;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 
+/**
+ *
+ */
 public class GUI extends Application {
 
     @Override

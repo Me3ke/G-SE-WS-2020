@@ -232,6 +232,10 @@
                             <mainClass>de.techfak.se.mmoebius.application.Encore</mainClass>
                             <id>Encore</id>
                         </program>
+                        <program>
+                            <mainClass>de.techfak.se.mmoebius.application.EncoreGUI</mainClass>
+                            <id>EncoreGUI</id>
+                        </program>
                     </programs>
                 </configuration>
                 <executions>
