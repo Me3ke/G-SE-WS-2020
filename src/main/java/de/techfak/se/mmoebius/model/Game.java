@@ -6,16 +6,16 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.Scanner;
 
 /**
  *
  */
+@SuppressWarnings("PMD.CloseResource")
 public class Game {
 
-    private static final int SYS_EXIT_FAILED = 100;
     private static final int ROW_COUNT = 7;
     private static final int COL_COUNT = 15;
-    private static final char[][] MAP = new char[ROW_COUNT][COL_COUNT];
 
     /**
      * Game attributes:
@@ -38,32 +38,39 @@ public class Game {
      * and creates a 2-dim char array of it. Then a board is created from it an printed.
      * If the parameters are not valid, the program exits with code 100.
      * @throws InvalidBoardLayout if the file does not correspond to the specifications.
+     * @return returns a value to indicate if creatingBoard was successful
      */
-    public void createBoard() {
+    @SuppressWarnings("PMD.AvoidFileStream")
+    public int createBoard() {
         System.out.println("Welcome to encore");
         if (args.length == 0) {
             System.out.println("<100> No program arguments given. Type -f <filename>");
+            return -1;
         } else if (args[0].equals("-f")) {
             File file = new File(args[1]);
             if (file.isFile() && file.canRead()) {
                 String line;
-
-                int rowCount = 0;
-                int colCount = 0;
+                System.out.println("Type in the number of rows in the given playing field: ");
+                int rowCount = readRow();
+                System.out.println("Type in the number of columns in the given playing field: ");
+                int colCount = readCol();
+                char[][] map = new char[rowCount][colCount];
+                int rowCountCounter = 0;
+                int colCountCounter = 0;
                 BufferedReader reader = null;
                 try {
                     reader = new BufferedReader(new FileReader(file));
                     while ((line = reader.readLine()) != null) {
-                        if (line.length() != COL_COUNT) {
+                        if (line.length() != colCount) {
                             throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long/short");
                         }
-                        for (colCount = 0; colCount < line.length(); colCount++) {
-                            MAP[rowCount][colCount] = line.charAt(colCount);
+                        for (colCountCounter = 0; colCountCounter < line.length(); colCountCounter++) {
+                            map[rowCountCounter][colCountCounter] = line.charAt(colCountCounter);
                         }
-                        rowCount++;
+                        rowCountCounter++;
                     }
-                    System.out.println("Row Count: " + rowCount);
-                    System.out.println("Column Count: " + colCount);
+                    System.out.println("Row Count: " + rowCountCounter);
+                    System.out.println("Column Count: " + colCountCounter);
                     System.out.println("The size of the board is therefore valid");
                 } catch (IOException e) {
                     System.out.println("Source file is not valid. Check documentation for further information");
@@ -78,16 +85,61 @@ public class Game {
                         }
                     }
                 }
-                Board board = new Board(MAP);
+                Board board = new Board(map);
                 this.board = board;
                 board.printBoard();
-                return;
+                return 1;
             }
             System.out.println("<100> no valid file found with filename: " + file.getName());
+            return -1;
         } else {
             System.out.println("<100> unknown program argument. Type -f <filename>");
+            return -1;
         }
-        System.exit(SYS_EXIT_FAILED); //TODO muss in main stehen
+    }
+
+    /**
+     *  reads the number of columns from the console
+     * @return the number of columns
+     */
+    private int readCol() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input.isEmpty() || input.length() > 100) {
+            System.out.println("input is empty or invalid, taking default value");
+            return COL_COUNT;
+        }
+        else {
+            try {
+                int temp = Integer.parseInt(input);
+                return temp;
+            } catch (NumberFormatException e) {
+                System.out.println("input is not valid, taking default value");
+                return COL_COUNT;
+            }
+        }
+    }
+
+    /**
+     * reads the number of rows from the console
+     * @return the number of rows
+     */
+    private int readRow() {
+        Scanner scanner = new Scanner(System.in);
+        String input = scanner.nextLine();
+        if (input.isEmpty() || input.length() > 100) {
+            System.out.println("input is empty or invalid, taking default value");
+            return ROW_COUNT;
+        }
+        else {
+            try {
+                int temp = Integer.parseInt(input);
+                return temp;
+            } catch (NumberFormatException e) {
+                System.out.println("input is not valid, taking default value");
+                return ROW_COUNT;
+            }
+        }
     }
 
     /**
@@ -114,6 +166,10 @@ public class Game {
                 }
             }
         } while (escParameter != 0);
+    }
+
+    public Board getBoard() {
+        return board;
     }
 }
 

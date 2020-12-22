@@ -13,6 +13,7 @@ import javafx.scene.shape.StrokeType;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -21,14 +22,16 @@ public class Controller {
 
     @FXML
     private VBox containerV ;
-    private static final int ROW_COUNT = 7;
-    private static final int COL_COUNT = 15;
-    private Rectangle [][] field = new Rectangle[ROW_COUNT][COL_COUNT];
+    private Board board;
+    private int rowCount;
+    private int colCount;
 
-    public void initialize() {
-        for (int i = 0; i < ROW_COUNT; i++) {
+    public void initialize(int rowCount, int colCount) {
+
+        Rectangle [][] field = new Rectangle[rowCount][colCount];
+        for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
-            for (int j = 0; j < COL_COUNT; j++) {
+            for (int j = 0; j < colCount; j++) {
                 Rectangle rectangle = new Rectangle(-24, -24, 48, 48);
                 rectangle.setFill(Color.GRAY);
                 rectangle.setStroke(Color.BLACK);
@@ -40,6 +43,11 @@ public class Controller {
         }
     }
 
+
+    /**
+     *
+     * @param mouseEvent
+     */
     public void setOnMouseClicked(MouseEvent mouseEvent) {
 
     }
