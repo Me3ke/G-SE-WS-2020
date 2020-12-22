@@ -21,19 +21,19 @@ public class Controller {
 
     @FXML
     private VBox containerV ;
-
-    private List<Rectangle> rectangles;
+    private static final int ROW_COUNT = 7;
+    private static final int COL_COUNT = 15;
+    private Rectangle [][] field = new Rectangle[ROW_COUNT][COL_COUNT];
 
     public void initialize() {
-        rectangles = new ArrayList<>();
-        for (int j = 0; j <= 6; j++) {
+        for (int i = 0; i < ROW_COUNT; i++) {
             HBox containerH = new HBox();
-            for (int i = 0; i <= 14; i++) {
+            for (int j = 0; j < COL_COUNT; j++) {
                 Rectangle rectangle = new Rectangle(-24, -24, 48, 48);
                 rectangle.setFill(Color.GRAY);
                 rectangle.setStroke(Color.BLACK);
                 rectangle.setStrokeType(StrokeType.INSIDE);
-                rectangles.add(rectangle);
+                field[i][j] = rectangle;
                 containerH.getChildren().add(rectangle);
             }
             containerV.getChildren().add(containerH);

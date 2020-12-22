@@ -47,6 +47,7 @@ public class Game {
             File file = new File(args[1]);
             if (file.isFile() && file.canRead()) {
                 String line;
+
                 int rowCount = 0;
                 int colCount = 0;
                 BufferedReader reader = null;
