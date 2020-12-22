@@ -1,9 +1,12 @@
 package de.techfak.se.mmoebius.view;
 
 import de.techfak.se.mmoebius.controller.Controller;
+import de.techfak.se.mmoebius.model.Game;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -20,15 +23,13 @@ public class GUI extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader fxmlLoader = new FXMLLoader(GUI.class.getResource("/GUI.fxml"));
         Pane root = fxmlLoader.load();
-        int initialRow = 7;
-        int initialColumn = 15;
         Parameters parameters = getParameters();
         List<String> parameterList = parameters.getRaw();
-        initialRow = Integer.parseInt(parameterList.get(0));
-        initialColumn = Integer.parseInt(parameterList.get(1));
-
+        String[] args = parameterList.toArray(new String[parameterList.size()]);
+        Game game = new Game(args);
+        game.createBoard();
         Controller controller = fxmlLoader.getController();
-        controller.initialize(initialRow,initialColumn);
+        controller.initialize(game.getBoard());
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();

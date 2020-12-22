@@ -1,6 +1,6 @@
 package de.techfak.se.mmoebius.model;
 
-import de.techfak.se.mmoebius.util.Color;
+import javafx.scene.paint.Color;
 
 /**
  *
@@ -19,7 +19,7 @@ public class Tile {
      * hasUpNeighbour: if the tile has a up neighbour.
      * hasDownNeighbour: if the tile has a down neighbour.
      */
-    private Color color;
+    private javafx.scene.paint.Color color;
     private int rowNr;
     private int colNr;
     private boolean isCrossed;
@@ -37,7 +37,7 @@ public class Tile {
      * @param rowNr the row number of the tile.
      * @param colNr the column number of the tile.
      */
-    public Tile(Color color, int rowNr, int colNr) {
+    public Tile(javafx.scene.paint.Color color, int rowNr, int colNr) {
         this.color = color;
         this.rowNr = rowNr;
         this.colNr = colNr;
@@ -70,7 +70,7 @@ public class Tile {
         return false;
     }
 
-    public Color getColor() {
+    public javafx.scene.paint.Color getColor() {
         return color;
     }
 

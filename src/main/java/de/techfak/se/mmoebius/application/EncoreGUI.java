@@ -19,21 +19,11 @@ public final class EncoreGUI {
     }
 
     /**
-     * The main method creates a game, a board and starts the game after with a GUI.
-     * Additionally provides the global row and column count to the application.
+     * The main method launches the GUI.
      * @param args the program arguments which include a filepath of a playing field
      */
     public static void main(final String... args) {
-        Game game = new Game(args);
-        int indicator = game.createBoard();
-        if (indicator == -1) {
-            System.exit(SYS_EXIT_FAILED);
-        }
-        String[] arguments = new String[2];
-        arguments[0] = String.valueOf(game.getBoard().getRowCount());
-        arguments[1] = String.valueOf(game.getBoard().getColCount());
-        GUI.launch(GUI.class, arguments);
-        game.play();
+        GUI.launch(GUI.class, args);
     }
 }
 

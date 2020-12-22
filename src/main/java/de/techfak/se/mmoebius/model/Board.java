@@ -3,9 +3,13 @@ package de.techfak.se.mmoebius.model;
 
 //TODO class description
 
-import de.techfak.se.mmoebius.util.Color;
 import de.techfak.se.mmoebius.util.InvalidField;
 import de.techfak.se.mmoebius.util.InvalidTurn;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.Color.*;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  *
@@ -16,6 +20,8 @@ public class Board {
     private static final int ASCII_CODE_CONST_CHAR = 65;
     private static final int ASCII_CODE_CONST_INT = 49;
     private static final String SPACE = " ";
+    private final PropertyChangeSupport observers = new PropertyChangeSupport(this);
+
 
     /**
      * Board attributes:
@@ -45,11 +51,11 @@ public class Board {
             for (int colNr = 0; colNr < colCount; colNr++) {
                 char mapCell = mapRow.charAt(colNr);
                 Tile tile;
-                if      (mapCell == 'b' || mapCell == 'B') { tile = new Tile(Color.BLUE, rowNr, colNr); }
-                else if (mapCell == 'g' || mapCell == 'G') { tile = new Tile(Color.GREEN, rowNr, colNr); }
-                else if (mapCell == 'o' || mapCell == 'O') { tile = new Tile(Color.ORANGE, rowNr, colNr); }
-                else if (mapCell == 'r' || mapCell == 'R') { tile = new Tile(Color.RED, rowNr, colNr); }
-                else if (mapCell == 'y' || mapCell == 'Y') { tile = new Tile(Color.YELLOW, rowNr, colNr); }
+                if      (mapCell == 'b' || mapCell == 'B') { tile = new Tile(javafx.scene.paint.Color.BLUE, rowNr, colNr); }
+                else if (mapCell == 'g' || mapCell == 'G') { tile = new Tile(javafx.scene.paint.Color.GREEN, rowNr, colNr); }
+                else if (mapCell == 'o' || mapCell == 'O') { tile = new Tile(javafx.scene.paint.Color.ORANGE, rowNr, colNr); }
+                else if (mapCell == 'r' || mapCell == 'R') { tile = new Tile(javafx.scene.paint.Color.RED, rowNr, colNr); }
+                else if (mapCell == 'y' || mapCell == 'Y') { tile = new Tile(javafx.scene.paint.Color.YELLOW, rowNr, colNr); }
                 else { throw new InvalidField("Invalid Field <101>"); }
                 floor[rowNr][colNr] = tile;
                 if (tile.getColNr() == 0) { tile.setHasLeftNeighbour(false); }
@@ -73,11 +79,11 @@ public class Board {
                 Tile tile = floor[i][j];
                 Color color = tile.getColor();
                 char current = '#';
-                if (color.equals(Color.BLUE)) { current = 'b'; }
-                if (color.equals(Color.ORANGE)) { current = 'o'; }
-                if (color.equals(Color.GREEN))  { current = 'g'; }
-                if (color.equals(Color.RED)) { current = 'r'; }
-                if (color.equals(Color.YELLOW)) { current = 'y'; }
+                if (color.equals(javafx.scene.paint.Color.BLUE)) { current = 'b'; }
+                if (color.equals(javafx.scene.paint.Color.ORANGE)) { current = 'o'; }
+                if (color.equals(javafx.scene.paint.Color.GREEN))  { current = 'g'; }
+                if (color.equals(javafx.scene.paint.Color.RED)) { current = 'r'; }
+                if (color.equals(javafx.scene.paint.Color.YELLOW)) { current = 'y'; }
                 if (tile.isCrossed()) { current = Character.toUpperCase(current); }
                 System.out.print(current + SPACE);
             }
@@ -191,5 +197,13 @@ public class Board {
 
     public void setColCount(int colCount) {
         this.colCount = colCount;
+    }
+
+    public void addObserver(PropertyChangeListener observer) {
+        observers.addPropertyChangeListener(observer);
+    }
+
+    public void removeObserver(PropertyChangeListener observer) {
+        observers.removePropertyChangeListener(observer);
     }
 }
