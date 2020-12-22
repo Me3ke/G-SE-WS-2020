@@ -5,9 +5,10 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.Color?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="de.techfak.se.mmoebius.controller.Controller"
-            prefHeight="400.0" prefWidth="600.0">
-</AnchorPane>
+<?import javafx.scene.shape.Rectangle?>
+<VBox fx:controller="de.techfak.se.mmoebius.controller.Controller" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:id="containerV">
+</VBox>
+

@@ -86,7 +86,7 @@ public class Game {
         } else {
             System.out.println("<100> unknown program argument. Type -f <filename>");
         }
-        System.exit(SYS_EXIT_FAILED);
+        System.exit(SYS_EXIT_FAILED); //TODO muss in main stehen
     }
 
     /**
