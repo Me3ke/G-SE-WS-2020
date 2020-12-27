@@ -14,6 +14,10 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
+import java.beans.PropertyChangeEvent;
+import java.util.ArrayList;
+import java.util.List;
+
 
 /**
  *
@@ -34,14 +38,18 @@ public class Controller {
     private int rowCount;
     private int colCount;
     public Group[][] field;
+    private Board board;
 
     /**
      *
      * @param board
      */
     public void initialize(Board board) {
+        this.board = board;
         colCount = board.getColCount();
         rowCount = board.getRowCount();
+        List<Integer> playMoveRow = new ArrayList<>();
+        List<Integer> playMoveCol = new ArrayList<>();
         field = new Group[rowCount][colCount];
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
@@ -51,6 +59,8 @@ public class Controller {
                 rectangle.setStroke(Color.BLACK);
                 rectangle.setStrokeType(StrokeType.INSIDE);
                 Group group = new Group();
+                final int currentRow = i;
+                final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
                         Rectangle crossTileOne = new Rectangle(-24,-2,50,5);
                         Rectangle crossTileTwo = new Rectangle(-2,-24,5,50);
@@ -60,6 +70,8 @@ public class Controller {
                         crossTileTwo.setFill(Color.BLACK);
                         group.getChildren().add(crossTileOne);
                         group.getChildren().add(crossTileTwo);
+                        playMoveRow.add(currentRow);
+                        playMoveCol.add(currentCol);
                     });
                 group.getChildren().add(rectangle);
                 field[i][j] = group;
@@ -67,6 +79,10 @@ public class Controller {
             }
             containerV.getChildren().add(containerH);
         }
+        board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+    private void updateField() {
     }
 
     /**
