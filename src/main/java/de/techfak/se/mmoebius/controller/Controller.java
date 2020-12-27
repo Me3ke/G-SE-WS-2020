@@ -39,6 +39,8 @@ public class Controller {
     private int colCount;
     public Group[][] field;
     private Board board;
+    private List<Integer> playMoveRow;
+    private List<Integer> playMoveCol;
 
     /**
      *
@@ -48,8 +50,8 @@ public class Controller {
         this.board = board;
         colCount = board.getColCount();
         rowCount = board.getRowCount();
-        List<Integer> playMoveRow = new ArrayList<>();
-        List<Integer> playMoveCol = new ArrayList<>();
+        playMoveRow = new ArrayList<>();
+        playMoveCol = new ArrayList<>();
         field = new Group[rowCount][colCount];
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
@@ -62,8 +64,9 @@ public class Controller {
                 final int currentRow = i;
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
-                        Rectangle crossTileOne = new Rectangle(-24,-2,50,5);
-                        Rectangle crossTileTwo = new Rectangle(-2,-24,5,50);
+                    if(!testForEqual(currentRow,currentCol)) {
+                        Rectangle crossTileOne = new Rectangle(-24, -2, 50, 5);
+                        Rectangle crossTileTwo = new Rectangle(-2, -24, 5, 50);
                         crossTileOne.setRotate(45);
                         crossTileTwo.setRotate(45);
                         crossTileOne.setFill(Color.BLACK);
@@ -72,7 +75,8 @@ public class Controller {
                         group.getChildren().add(crossTileTwo);
                         playMoveRow.add(currentRow);
                         playMoveCol.add(currentCol);
-                    });
+                    }
+                });
                 group.getChildren().add(rectangle);
                 field[i][j] = group;
                 containerH.getChildren().add(group);
@@ -80,6 +84,24 @@ public class Controller {
             containerV.getChildren().add(containerH);
         }
         board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+    //TODO Methode funktioniert noch nicht vollständig
+    /**
+     *
+      * @param currentRow
+     * @param currentCol
+     * @return
+     */
+    private boolean testForEqual(int currentRow, int currentCol) {
+        for(int i = 0; i < playMoveRow.size(); i++) {
+            if(playMoveRow.get(i).equals(currentRow) && playMoveCol.get(i).equals(currentCol)) {
+                System.out.print(playMoveRow.get(i) + ", " + playMoveCol.get(i));
+                System.out.println(" ist schon angekreuzt");
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateField() {
