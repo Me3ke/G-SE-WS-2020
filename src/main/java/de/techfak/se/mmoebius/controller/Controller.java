@@ -1,9 +1,11 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -14,6 +16,7 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
+import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +34,9 @@ public class Controller {
 
     @FXML
     private VBox containerV;
+
+    @FXML
+    private Button button;
 
     /**
      *
@@ -86,6 +92,18 @@ public class Controller {
         board.addObserver((PropertyChangeEvent evt) -> updateField());
     }
 
+    /**
+     *
+     * @param list
+     * @return
+     */
+    private int[] toIntArray(List<Integer> list) {
+        int[] array = new int[list.size()];
+        for(int i = 0;i < array.length;i++)
+            array[i] = list.get(i);
+        return array;
+    }
+
     //TODO Methode funktioniert noch nicht vollständig
     /**
      *
@@ -104,15 +122,31 @@ public class Controller {
         return false;
     }
 
+    /**
+     *
+     */
     private void updateField() {
     }
 
     /**
      *
+     * @param actionEvent
+     */
+    public void buttonClicked(ActionEvent actionEvent) {
+        if(board.validate(toIntArray(playMoveRow),toIntArray(playMoveCol))) {
+            System.out.println("Valid");
+            updateField();
+            playMoveRow.clear();
+            playMoveCol.clear();
+        } else {
+            removeCrosses();
+        }
+    }
+
+    /**
      *
      */
-    public void setOnMouseClicked(MouseEvent event) {
-
+    private void removeCrosses() {
     }
 }
 
