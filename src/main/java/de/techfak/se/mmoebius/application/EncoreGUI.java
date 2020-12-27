@@ -1,11 +1,7 @@
 package de.techfak.se.mmoebius.application;
 
-import de.techfak.se.mmoebius.controller.Controller;
-import de.techfak.se.mmoebius.model.Board;
-import de.techfak.se.mmoebius.model.Game;
 import de.techfak.se.mmoebius.view.GUI;
 
-import java.io.IOException;
 
 /**
  * The main class, contains just the main method to start the application.

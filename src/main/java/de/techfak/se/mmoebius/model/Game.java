@@ -16,13 +16,14 @@ public class Game {
 
     private static final int ROW_COUNT = 7;
     private static final int COL_COUNT = 15;
+    private static final int MAX_ROW_COL_COUNT = 100;
 
     /**
      * Game attributes:
      * args: program arguments.
      * board: the board to be played on.
      */
-    private String[] args;
+    private final String[] args;
     private Board board;
 
     /**
@@ -40,7 +41,7 @@ public class Game {
      * @throws InvalidBoardLayout if the file does not correspond to the specifications.
      * @return returns a value to indicate if creatingBoard was successful
      */
-    @SuppressWarnings("PMD.AvoidFileStream")
+    @SuppressWarnings({"PMD.AvoidFileStream", "PMD.PreserveStackTrace"})
     public int createBoard() {
         System.out.println("Welcome to encore");
         if (args.length == 0) {
@@ -69,9 +70,9 @@ public class Game {
                         }
                         rowCountCounter++;
                     }
+                    System.out.println("Checking Data from input file...");
                     System.out.println("Row Count: " + rowCountCounter);
                     System.out.println("Column Count: " + colCountCounter);
-                    System.out.println("The size of the board is therefore valid");
                 } catch (IOException e) {
                     System.out.println("Source file is not valid. Check documentation for further information");
                 } catch (IndexOutOfBoundsException e) {
@@ -99,44 +100,40 @@ public class Game {
     }
 
     /**
-     *  reads the number of columns from the console
+     *  reads the number of columns from the console.
      * @return the number of columns
      */
     private int readCol() {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        if (input.isEmpty() || input.length() > 100) {
-            System.out.println("input is empty or invalid, taking default value");
+        if (input.isEmpty() || input.length() > MAX_ROW_COL_COUNT) {
+            System.out.println("column input is empty or invalid, taking default value");
             return COL_COUNT;
-        }
-        else {
+        } else {
             try {
-                int temp = Integer.parseInt(input);
-                return temp;
+                return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("input is not valid, taking default value");
+                System.out.println("column input is not valid, taking default value");
                 return COL_COUNT;
             }
         }
     }
 
     /**
-     * reads the number of rows from the console
+     * reads the number of rows from the console.
      * @return the number of rows
      */
     private int readRow() {
         Scanner scanner = new Scanner(System.in);
         String input = scanner.nextLine();
-        if (input.isEmpty() || input.length() > 100) {
-            System.out.println("input is empty or invalid, taking default value");
+        if (input.isEmpty() || input.length() > MAX_ROW_COL_COUNT) {
+            System.out.println("row input is empty or invalid, taking default value");
             return ROW_COUNT;
-        }
-        else {
+        } else {
             try {
-                int temp = Integer.parseInt(input);
-                return temp;
+                return Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("input is not valid, taking default value");
+                System.out.println(" row input is not valid, taking default value");
                 return ROW_COUNT;
             }
         }

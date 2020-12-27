@@ -1,8 +1,5 @@
 package de.techfak.se.mmoebius.model;
 
-import de.techfak.se.mmoebius.model.Board;
-import de.techfak.se.mmoebius.model.Player;
-
 /**
  *
  */
@@ -89,37 +86,64 @@ public class Score {
                 }
             }
             if (counter == ROW_SUM) {
-                if (i == COL_A || i == COL_O) { points += POINTS_FOR_AO; }
-                if (i >= COL_B && i <= COL_D || i >= COL_L && i <= COL_N) { points += POINTS_FOR_BCD_LMN; }
-                if (i >= COL_E && i <= COL_G || i >= COL_I && i <= COL_K) { points += POINTS_FOR_EFG_IJK; }
-                if (i == COL_H) { points += POINTS_FOR_H; }
+                if (i == COL_A || i == COL_O) {
+                    points += POINTS_FOR_AO;
+                }
+                if (i >= COL_B && i <= COL_D || i >= COL_L && i <= COL_N) {
+                    points += POINTS_FOR_BCD_LMN;
+                }
+                if (i >= COL_E && i <= COL_G || i >= COL_I && i <= COL_K) {
+                    points += POINTS_FOR_EFG_IJK;
+                }
+                if (i == COL_H) {
+                    points += POINTS_FOR_H;
+                }
             }
             counter = 0;
         }
-        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) { points += POINTS_FOR_COLOR; }
-        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) { points += POINTS_FOR_COLOR; }
-        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) { points += POINTS_FOR_COLOR; }
-        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) { points += POINTS_FOR_COLOR; }
-        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) { points += POINTS_FOR_COLOR; }
+        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) {
+            points += POINTS_FOR_COLOR;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) {
+            points += POINTS_FOR_COLOR;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) {
+            points += POINTS_FOR_COLOR;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) {
+            points += POINTS_FOR_COLOR;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) {
+            points += POINTS_FOR_COLOR;
+        }
         return points;
     }
 
     /**
-     * The testIfFinished method, tests if two (-> documentation) colors are completely ticked. (winning condition)
+     * The testIfFinished method, tests if two (-> documentation) colors are completely ticked.
+     * (winning condition)
      * @param board the board on which it should be tested.
      * @return returns true if at least two colors are completely ticked.
      */
     public boolean testIfFinished(Board board) {
         int counter = 0;
-        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) { counter++; }
-        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) { counter++; }
-        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) { counter++; }
-        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) { counter++; }
-        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) { counter++; }
-        if (counter >= WIN_THRESHOLD) {
-            return true;
+        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) {
+            counter++;
         }
-        return false;
+        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) {
+            counter++;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) {
+            counter++;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) {
+            counter++;
+        }
+        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) {
+            counter++;
+        }
+        return counter >= WIN_THRESHOLD;
+
     }
 
     /**

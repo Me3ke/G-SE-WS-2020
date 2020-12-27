@@ -4,12 +4,9 @@ import de.techfak.se.mmoebius.controller.Controller;
 import de.techfak.se.mmoebius.model.Game;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
 
 import java.io.IOException;
 import java.util.List;
@@ -25,7 +22,7 @@ public class GUI extends Application {
         Pane root = fxmlLoader.load();
         Parameters parameters = getParameters();
         List<String> parameterList = parameters.getRaw();
-        String[] args = parameterList.toArray(new String[parameterList.size()]);
+        String[] args = parameterList.toArray(new String[0]);
         Game game = new Game(args);
         game.createBoard();
         Controller controller = fxmlLoader.getController();

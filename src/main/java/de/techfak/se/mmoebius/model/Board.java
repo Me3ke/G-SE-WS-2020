@@ -6,8 +6,6 @@ package de.techfak.se.mmoebius.model;
 import de.techfak.se.mmoebius.util.InvalidField;
 import de.techfak.se.mmoebius.util.InvalidTurn;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.Color.*;
-
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -32,6 +30,7 @@ public class Board {
     public final Tile[][] floor;
     private int rowCount;
     private int colCount;
+    //TODO definition scope
 
     /**
      * The Board constructor creates a 2-dim array of tiles (floor) from a given 2-dim
@@ -51,18 +50,35 @@ public class Board {
             for (int colNr = 0; colNr < colCount; colNr++) {
                 char mapCell = mapRow.charAt(colNr);
                 Tile tile;
-                if      (mapCell == 'b' || mapCell == 'B') { tile = new Tile(javafx.scene.paint.Color.BLUE, rowNr, colNr); }
-                else if (mapCell == 'g' || mapCell == 'G') { tile = new Tile(javafx.scene.paint.Color.GREEN, rowNr, colNr); }
-                else if (mapCell == 'o' || mapCell == 'O') { tile = new Tile(javafx.scene.paint.Color.ORANGE, rowNr, colNr); }
-                else if (mapCell == 'r' || mapCell == 'R') { tile = new Tile(javafx.scene.paint.Color.RED, rowNr, colNr); }
-                else if (mapCell == 'y' || mapCell == 'Y') { tile = new Tile(javafx.scene.paint.Color.YELLOW, rowNr, colNr); }
-                else { throw new InvalidField("Invalid Field <101>"); }
+                if      (mapCell == 'b' || mapCell == 'B') {
+                    tile = new Tile(javafx.scene.paint.Color.BLUE, rowNr, colNr);
+                } else if (mapCell == 'g' || mapCell == 'G') {
+                    tile = new Tile(javafx.scene.paint.Color.GREEN, rowNr, colNr);
+                } else if (mapCell == 'o' || mapCell == 'O') {
+                    tile = new Tile(javafx.scene.paint.Color.ORANGE, rowNr, colNr);
+                } else if (mapCell == 'r' || mapCell == 'R') {
+                    tile = new Tile(javafx.scene.paint.Color.RED, rowNr, colNr);
+                } else if (mapCell == 'y' || mapCell == 'Y') {
+                    tile = new Tile(javafx.scene.paint.Color.YELLOW, rowNr, colNr);
+                } else {
+                    throw new InvalidField("Invalid Field <101>");
+                }
                 floor[rowNr][colNr] = tile;
-                if (tile.getColNr() == 0) { tile.setHasLeftNeighbour(false); }
-                if (tile.getColNr() == colCount - 1) { tile.setHasRightNeighbour(false); }
-                if (tile.getRowNr() == 0) { tile.setHasUpNeighbour(false); }
-                if (tile.getRowNr() == rowCount - 1) { tile.setHasDownNeighbour(false); }
-                if (Character.isUpperCase(mapCell)) { tile.setCrossed(true); }
+                if (tile.getColNr() == 0) {
+                    tile.setHasLeftNeighbour(false);
+                }
+                if (tile.getColNr() == colCount - 1) {
+                    tile.setHasRightNeighbour(false);
+                }
+                if (tile.getRowNr() == 0) {
+                    tile.setHasUpNeighbour(false);
+                }
+                if (tile.getRowNr() == rowCount - 1) {
+                    tile.setHasDownNeighbour(false);
+                }
+                if (Character.isUpperCase(mapCell)) {
+                    tile.setCrossed(true);
+                }
             }
         }
     }
@@ -79,12 +95,24 @@ public class Board {
                 Tile tile = floor[i][j];
                 Color color = tile.getColor();
                 char current = '#';
-                if (color.equals(javafx.scene.paint.Color.BLUE)) { current = 'b'; }
-                if (color.equals(javafx.scene.paint.Color.ORANGE)) { current = 'o'; }
-                if (color.equals(javafx.scene.paint.Color.GREEN))  { current = 'g'; }
-                if (color.equals(javafx.scene.paint.Color.RED)) { current = 'r'; }
-                if (color.equals(javafx.scene.paint.Color.YELLOW)) { current = 'y'; }
-                if (tile.isCrossed()) { current = Character.toUpperCase(current); }
+                if (color.equals(javafx.scene.paint.Color.BLUE)) {
+                    current = 'b';
+                }
+                if (color.equals(javafx.scene.paint.Color.ORANGE)) {
+                    current = 'o';
+                }
+                if (color.equals(javafx.scene.paint.Color.GREEN))  {
+                    current = 'g';
+                }
+                if (color.equals(javafx.scene.paint.Color.RED)) {
+                    current = 'r';
+                }
+                if (color.equals(javafx.scene.paint.Color.YELLOW)) {
+                    current = 'y';
+                }
+                if (tile.isCrossed()) {
+                    current = Character.toUpperCase(current);
+                }
                 System.out.print(current + SPACE);
             }
             System.out.println();
@@ -100,12 +128,21 @@ public class Board {
     public void updateTile(int row, int col) {
         Tile tile = floor[row][col];
         tile.setCrossed(true);
-        if (tile.hasLeftNeighbour()) { floor[row][col - 1].setHasCrossedNeighbour(true); }
-        if (tile.hasRightNeighbour()) { floor[row][col + 1].setHasCrossedNeighbour(true); }
-        if (tile.hasUpNeighbour()) { floor[row - 1][col].setHasCrossedNeighbour(true); }
-        if (tile.hasDownNeighbour()) { floor[row + 1][col].setHasCrossedNeighbour(true); }
+        if (tile.hasLeftNeighbour()) {
+            floor[row][col - 1].setHasCrossedNeighbour(true);
+        }
+        if (tile.hasRightNeighbour()) {
+            floor[row][col + 1].setHasCrossedNeighbour(true);
+        }
+        if (tile.hasUpNeighbour()) {
+            floor[row - 1][col].setHasCrossedNeighbour(true);
+        }
+        if (tile.hasDownNeighbour()) {
+            floor[row + 1][col].setHasCrossedNeighbour(true);
+        }
     }
 
+    //TODO H1,, abfangen
     /**
      * The validate method consists of two sections. The method gets two arrays of
      * Integers which represent one play move consisting of several inputs.
