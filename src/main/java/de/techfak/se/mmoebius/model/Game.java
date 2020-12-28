@@ -102,6 +102,7 @@ public class Game {
         }
     }
 
+    //TODO Würfeln auch nach flaschem Zug?
     /**
      * The play method is the basic loop to be played in.
      * The play method asks for inputs and processes them.

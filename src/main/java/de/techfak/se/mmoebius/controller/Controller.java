@@ -1,6 +1,7 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
+import de.techfak.se.mmoebius.model.Dice;
 import de.techfak.se.mmoebius.model.Player;
 import de.techfak.se.mmoebius.model.Score;
 import javafx.event.ActionEvent;
@@ -51,6 +52,8 @@ public class Controller {
     private Player player;
     private List<Integer> playMoveRow;
     private List<Integer> playMoveCol;
+    private int[] numbers;
+    private Color[] colors;
 
     /**
      *
@@ -144,7 +147,7 @@ public class Controller {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
             System.out.println("Passing play move");
         } else {
-            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol))) {
+            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
                 if (score.testIfFinished(board)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);

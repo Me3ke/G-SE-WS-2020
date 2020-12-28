@@ -205,14 +205,14 @@ public class Board {
                 }
                 if (tester == row.length) {
                     System.out.println("All crosses valid");
-                    if (testWithDice()) {
+                    if (testWithDice(tileArr, numbers, colors)) {
                         System.out.println("play move is compatible with dices");
                         for (int j = 0; j < tileArr.length; j++) {
                             updateTile(tileArr[j].getRowNr(), tileArr[j].getColNr());
                         }
                         return true;
                     } else {
-                        throw new InvalidTurn("play move is not compatible with dices");
+                        throw new InvalidTurn("Play move is not compatible with dices");
                     }
                 } else {
                     throw new InvalidTurn("Some crosses were not valid");
@@ -232,8 +232,22 @@ public class Board {
      *
      * @return
      */
-    private boolean testWithDice() {
-
+    private boolean testWithDice(Tile[] tileArr, int[] numbers, Color[] colors) {
+        boolean colorsValid = false;
+        boolean numbersValid = false;
+        for (int i = 0; i < numbers.length; i++) {
+            if (tileArr.length == numbers[i]) {
+                numbersValid = true;
+                break;
+            }
+        }
+        for (int i = 0; i < colors.length; i++) {
+            if (tileArr[0].getColor().equals(colors[i])) {
+                colorsValid = true;
+                break;
+            }
+        }
+        return colorsValid && numbersValid;
     }
 
     public int getRowCount() {
