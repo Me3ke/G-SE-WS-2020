@@ -141,29 +141,33 @@ public class Controller {
      * @param actionEvent
      */
     public void buttonClicked(ActionEvent actionEvent) {
-        if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol))) {
-            board.printBoard();
-            if (score.testIfFinished(board)) {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Game Over");
-                alert.setHeaderText(null);
-                alert.setContentText("The game is over");
-                alert.showAndWait();
-                while(true) {
-                    //TODO Anders implementieren
-                }
-            }
-            playMoveRow.clear();
-            playMoveCol.clear();
+        if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
+            System.out.println("Passing play move");
         } else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Invalid Turn");
-            alert.setHeaderText("The chosen move is invalid");
-            alert.setContentText("Crosses will be removed, try again.");
-            alert.showAndWait();
-            removeCrosses();
-            playMoveRow.clear();
-            playMoveCol.clear();
+            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol))) {
+                board.printBoard();
+                if (score.testIfFinished(board)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game Over");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The game is over");
+                    alert.showAndWait();
+                    while (true) {
+                        //TODO Anders implementieren (Spielende)
+                    }
+                }
+                playMoveRow.clear();
+                playMoveCol.clear();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Turn");
+                alert.setHeaderText("The chosen move is invalid");
+                alert.setContentText("Crosses will be removed, try again.");
+                alert.showAndWait();
+                removeCrosses();
+                playMoveRow.clear();
+                playMoveCol.clear();
+            }
         }
     }
 
