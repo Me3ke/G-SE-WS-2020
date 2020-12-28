@@ -13,28 +13,35 @@
     </padding>
     <Button onAction="#buttonClicked"
             alignment="BOTTOM_RIGHT">Check Move</Button>
-    <HBox fx:id="dices">
-        <Rectangle fx:id="diceOneColor">
-            <x> -24 </x>
-            <y> -24 </y>
-            <height> 48 </height>
-            <width> 48 </width>
-        </Rectangle>
-        <Rectangle fx:id="diceTwoColor">
-            <x> -24 </x>
-            <y> -24 </y>
-            <height> 48 </height>
-            <width> 48 </width>
-        </Rectangle>
-        <Rectangle fx:id="diceThreeColor">
-            <x> -24 </x>
-            <y> -24 </y>
-            <height> 48 </height>
-            <width> 48 </width>
-        </Rectangle>
-        <Label fx:id="diceOneNumber"></Label>
-        <Label fx:id="diceTwoNumber"></Label>
-        <Label fx:id="diceThreeNumber"></Label>
+    <HBox fx:id="dices" spacing="10">
+        <padding>
+            <Insets topRightBottomLeft="10"/>
+        </padding>
+        <VBox>
+            <Rectangle fx:id="diceOneColor">
+                <x> -24 </x>
+                <y> -24 </y>
+                <height> 48 </height>
+                <width> 48 </width>
+            </Rectangle>
+            <Rectangle fx:id="diceTwoColor">
+                <x> -24 </x>
+                <y> -24 </y>
+                <height> 48 </height>
+                <width> 48 </width>
+            </Rectangle>
+            <Rectangle fx:id="diceThreeColor">
+                <x> -24 </x>
+                <y> -24 </y>
+                <height> 48 </height>
+                <width> 48 </width>
+            </Rectangle>
+        </VBox>
+        <VBox>
+            <Label fx:id="diceOneNumber"></Label>
+            <Label fx:id="diceTwoNumber"></Label>
+            <Label fx:id="diceThreeNumber"></Label>
+        </VBox>
     </HBox>
 </VBox>
 

@@ -9,6 +9,12 @@ import java.util.Random;
  */
 public class Dice {
 
+    private static final int NUMBER_THRESHOLD = 4;
+    private static final int COLOR_ORANGE = 1;
+    private static final int COLOR_RED = 2;
+    private static final int COLOR_GREEN = 4;
+    private static final int COLOR_YELLOW = 3;
+
     /**
      *
      */
@@ -20,20 +26,19 @@ public class Dice {
      */
     public Dice() {
         Random random = new Random();
-        this.number = 1 + random.nextInt(4);
-        int temp = random.nextInt(5);
-        switch (temp)
-        {
-            case 1:
+        this.number = 1 + random.nextInt(NUMBER_THRESHOLD);
+        int temp = 1 + random.nextInt(NUMBER_THRESHOLD);
+        switch (temp) {
+            case COLOR_ORANGE:
                 color = Color.ORANGE;
                 break;
-            case 2:
+            case COLOR_RED:
                 color = Color.RED;
                 break;
-            case 3:
+            case COLOR_YELLOW:
                 color = Color.YELLOW;
                 break;
-            case 4:
+            case COLOR_GREEN:
                 color = Color.GREEN;
                 break;
             default:

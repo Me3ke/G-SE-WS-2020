@@ -191,7 +191,7 @@ public class Board {
                         }
                     }
                     for (int count = 0; count < tester; count++) {
-                        if(null != tileArr[count]) {
+                        if (null != tileArr[count]) {
                             if (firstTile.getColor().equals(tile.getColor()) && tile.isNeighbourTo(tileArr[count])) {
                                 System.out.print(Character.toString((char) col[i] + ASCII_CODE_CONST_CHAR));
                                 System.out.print(Character.toString((char) row[i] + ASCII_CODE_CONST_INT));
@@ -206,7 +206,7 @@ public class Board {
                 if (tester == row.length) {
                     System.out.println("All crosses valid");
                     if (testWithDice(tileArr, numbers, colors)) {
-                        System.out.println("play move is compatible with dices");
+                        System.out.println("Play move is compatible with dices");
                         for (int j = 0; j < tileArr.length; j++) {
                             updateTile(tileArr[j].getRowNr(), tileArr[j].getColNr());
                         }

@@ -143,17 +143,13 @@ public class Game {
     private void printColor(Color color) {
         if (color.equals(Color.ORANGE)) {
             System.out.println(" orange");
-        }
-        else if (color.equals(Color.GREEN)) {
+        } else if (color.equals(Color.GREEN)) {
             System.out.println(" green");
-        }
-        else if (color.equals(Color.BLUE)) {
+        } else if (color.equals(Color.BLUE)) {
             System.out.println(" blue");
-        }
-        else if (color.equals(Color.RED)) {
+        } else if (color.equals(Color.RED)) {
             System.out.println(" red");
-        }
-        else if (color.equals(Color.YELLOW)) {
+        } else if (color.equals(Color.YELLOW)) {
             System.out.println(" yellow");
         } else {
             System.out.println(" unknown");

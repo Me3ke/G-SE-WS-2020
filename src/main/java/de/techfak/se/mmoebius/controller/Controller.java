@@ -10,11 +10,11 @@ import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
+import javafx.scene.text.Font;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
@@ -36,6 +36,9 @@ public class Controller {
     private static final int CROSS_H = 5;
     private static final int ROTATE_CONST = 45;
     private static final int DICE_COUNT = 3;
+    private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
+    private static final BorderWidths WIDTH = BorderStroke.DEFAULT_WIDTHS;
+    private static final BorderStroke BORDER_STROKE = new BorderStroke(Color.BLACK, SOLID , CornerRadii.EMPTY, WIDTH);
 
     @FXML
     private VBox containerV;
@@ -141,6 +144,12 @@ public class Controller {
         diceOneNumber.setText(String.valueOf(numbers[0]));
         diceTwoNumber.setText(String.valueOf(numbers[1]));
         diceThreeNumber.setText(String.valueOf(numbers[2]));
+        diceOneNumber.setFont(new Font(32));
+        diceTwoNumber.setFont(new Font(32));
+        diceThreeNumber.setFont(new Font(32));
+        diceOneNumber.setBorder(new Border(BORDER_STROKE));
+        diceTwoNumber.setBorder(new Border(BORDER_STROKE));
+        diceThreeNumber.setBorder(new Border(BORDER_STROKE));
         diceOneColor.setFill(colors[0]);
         diceTwoColor.setFill(colors[1]);
         diceThreeColor.setFill(colors[2]);
@@ -150,6 +159,7 @@ public class Controller {
         diceTwoColor.setStrokeType(StrokeType.INSIDE);
         diceThreeColor.setStroke(Color.BLACK);
         diceThreeColor.setStrokeType(StrokeType.INSIDE);
+        //TODO verschönern
     }
 
     /**
@@ -241,6 +251,7 @@ public class Controller {
     /*TODO Fragen im Tut:   -Nicht mehr weiterspielen
                             -Controller zu viel View?
                             -Sachen in .FXML unten einfügen, da initalize Rechtecke (Punkte unten)
+                            -Updatefield + oberserver. Wie sinnvoll benutzen?
      */
 
 
