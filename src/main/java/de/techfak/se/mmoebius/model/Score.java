@@ -39,7 +39,7 @@ public class Score {
      * @param color the color of tiles to be counted.
      * @return returns counter, the amount of tiles with the color.
      */
-    private int colorCount(Board board, javafx.scene.paint.Color color) {
+    public int colorCount(Board board, javafx.scene.paint.Color color) {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {
@@ -57,7 +57,7 @@ public class Score {
      * @param color the color of tiles to be counted.
      * @return returns counter, the amount of ticked tiles with the color.
      */
-    private int colorCountCrossed(Board board, javafx.scene.paint.Color color) {
+    public int colorCountCrossed(Board board, javafx.scene.paint.Color color) {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {

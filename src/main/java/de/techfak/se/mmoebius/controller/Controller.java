@@ -6,6 +6,7 @@ import de.techfak.se.mmoebius.model.Player;
 import de.techfak.se.mmoebius.model.Score;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -39,6 +40,12 @@ public class Controller {
     private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
     private static final BorderWidths WIDTH = BorderStroke.DEFAULT_WIDTHS;
     private static final BorderStroke BORDER_STROKE = new BorderStroke(Color.BLACK, SOLID , CornerRadii.EMPTY, WIDTH);
+    private static final Font BASIC_FONT = new Font(32);
+    private static final int POINTS_FOR_COLOR = 5;
+    private static final int POINTS_FOR_AO = 5;
+    private static final int POINTS_FOR_BCD_LMN = 3;
+    private static final int POINTS_FOR_EFG_IJK = 2;
+    private static final int POINTS_FOR_H = 1;
 
     @FXML
     private VBox containerV;
@@ -127,7 +134,56 @@ public class Controller {
             }
             containerV.getChildren().add(containerH);
         }
+        createPointLabels();
         board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+    /**
+     *
+     */
+    private void createPointLabels() {
+        //TODO über FXML?
+        Label pointsForA = new Label(String.valueOf(POINTS_FOR_AO));
+        Label pointsForB = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForC = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForD= new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForE = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForF = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForG = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForH = new Label(String.valueOf(POINTS_FOR_H));
+        Label pointsForI = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForJ = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForK = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        Label pointsForL = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForM = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForN = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        Label pointsForO = new Label(String.valueOf(POINTS_FOR_AO));
+        pointsForA.setFont(BASIC_FONT);
+        pointsForB.setFont(BASIC_FONT);
+        pointsForC.setFont(BASIC_FONT);
+        pointsForD.setFont(BASIC_FONT);
+        pointsForE.setFont(BASIC_FONT);
+        pointsForF.setFont(BASIC_FONT);
+        pointsForG.setFont(BASIC_FONT);
+        pointsForH.setFont(BASIC_FONT);
+        pointsForI.setFont(BASIC_FONT);
+        pointsForJ.setFont(BASIC_FONT);
+        pointsForK.setFont(BASIC_FONT);
+        pointsForL.setFont(BASIC_FONT);
+        pointsForM.setFont(BASIC_FONT);
+        pointsForN.setFont(BASIC_FONT);
+        pointsForO.setFont(BASIC_FONT);
+        HBox points = new HBox(pointsForA,pointsForB,pointsForC,pointsForD,pointsForE,pointsForF,pointsForG,pointsForH);
+        points.setSpacing(30);
+        points.setPadding(new Insets(10));
+        points.getChildren().add(pointsForI);
+        points.getChildren().add(pointsForJ);
+        points.getChildren().add(pointsForK);
+        points.getChildren().add(pointsForL);
+        points.getChildren().add(pointsForM);
+        points.getChildren().add(pointsForN);
+        points.getChildren().add(pointsForO);
+        containerV.getChildren().add(points);
     }
 
     /**
@@ -144,9 +200,9 @@ public class Controller {
         diceOneNumber.setText(String.valueOf(numbers[0]));
         diceTwoNumber.setText(String.valueOf(numbers[1]));
         diceThreeNumber.setText(String.valueOf(numbers[2]));
-        diceOneNumber.setFont(new Font(32));
-        diceTwoNumber.setFont(new Font(32));
-        diceThreeNumber.setFont(new Font(32));
+        diceOneNumber.setFont(BASIC_FONT);
+        diceTwoNumber.setFont(BASIC_FONT);
+        diceThreeNumber.setFont(BASIC_FONT);
         diceOneNumber.setBorder(new Border(BORDER_STROKE));
         diceTwoNumber.setBorder(new Border(BORDER_STROKE));
         diceThreeNumber.setBorder(new Border(BORDER_STROKE));
@@ -211,6 +267,7 @@ public class Controller {
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
+                updatePoints();
                 if (score.testIfFinished(board)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
@@ -235,6 +292,9 @@ public class Controller {
                 playMoveCol.clear();
             }
         }
+    }
+
+    private void updatePoints() {
     }
 
     /**
