@@ -307,7 +307,6 @@ public class Controller {
             for (int i = 0; i < completeCols.length; i++) {
                 //TODO Wenn label für Punkte global zugreifbar, dann hier Farbe anpassen.
             }
-
         }
     }
 
