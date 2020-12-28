@@ -1,7 +1,6 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
-import de.techfak.se.mmoebius.util.InvalidTurn;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -156,7 +155,10 @@ public class Controller {
      *
      */
     private void removeCrosses() {
-        //TODO implementieren
+        for (int i = 0; i < playMoveRow.size(); i++) {
+            field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
+            field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
+        }
     }
 
     //TODO Score handling und Finish handling
