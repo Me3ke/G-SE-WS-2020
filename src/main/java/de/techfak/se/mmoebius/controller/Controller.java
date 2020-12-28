@@ -1,6 +1,8 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
+import de.techfak.se.mmoebius.model.Player;
+import de.techfak.se.mmoebius.model.Score;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
@@ -43,8 +45,10 @@ public class Controller {
      */
     private int rowCount;
     private int colCount;
-    public Group[][] field;
+    private Group[][] field;
     private Board board;
+    private Score score;
+    private Player player;
     private List<Integer> playMoveRow;
     private List<Integer> playMoveCol;
 
@@ -54,6 +58,8 @@ public class Controller {
      */
     public void initialize(Board board) {
         this.board = board;
+        player = new Player(1, board);
+        score = new Score(player);
         colCount = board.getColCount();
         rowCount = board.getRowCount();
         playMoveRow = new ArrayList<>();
@@ -137,6 +143,16 @@ public class Controller {
     public void buttonClicked(ActionEvent actionEvent) {
         if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol))) {
             board.printBoard();
+            if (score.testIfFinished(board)) {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setTitle("Game Over");
+                alert.setHeaderText(null);
+                alert.setContentText("The game is over");
+                alert.showAndWait();
+                while(true) {
+                    //TODO Anders implementieren
+                }
+            }
             playMoveRow.clear();
             playMoveCol.clear();
         } else {

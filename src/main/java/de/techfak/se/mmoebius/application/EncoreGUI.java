@@ -10,6 +10,7 @@ import de.techfak.se.mmoebius.view.GUI;
 public final class EncoreGUI {
 
     private static final int SYS_EXIT_FAILED = 100;
+    private static final int SYS_EXIT_SUCCESS = 1;
 
     private EncoreGUI() {
     }
@@ -19,7 +20,7 @@ public final class EncoreGUI {
      * @param args the program arguments which include a filepath of a playing field
      */
     public static void main(final String... args) {
-        GUI.launch(GUI.class, args);
+            GUI.launch(GUI.class, args);
     }
 }
 

@@ -191,13 +191,15 @@ public class Board {
                         }
                     }
                     for (int count = 0; count < tester; count++) {
-                        if (firstTile.getColor().equals(tile.getColor()) && tile.isNeighbourTo(tileArr[count])) {
-                            System.out.print(Character.toString((char) col[i] + ASCII_CODE_CONST_CHAR));
-                            System.out.print(Character.toString((char) row[i] + ASCII_CODE_CONST_INT));
-                            System.out.println(" is valid");
-                            tileArr[i] = tile;
-                            tester++;
-                            break;
+                        if(null != tileArr[count]) {
+                            if (firstTile.getColor().equals(tile.getColor()) && tile.isNeighbourTo(tileArr[count])) {
+                                System.out.print(Character.toString((char) col[i] + ASCII_CODE_CONST_CHAR));
+                                System.out.print(Character.toString((char) row[i] + ASCII_CODE_CONST_INT));
+                                System.out.println(" is valid");
+                                tileArr[i] = tile;
+                                tester++;
+                                break;
+                            }
                         }
                     }
                 }
