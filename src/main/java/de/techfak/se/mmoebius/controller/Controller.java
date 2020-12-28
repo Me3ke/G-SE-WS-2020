@@ -1,22 +1,18 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
+import de.techfak.se.mmoebius.util.InvalidTurn;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Line;
-import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
-import java.awt.*;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,6 +27,11 @@ public class Controller {
     private static final int REC_Y_CONST = -24;
     private static final int REC_WIDTH_CONST = 48;
     private static final int REC_HEIGHT_CONST = 48;
+    private static final int CROSS_X_CONST = -24;
+    private static final int CROSS_Y_CONST = -2;
+    private static final int CROSS_W = 50;
+    private static final int CROSS_H = 5;
+    private static final int ROTATE_CONST = 45;
 
     @FXML
     private VBox containerV;
@@ -70,11 +71,11 @@ public class Controller {
                 final int currentRow = i;
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
-                    if(!testForEqual(currentRow,currentCol)) {
-                        Rectangle crossTileOne = new Rectangle(-24, -2, 50, 5);
-                        Rectangle crossTileTwo = new Rectangle(-2, -24, 5, 50);
-                        crossTileOne.setRotate(45);
-                        crossTileTwo.setRotate(45);
+                    if (!testForEqual(currentRow, currentCol)) {
+                        Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
+                        Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
+                        crossTileOne.setRotate(ROTATE_CONST);
+                        crossTileTwo.setRotate(ROTATE_CONST);
                         crossTileOne.setFill(Color.BLACK);
                         crossTileTwo.setFill(Color.BLACK);
                         group.getChildren().add(crossTileOne);
@@ -99,8 +100,9 @@ public class Controller {
      */
     private int[] toIntArray(List<Integer> list) {
         int[] array = new int[list.size()];
-        for(int i = 0;i < array.length;i++)
+        for (int i = 0; i < array.length; i++) {
             array[i] = list.get(i);
+        }
         return array;
     }
 
@@ -112,8 +114,8 @@ public class Controller {
      * @return
      */
     private boolean testForEqual(int currentRow, int currentCol) {
-        for(int i = 0; i < playMoveRow.size(); i++) {
-            if(playMoveRow.get(i).equals(currentRow) && playMoveCol.get(i).equals(currentCol)) {
+        for (int i = 0; i < playMoveRow.size(); i++) {
+            if (playMoveRow.get(i).equals(currentRow) && playMoveCol.get(i).equals(currentCol)) {
                 System.out.print(playMoveRow.get(i) + ", " + playMoveCol.get(i));
                 System.out.println(" ist schon angekreuzt");
                 return true;
@@ -126,6 +128,7 @@ public class Controller {
      *
      */
     private void updateField() {
+        //TODO evtl implementieren. Vielleicht unsinnig
     }
 
     /**
@@ -133,13 +136,19 @@ public class Controller {
      * @param actionEvent
      */
     public void buttonClicked(ActionEvent actionEvent) {
-        if(board.validate(toIntArray(playMoveRow),toIntArray(playMoveCol))) {
-            System.out.println("Valid");
-            updateField();
+        if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol))) {
+            board.printBoard();
             playMoveRow.clear();
             playMoveCol.clear();
         } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Invalid Turn");
+            alert.setHeaderText("The chosen move is invalid");
+            alert.setContentText("Crosses will be removed, try again.");
+            alert.showAndWait();
             removeCrosses();
+            playMoveRow.clear();
+            playMoveCol.clear();
         }
     }
 
@@ -147,6 +156,11 @@ public class Controller {
      *
      */
     private void removeCrosses() {
+        //TODO implementieren
     }
+
+    //TODO Score handling und Finish handling
+    //TODO Javadoc + Checkstyle !!
+
 }
 

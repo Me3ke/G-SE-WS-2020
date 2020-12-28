@@ -140,6 +140,7 @@ public class Board {
         if (tile.hasDownNeighbour()) {
             floor[row + 1][col].setHasCrossedNeighbour(true);
         }
+        observers.firePropertyChange("setCrossed", false, true);
     }
 
     //TODO H1,, abfangen
