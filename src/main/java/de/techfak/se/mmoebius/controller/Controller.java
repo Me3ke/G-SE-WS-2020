@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -34,12 +35,34 @@ public class Controller {
     private static final int CROSS_W = 50;
     private static final int CROSS_H = 5;
     private static final int ROTATE_CONST = 45;
+    private static final int DICE_COUNT = 3;
 
     @FXML
     private VBox containerV;
 
     @FXML
     private Button button;
+
+    @FXML
+    private HBox dices;
+
+    @FXML
+    private Rectangle diceOneColor;
+
+    @FXML
+    private Rectangle diceTwoColor;
+
+    @FXML
+    private Rectangle diceThreeColor;
+
+    @FXML
+    private Label diceOneNumber;
+
+    @FXML
+    private Label diceTwoNumber;
+
+    @FXML
+    private Label diceThreeNumber;
 
     /**
      *
@@ -68,6 +91,9 @@ public class Controller {
         playMoveRow = new ArrayList<>();
         playMoveCol = new ArrayList<>();
         field = new Group[rowCount][colCount];
+        numbers = new int[DICE_COUNT];
+        colors = new Color[DICE_COUNT];
+        throwDices();
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
             for (int j = 0; j < colCount; j++) {
@@ -99,6 +125,31 @@ public class Controller {
             containerV.getChildren().add(containerH);
         }
         board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+    /**
+     *
+     */
+    private void throwDices() {
+        for (int i = 0; i < DICE_COUNT; i++) {
+            Dice dice = new Dice();
+            numbers[i] = dice.getNumber();
+            System.out.print(dice.getNumber());
+            colors[i] = dice.getColor();
+            System.out.println(" " + dice.getColor());
+        }
+        diceOneNumber.setText(String.valueOf(numbers[0]));
+        diceTwoNumber.setText(String.valueOf(numbers[1]));
+        diceThreeNumber.setText(String.valueOf(numbers[2]));
+        diceOneColor.setFill(colors[0]);
+        diceTwoColor.setFill(colors[1]);
+        diceThreeColor.setFill(colors[2]);
+        diceOneColor.setStroke(Color.BLACK);
+        diceOneColor.setStrokeType(StrokeType.INSIDE);
+        diceTwoColor.setStroke(Color.BLACK);
+        diceTwoColor.setStrokeType(StrokeType.INSIDE);
+        diceThreeColor.setStroke(Color.BLACK);
+        diceThreeColor.setStrokeType(StrokeType.INSIDE);
     }
 
     /**
@@ -146,6 +197,7 @@ public class Controller {
     public void buttonClicked(ActionEvent actionEvent) {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
             System.out.println("Passing play move");
+            throwDices();
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
@@ -161,6 +213,7 @@ public class Controller {
                 }
                 playMoveRow.clear();
                 playMoveCol.clear();
+                throwDices();
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Turn");

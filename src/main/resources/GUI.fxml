@@ -4,6 +4,8 @@
 
 <?import javafx.scene.control.Button?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.control.Label?>
 <VBox fx:controller="de.techfak.se.mmoebius.controller.Controller" xmlns="http://javafx.com/javafx"
       xmlns:fx="http://javafx.com/fxml" fx:id="containerV">
     <padding>
@@ -11,5 +13,28 @@
     </padding>
     <Button onAction="#buttonClicked"
             alignment="BOTTOM_RIGHT">Check Move</Button>
+    <HBox fx:id="dices">
+        <Rectangle fx:id="diceOneColor">
+            <x> -24 </x>
+            <y> -24 </y>
+            <height> 48 </height>
+            <width> 48 </width>
+        </Rectangle>
+        <Rectangle fx:id="diceTwoColor">
+            <x> -24 </x>
+            <y> -24 </y>
+            <height> 48 </height>
+            <width> 48 </width>
+        </Rectangle>
+        <Rectangle fx:id="diceThreeColor">
+            <x> -24 </x>
+            <y> -24 </y>
+            <height> 48 </height>
+            <width> 48 </width>
+        </Rectangle>
+        <Label fx:id="diceOneNumber"></Label>
+        <Label fx:id="diceTwoNumber"></Label>
+        <Label fx:id="diceThreeNumber"></Label>
+    </HBox>
 </VBox>
 
