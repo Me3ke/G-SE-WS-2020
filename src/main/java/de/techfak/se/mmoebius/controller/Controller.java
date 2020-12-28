@@ -181,8 +181,12 @@ public class Controller {
         }
     }
 
-    //TODO Score handling und Finish handling
     //TODO Javadoc + Checkstyle !!
+    /*TODO Fragen im Tut:   -Nicht mehr weiterspielen
+                            -Controller zu viel View?
+                            -Sachen in .FXML unten einfügen, da initalize Rechtecke (Punkte unten)
+     */
+
 
 }
 

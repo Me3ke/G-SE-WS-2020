@@ -1,6 +1,7 @@
 package de.techfak.se.mmoebius.model;
 
 import de.techfak.se.mmoebius.util.InvalidBoardLayout;
+import javafx.scene.paint.Color;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +19,7 @@ public class Game {
     private static final int ROW_COUNT = 7;
     private static final int COL_COUNT = 15;
     private static final int MAX_ROW_COL_COUNT = 100;
+    private static final int DICE_COUNT = 3;
 
     /**
      * Game attributes:
@@ -101,6 +103,63 @@ public class Game {
     }
 
     /**
+     * The play method is the basic loop to be played in.
+     * The play method asks for inputs and processes them.
+     * - validate, update, print, set points and test if finished.
+     * The escParameter is an indicator if the game has been canceled by user.
+     */
+    public void play() {
+        Player playerOne = new Player(1, board);
+        Score scoreOne = new Score(playerOne);
+        int escParameter;
+        do {
+            System.out.println("Your Dices: ");
+            Dice[] dices = new Dice[DICE_COUNT];
+            for (int i = 0; i < DICE_COUNT; i++) {
+                dices[i] = new Dice();
+                System.out.print(dices[i].getNumber());
+                printColor(dices[i].getColor());
+            }
+            System.out.println("Type in your play move Player" + playerOne.getPlayerNumber() + ": ");
+            escParameter = playerOne.playMove(dices);
+            if (escParameter > 1) {
+                board.printBoard();
+                playerOne.setPoints(scoreOne.calculatePoints(board));
+                scoreOne.printPoints();
+                if (scoreOne.testIfFinished(board)) {
+                    System.out.println("Game is over. Final Scores:");
+                    scoreOne.printPoints();
+                    break;
+                }
+            }
+        } while (escParameter != 0);
+    }
+
+    /**
+     *
+     * @param color
+     */
+    private void printColor(Color color) {
+        if (color.equals(Color.ORANGE)) {
+            System.out.println(" orange");
+        }
+        else if (color.equals(Color.GREEN)) {
+            System.out.println(" green");
+        }
+        else if (color.equals(Color.BLUE)) {
+            System.out.println(" blue");
+        }
+        else if (color.equals(Color.RED)) {
+            System.out.println(" red");
+        }
+        else if (color.equals(Color.YELLOW)) {
+            System.out.println(" yellow");
+        } else {
+            System.out.println(" unknown");
+        }
+    }
+
+    /**
      *  reads the number of columns from the console.
      * @return the number of columns
      */
@@ -138,32 +197,6 @@ public class Game {
                 return ROW_COUNT;
             }
         }
-    }
-
-    /**
-     * The play method is the basic loop to be played in.
-     * The play method asks for inputs and processes them.
-     * - validate, update, print, set points and test if finished.
-     * The escParameter is an indicator if the game has been canceled by user.
-     */
-    public void play() {
-        Player playerOne = new Player(1, board);
-        Score scoreOne = new Score(playerOne);
-        int escParameter;
-        do {
-            System.out.println("Type in your play move Player" + playerOne.getPlayerNumber() + ": ");
-            escParameter = playerOne.playMove();
-            if (escParameter > 1) {
-                board.printBoard();
-                playerOne.setPoints(scoreOne.calculatePoints(board));
-                scoreOne.printPoints();
-                if (scoreOne.testIfFinished(board)) {
-                    System.out.println("Game is over. Final Scores:");
-                    scoreOne.printPoints();
-                    break;
-                }
-            }
-        } while (escParameter != 0);
     }
 
     public Board getBoard() {

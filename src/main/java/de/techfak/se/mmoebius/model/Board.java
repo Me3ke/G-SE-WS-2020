@@ -160,7 +160,7 @@ public class Board {
      * @param col The col is an array of integers consisting of all column numbers from the given input.
      * @return returns true if all inputs are valid and false if at least one input is not valid.
      */
-    public boolean validate(int[] row, int[] col) {
+    public boolean validate(int[] row, int[] col, int[] numbers, Color[] colors) {
         try {
             Tile firstTile = floor[row[0]][col[0]];
             int tester = 0;
@@ -205,10 +205,15 @@ public class Board {
                 }
                 if (tester == row.length) {
                     System.out.println("All crosses valid");
-                    for (int j = 0; j < tileArr.length; j++) {
-                        updateTile(tileArr[j].getRowNr(), tileArr[j].getColNr());
+                    if (testWithDice()) {
+                        System.out.println("play move is compatible with dices");
+                        for (int j = 0; j < tileArr.length; j++) {
+                            updateTile(tileArr[j].getRowNr(), tileArr[j].getColNr());
+                        }
+                        return true;
+                    } else {
+                        throw new InvalidTurn("play move is not compatible with dices");
                     }
-                    return true;
                 } else {
                     throw new InvalidTurn("Some crosses were not valid");
                 }
@@ -221,6 +226,14 @@ public class Board {
             System.out.println(e);
             return false;
         }
+    }
+
+    /**
+     *
+     * @return
+     */
+    private boolean testWithDice() {
+
     }
 
     public int getRowCount() {

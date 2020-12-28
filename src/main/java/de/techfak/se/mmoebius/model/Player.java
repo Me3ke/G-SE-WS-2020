@@ -1,6 +1,7 @@
 package de.techfak.se.mmoebius.model;
 
 import de.techfak.se.mmoebius.util.InvalidInput;
+import javafx.scene.paint.Color;
 
 import java.util.Scanner;
 
@@ -53,7 +54,7 @@ public class Player {
      *             2 means there were updates on the board which are not shown yet -> print.
      *             0 means the game was terminated.
      */
-    public int playMove() {
+    public int playMove(Dice[] dices) {
         Scanner playMove = new Scanner(System.in);
         int printIndex = 1;
         String input = playMove.nextLine();
@@ -65,6 +66,8 @@ public class Player {
                 String[] inputArr = input.split(",");
                 int[] col = new int[inputArr.length];
                 int[] row = new int[inputArr.length];
+                int[] numbers = new int[dices.length];
+                Color[] colors = new Color[dices.length];
                 for (int i = 0; i < inputArr.length; i++) {
                     if (inputArr[i].length() != 2) {
                         throw new InvalidInput("InvalidInputException: Wrong input format. Try e.g. H4,H5,G5,G4");
@@ -76,7 +79,7 @@ public class Player {
                         }
                     }
                 }
-                if (board.validate(row, col)) {
+                if (board.validate(row, col, numbers, colors)) {
                     System.out.println("Turn is valid");
                     printIndex++;
                 } else {
