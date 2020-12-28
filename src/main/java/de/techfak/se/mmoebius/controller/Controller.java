@@ -74,6 +74,21 @@ public class Controller {
 
     @FXML
     private Label diceThreeNumber;
+    private Label pointsForA;
+    private Label pointsForB;
+    private Label pointsForC;
+    private Label pointsForD;
+    private Label pointsForE;
+    private Label pointsForF;
+    private Label pointsForG;
+    private Label pointsForH;
+    private Label pointsForI;
+    private Label pointsForJ;
+    private Label pointsForK;
+    private Label pointsForL;
+    private Label pointsForM;
+    private Label pointsForN;
+    private Label pointsForO;
 
     /**
      *
@@ -144,21 +159,21 @@ public class Controller {
      */
     private void createPointLabels() {
         //TODO über FXML?
-        Label pointsForA = new Label(String.valueOf(POINTS_FOR_AO));
-        Label pointsForB = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForC = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForD= new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForE = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForF = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForG = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForH = new Label(String.valueOf(POINTS_FOR_H));
-        Label pointsForI = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForJ = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForK = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        Label pointsForL = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForM = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForN = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        Label pointsForO = new Label(String.valueOf(POINTS_FOR_AO));
+        pointsForA = new Label(String.valueOf(POINTS_FOR_AO));
+        pointsForB = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForC = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForD= new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForE = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForF = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForG = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForH = new Label(String.valueOf(POINTS_FOR_H));
+        pointsForI = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForJ = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForK = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
+        pointsForL = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForM = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForN = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
+        pointsForO = new Label(String.valueOf(POINTS_FOR_AO));
         pointsForA.setFont(BASIC_FONT);
         pointsForB.setFont(BASIC_FONT);
         pointsForC.setFont(BASIC_FONT);
@@ -301,11 +316,41 @@ public class Controller {
      */
     private void updateColumns() {
         int[] completeCols = score.getCompleteCols(board);
-        if(completeCols.length == 0) {
+        if(completeCols[0] == 0) {
             return;
         } else {
             for (int i = 0; i < completeCols.length; i++) {
-                //TODO Wenn label für Punkte global zugreifbar, dann hier Farbe anpassen.
+                if (completeCols[i] == 1) {
+                    pointsForA.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 2) {
+                    pointsForB.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 3) {
+                    pointsForC.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 4) {
+                    pointsForD.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 5) {
+                    pointsForE.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 6) {
+                    pointsForF.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 7) {
+                    pointsForG.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 8) {
+                    pointsForH.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 9) {
+                    pointsForI.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 10) {
+                    pointsForJ.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 11) {
+                    pointsForK.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 12) {
+                    pointsForL.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 13) {
+                    pointsForM.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 14) {
+                    pointsForN.setTextFill(Color.GOLD);
+                } else if (completeCols[i] == 15) {
+                    pointsForO.setTextFill(Color.GOLD);
+                }
             }
         }
     }
@@ -331,7 +376,7 @@ public class Controller {
                     if (board.floor[i][k].getColor().equals(completeColors[l])) {
                         Node node = field[i][k].getChildren().get(0);
                         if (node instanceof Rectangle) {
-                            ((Rectangle)node).setFill(Color.GOLD);
+                            ((Rectangle)node).setFill(Color.DARKVIOLET);
                         }
                     }
                 }
@@ -349,7 +394,7 @@ public class Controller {
     }
 
     //TODO Javadoc + Checkstyle !!
-    /*TODO Fragen im Tut:   -Nicht mehr weiterspielen
+    /*TODO Fragen im Tut:   -Nicht mehr weiterspielen (Spielende)
                             -Controller zu viel View?
                             -Sachen in .FXML unten einfügen, da initalize Rechtecke (Punkte unten)
                             -Updatefield + oberserver. Wie sinnvoll benutzen?

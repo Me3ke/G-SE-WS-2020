@@ -135,9 +135,12 @@ public class Score {
                 }
             }
             if(counter == ROW_SUM) {
-                completeCols[completeColCount] = i;
+                completeCols[completeColCount] = i+1;
                 completeColCount++;
+            } else {
+                counter = 0;
             }
+
         }
         return completeCols;
     }
