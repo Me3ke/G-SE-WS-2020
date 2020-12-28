@@ -27,7 +27,7 @@ public class Dice {
     public Dice() {
         Random random = new Random();
         this.number = 1 + random.nextInt(NUMBER_THRESHOLD);
-        int temp = 1 + random.nextInt(NUMBER_THRESHOLD);
+        int temp = 1 + random.nextInt(NUMBER_THRESHOLD+1);
         switch (temp) {
             case COLOR_ORANGE:
                 color = Color.ORANGE;

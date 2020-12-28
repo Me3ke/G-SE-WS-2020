@@ -120,6 +120,29 @@ public class Score {
     }
 
     /**
+     *
+     * @param board
+     * @return
+     */
+    public int[] getCompleteCols(Board board) {
+        int [] completeCols = new int[board.getColCount()];
+        int completeColCount = 0;
+        int counter = 0;
+        for (int i = 0; i < board.getColCount(); i++) {
+            for (int j = 0; j < board.getRowCount(); j++) {
+                if (board.floor[j][i].isCrossed()) {
+                    counter++;
+                }
+            }
+            if(counter == ROW_SUM) {
+                completeCols[completeColCount] = i;
+                completeColCount++;
+            }
+        }
+        return completeCols;
+    }
+
+    /**
      * The testIfFinished method, tests if two (-> documentation) colors are completely ticked.
      * (winning condition)
      * @param board the board on which it should be tested.

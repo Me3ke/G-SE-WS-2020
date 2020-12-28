@@ -8,6 +8,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -267,7 +268,8 @@ public class Controller {
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
-                updatePoints();
+                updateColors();
+                updateColumns();
                 if (score.testIfFinished(board)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
@@ -294,7 +296,47 @@ public class Controller {
         }
     }
 
-    private void updatePoints() {
+    /**
+     *
+     */
+    private void updateColumns() {
+        int[] completeCols = score.getCompleteCols(board);
+        if(completeCols.length == 0) {
+            return;
+        } else {
+            for (int i = 0; i < completeCols.length; i++) {
+                //TODO Wenn label für Punkte global zugreifbar, dann hier Farbe anpassen.
+            }
+
+        }
+    }
+
+    /**
+     *
+     */
+    private void updateColors() {
+        Color[] completeColors = new Color[colors.length];
+        int completeColorCount = 0;
+        for (int i = 0; i < colors.length; i++) {
+            if (score.colorCountCrossed(board,colors[i]) == score.colorCount(board,colors[i])) {
+                completeColors[completeColorCount] = colors[i];
+                completeColorCount++;
+            }
+        }
+        if (completeColorCount == 0) {
+            return;
+        }
+        for (int l = 0; l < completeColors.length; l++)
+            for (int i = 0; i < field.length; i++) {
+                for (int k = 0; k < field[i].length; k++) {
+                    if (board.floor[i][k].getColor().equals(completeColors[l])) {
+                        Node node = field[i][k].getChildren().get(0);
+                        if (node instanceof Rectangle) {
+                            ((Rectangle)node).setFill(Color.GOLD);
+                        }
+                    }
+                }
+            }
     }
 
     /**
