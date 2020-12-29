@@ -1,8 +1,5 @@
 package de.techfak.se.mmoebius.model;
 
-
-//TODO class description
-
 import de.techfak.se.mmoebius.util.InvalidField;
 import de.techfak.se.mmoebius.util.InvalidTurn;
 import javafx.scene.paint.Color;
@@ -10,7 +7,8 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- *
+ * The Board class is the main part of the game mechanic. It creates the
+ * playing field model and handles changes on it from different inputs.
  */
 public class Board {
 
@@ -158,6 +156,8 @@ public class Board {
      * @throws InvalidTurn The InvalidTurnException is thrown if the given Turn was invalid.
      * @param row The row is an array of integers consisting of all row numbers from the given input.
      * @param col The col is an array of integers consisting of all column numbers from the given input.
+     * @param numbers The numbers of the current dice roll.
+     * @param colors The colors of the current dice roll.
      * @return returns true if all inputs are valid and false if at least one input is not valid.
      */
     public boolean validate(int[] row, int[] col, int[] numbers, Color[] colors) {
@@ -229,8 +229,14 @@ public class Board {
     }
 
     /**
-     *
-     * @return
+     * The testWithDice method tests if the current play move is valid
+     * considering the dice roll.
+     * @param tileArr The current play move containing all the tiles of
+     *                this play move.
+     * @param numbers All the numbers of the dice roll.
+     * @param colors  All the colors of the dice roll.
+     * @return  Returns true if the input is compatible with the dice roll
+     *          and false if it is not.
      */
     private boolean testWithDice(Tile[] tileArr, int[] numbers, Color[] colors) {
         boolean colorsValid = false;

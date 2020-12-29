@@ -11,7 +11,10 @@ import java.util.Scanner;
 
 //TODO MS1 mit Fehlercode beenden (in Encore und EncoreGUI)
 /**
- *
+ * The game class is where the game runs in a loop. It is
+ * instantiated first and instantiates all other components
+ * such as Player, Board or Score. The game will be started
+ * and terminated in this class.
  */
 @SuppressWarnings("PMD.CloseResource")
 public class Game {
@@ -102,7 +105,6 @@ public class Game {
         }
     }
 
-    //TODO Würfeln auch nach flaschem Zug?
     /**
      * The play method is the basic loop to be played in.
      * The play method asks for inputs and processes them.
@@ -137,8 +139,9 @@ public class Game {
     }
 
     /**
-     *
-     * @param color
+     * The printColor method prints the name of the color
+     * object in parameter for debugging purposes.
+     * @param color The color which name should be printed out.
      */
     private void printColor(Color color) {
         if (color.equals(Color.ORANGE)) {

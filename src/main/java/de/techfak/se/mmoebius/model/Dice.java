@@ -5,7 +5,9 @@ import javafx.scene.paint.Color;
 import java.util.Random;
 
 /**
- *
+ * The Dice class instantiates dices for the game consisting
+ * of one number between one and four and a color
+ * (Yellow,Blue,Green,Red,Orange).
  */
 public class Dice {
 
@@ -16,13 +18,15 @@ public class Dice {
     private static final int COLOR_YELLOW = 3;
 
     /**
-     *
+     * Dice attributes:
+     * color: the color of the Dice.
+     * number: the number of the Dice.
      */
     private Color color;
     private int number;
 
     /**
-     *
+     * Creates a Dice using random numbers.
      */
     public Dice() {
         Random random = new Random();

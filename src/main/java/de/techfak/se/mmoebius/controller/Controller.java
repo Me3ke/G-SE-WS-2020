@@ -18,14 +18,14 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
 
 
 /**
- *
+ * The Controller class handles the interactions with the GUI
+ * and does changes to the model.
  */
 public class Controller {
 
@@ -49,6 +49,9 @@ public class Controller {
     private static final int DEFAULT_SPACING = 10;
     private static final int POINT_SPACING = 30;
 
+    /**
+     * All the Objects here are initialized in the GUI.fxml.
+     */
     @FXML
     private VBox containerV;
 
@@ -69,7 +72,20 @@ public class Controller {
 
 
     /**
-     *
+     *  Controller Attributes:
+     *  rowCount: the amount of rows on the current board.
+     *  colCount: the amount of columns on the current board.
+     *  field: a 2-dim group array. Every group is either a
+     *  normal tile, or a crossed tile representing the board.
+     *  board: the current board instance.
+     *  score: the current score instance.
+     *  player: the current player instance.
+     *  playMoveRow: a list of integers containing the row numbers
+     *  of the in the current play move crossed tiles.
+     *  playMoveCol: a list of integers containing the column numbers
+     *  of the in the current play move crossed tiles.
+     *  numbers: an array of the numbers of the dices.
+     *  colors: an array of the colors of the dices.
      */
     private int rowCount;
     private int colCount;
@@ -83,8 +99,13 @@ public class Controller {
     private Color[] colors;
 
     /**
-     *
-     * @param board
+     * the initialize method creates the playing field.
+     * It initializes all the attributes of the class and
+     * visualizes the board with rectangles in appropriate colors,
+     * the point scale, the current points and the dices.
+     * Additionally handles a click on one of the tiles by crossing them.
+     * @param board The board is initialized in the GUI class where a game
+     *              starts. It is the current board to be played on.
      */
     public void initialize(Board board) {
         this.board = board;
@@ -135,8 +156,12 @@ public class Controller {
     }
 
     /**
-     *
-     * @param actionEvent
+     * The buttonClicked method handles a click on the "check move" button.
+     * It gets the fields clicked in this move (playMoveRow, playMoveCol) and
+     * uses the board.validate method to validate the inputs if there were some.
+     * If the move was invalid it shows a dialog. After a move it rolls the dices again.
+     * Furthermore it tests if the game is over and shows a dialog then.
+     * @param actionEvent The event of the clicked Button.
      */
     public void buttonClicked(ActionEvent actionEvent) {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
@@ -169,10 +194,10 @@ public class Controller {
     }
 
     /**
-     *
+     * The createPointLabels method creates Labels below the playing field
+     * showing the points you get for filling the corresponding columns.
      */
     private void createPointLabels() {
-        //TODO über FXML?
         HBox pointsH = new HBox();
         pointsH.setSpacing(POINT_SPACING);
         pointsH.setPadding(new Insets(DEFAULT_SPACING));
@@ -185,7 +210,8 @@ public class Controller {
     }
 
     /**
-     *
+     *  The throwDices method creates a dice instances and visualizes
+     *  the color and the number in the application.
      */
     private void throwDices() {
         HBox diceColors = new HBox();
@@ -213,16 +239,18 @@ public class Controller {
 
     //TODO Methode funktioniert noch nicht vollständig
     /**
-     *
-      * @param currentRow
-     * @param currentCol
-     * @return
+     * The testForEqual method checks if the current field the
+     * player crossed, was already crossed beforehand.
+      * @param currentRow The row of the tile to be crossed.
+     * @param currentCol The column of the tile to be crossed.
+     * @return  Returns true if the current field to be crossed was
+     *          already crossed and false if not.
      */
     private boolean testForEqual(int currentRow, int currentCol) {
         for (int i = 0; i < playMoveRow.size(); i++) {
             if (playMoveRow.get(i).equals(currentRow) && playMoveCol.get(i).equals(currentCol)) {
                 System.out.print(playMoveRow.get(i) + ", " + playMoveCol.get(i));
-                System.out.println(" ist schon angekreuzt");
+                System.out.println(" is already crossed");
                 return true;
             }
         }
@@ -230,7 +258,8 @@ public class Controller {
     }
 
     /**
-     *
+     *  The update field method is called after a change on the model.board has been made.
+     *  It adjusts the View by calling the methods.
      */
     private void updateField() {
         updateColors();
@@ -239,7 +268,9 @@ public class Controller {
     }
 
     /**
-     *
+     * The updateColors method uses the score.colorCountCrossed and the score.colorCount
+     * methods to check for completely crossed colors. If there is one it changes the
+     * color to violet.
      */
     private void updateColors() {
         Color[] completeColors = new Color[colors.length];
@@ -268,7 +299,9 @@ public class Controller {
     }
 
     /**
-     *
+     *  The updateColumns method uses the score.getCompleteCols class to investigate
+     *  if there are columns which are completely crossed. If this is the case, it changes
+     *  the color of the corresponding label to gold.
      */
     private void updateColumns() {
         int[] completeCols = score.getCompleteCols(board);
@@ -291,7 +324,8 @@ public class Controller {
     }
 
     /**
-     *
+     * The updatePoints method uses the score.calculatePoints method to show the
+     * current points of the player in the application.
      */
     private void updatePoints() {
         int currentPoints = score.calculatePoints(board);
@@ -299,7 +333,8 @@ public class Controller {
     }
 
     /**
-     *
+     * The removeCrosses method removes the cross of a tile if a play move was
+     * considered invalid.
      */
     private void removeCrosses() {
         for (int i = 0; i < playMoveRow.size(); i++) {
@@ -309,9 +344,10 @@ public class Controller {
     }
 
     /**
-     *
-     * @param list
-     * @return
+     * The toIntArray is and auxiliary method to convert an list of integers
+     * to an array of integers.
+     * @param list The list to be converted.
+     * @return The corresponding array.
      */
     private int[] toIntArray(List<Integer> list) {
         int[] array = new int[list.size()];
@@ -320,14 +356,9 @@ public class Controller {
         }
         return array;
     }
-
-    //TODO Javadoc + Checkstyle !!
-    /*TODO Fragen im Tut:   -Nicht mehr weiterspielen (Spielende)
-                            -Controller zu viel View?
-                            -Sachen in .FXML unten einfügen, da initalize Rechtecke (Punkte unten)
-                            -Updatefield + oberserver. Wie sinnvoll benutzen?
-     */
-
-
 }
+
+    /*TODO Fragen im Tut:  -Controller zu viel View?
+                           -DefinitionScope (Board)
+     */
 

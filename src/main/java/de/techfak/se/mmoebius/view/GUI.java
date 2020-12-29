@@ -7,12 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.scene.Scene;
-
 import java.io.IOException;
 import java.util.List;
 
 /**
- *
+ * The GUI class initializes the GUI, the game, the view and the controller for the application.
  */
 public class GUI extends Application {
 

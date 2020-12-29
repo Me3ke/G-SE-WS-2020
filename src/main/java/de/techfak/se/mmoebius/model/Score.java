@@ -3,7 +3,7 @@ package de.techfak.se.mmoebius.model;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * The score class is responsible for any point calculation in the game.
  */
 public class Score {
     private static final int WIN_THRESHOLD = 2;
@@ -97,9 +97,11 @@ public class Score {
     }
 
     /**
-     *
-     * @param board
-     * @return
+     * The getCompleteCols method is an auxiliary method for the GUI.
+     * It calculates the completely crossed columns.
+     * @param board The current playing field.
+     * @return  returns an array containing the number of the columns
+     *          which are completely crossed.
      */
     public int[] getCompleteCols(Board board) {
         int[] completeCols = new int[board.getColCount()];
@@ -117,7 +119,6 @@ public class Score {
             } else {
                 counter = 0;
             }
-
         }
         return completeCols;
     }

@@ -3,7 +3,8 @@ package de.techfak.se.mmoebius.model;
 import javafx.scene.paint.Color;
 
 /**
- *
+ * The Tile class instantiates tiles of which the playing field consists.
+ * It deals with the characteristics of the tile.
  */
 public class Tile {
 
@@ -19,7 +20,7 @@ public class Tile {
      * hasUpNeighbour: if the tile has a up neighbour.
      * hasDownNeighbour: if the tile has a down neighbour.
      */
-    private javafx.scene.paint.Color color;
+    private Color color;
     private int rowNr;
     private int colNr;
     private boolean isCrossed;
@@ -76,7 +77,7 @@ public class Tile {
         return false;
     }
 
-    public javafx.scene.paint.Color getColor() {
+    public Color getColor() {
         return color;
     }
 

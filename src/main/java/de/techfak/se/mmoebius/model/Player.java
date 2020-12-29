@@ -6,7 +6,8 @@ import javafx.scene.paint.Color;
 import java.util.Scanner;
 
 /**
- *
+ * The player class handles all interaction with the
+ * person playing with the game itself.
  */
 public class Player {
 
@@ -46,6 +47,7 @@ public class Player {
      * and then turns them into two integer arrays for row and column
      * (e.g. col = {7,7,6,6} row = {4,5,4,5}).
      * An empty input terminates the program.
+     * @param dices the current dice roll.
      * @throws InvalidInput Exception if input has wrong format.
      *             Check documentation to see the format rules.
      * @return returns printIndex which is an Indicator.
