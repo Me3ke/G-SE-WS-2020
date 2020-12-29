@@ -1,6 +1,7 @@
 package de.techfak.se.mmoebius.model;
 
 import de.techfak.se.mmoebius.util.InvalidBoardLayout;
+import de.techfak.se.mmoebius.util.InvalidField;
 import javafx.scene.paint.Color;
 
 import java.io.BufferedReader;
@@ -45,63 +46,72 @@ public class Game {
      * and creates a 2-dim char array of it. Then a board is created from it an printed.
      * If the parameters are not valid, the program exits with code 100.
      * @throws InvalidBoardLayout if the file does not correspond to the specifications.
+     * @throws InvalidField if the file does not correspond to the specifications.
      * @return returns a value to indicate if creatingBoard was successful
      */
     @SuppressWarnings({"PMD.AvoidFileStream", "PMD.PreserveStackTrace"})
     public int createBoard() {
-        System.out.println("Welcome to encore");
-        if (args.length == 0) {
-            System.out.println("<100> No program arguments given. Type -f <filename>");
-            return -1;
-        } else if (args[0].equals("-f")) {
-            File file = new File(args[1]);
-            if (file.isFile() && file.canRead()) {
-                String line;
-                System.out.println("Type in the number of rows in the given playing field: ");
-                int rowCount = readRow();
-                System.out.println("Type in the number of columns in the given playing field: ");
-                int colCount = readCol();
-                char[][] map = new char[rowCount][colCount];
-                int rowCountCounter = 0;
-                int colCountCounter = 0;
-                BufferedReader reader = null;
-                try {
-                    reader = new BufferedReader(new FileReader(file));
-                    while ((line = reader.readLine()) != null) {
-                        if (line.length() != colCount) {
-                            throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long/short");
+        try {
+            System.out.println("Welcome to encore");
+            if (args.length == 0) {
+                System.out.println("<100> No program arguments given. Type -f <filename>");
+                return 100;
+            } else if (args[0].equals("-f")) {
+                File file = new File(args[1]);
+                if (file.isFile() && file.canRead()) {
+                    String line;
+                    System.out.println("Type in the number of rows in the given playing field: ");
+                    int rowCount = readRow();
+                    System.out.println("Type in the number of columns in the given playing field: ");
+                    int colCount = readCol();
+                    char[][] map = new char[rowCount][colCount];
+                    int rowCountCounter = 0;
+                    int colCountCounter = 0;
+                    BufferedReader reader = null;
+                    try {
+                        reader = new BufferedReader(new FileReader(file));
+                        while ((line = reader.readLine()) != null) {
+                            if (line.length() != colCount) {
+                                throw new InvalidBoardLayout("Invalid Board Layout <101> one line is too long/short");
+                            }
+                            for (colCountCounter = 0; colCountCounter < line.length(); colCountCounter++) {
+                                map[rowCountCounter][colCountCounter] = line.charAt(colCountCounter);
+                            }
+                            rowCountCounter++;
                         }
-                        for (colCountCounter = 0; colCountCounter < line.length(); colCountCounter++) {
-                            map[rowCountCounter][colCountCounter] = line.charAt(colCountCounter);
+                        System.out.println("Checking Data from input file...");
+                        System.out.println("Row Count: " + rowCountCounter);
+                        System.out.println("Column Count: " + colCountCounter);
+                    } catch (IOException e) {
+                        System.out.println("Source file is not valid. Check documentation for further information");
+                    } catch (IndexOutOfBoundsException e) {
+                        throw new InvalidBoardLayout("Invalid Board Layout <101> row or column not suitable");
+                    } finally {
+                        if (reader != null) {
+                            try {
+                                reader.close();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
-                        rowCountCounter++;
                     }
-                    System.out.println("Checking Data from input file...");
-                    System.out.println("Row Count: " + rowCountCounter);
-                    System.out.println("Column Count: " + colCountCounter);
-                } catch (IOException e) {
-                    System.out.println("Source file is not valid. Check documentation for further information");
-                } catch (IndexOutOfBoundsException e) {
-                    throw new InvalidBoardLayout("Invalid Board Layout <101> row or column not suitable");
-                } finally {
-                    if (reader != null) {
-                        try {
-                            reader.close();
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                    Board board = new Board(map);
+                    if(board.getFloor() == null) {
+                        throw new InvalidField("Unexpected Character found in input file");
                     }
+                    this.board = board;
+                    board.printBoard();
+                    return 1;
                 }
-                Board board = new Board(map);
-                this.board = board;
-                board.printBoard();
-                return 1;
+                System.out.println("<100> no valid file found with filename: " + file.getName());
+                return 100;
+            } else {
+                System.out.println("<100> unknown program argument. Type -f <filename>");
+                return 100;
             }
-            System.out.println("<100> no valid file found with filename: " + file.getName());
-            return -1;
-        } else {
-            System.out.println("<100> unknown program argument. Type -f <filename>");
-            return -1;
+        } catch (InvalidBoardLayout | InvalidField e) {
+            System.out.println(e);
+            return 101;
         }
     }
 

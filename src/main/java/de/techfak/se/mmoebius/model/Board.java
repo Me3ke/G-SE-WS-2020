@@ -1,6 +1,5 @@
 package de.techfak.se.mmoebius.model;
 
-import de.techfak.se.mmoebius.util.InvalidField;
 import de.techfak.se.mmoebius.util.InvalidTurn;
 import javafx.scene.paint.Color;
 import java.beans.PropertyChangeListener;
@@ -25,7 +24,7 @@ public class Board {
      * rowCount: the amount of rows.
      * colCount: the amount of columns.
      */
-    public final Tile[][] floor;
+    private Tile[][] floor;
     private int rowCount;
     private int colCount;
     //TODO definition scope
@@ -35,7 +34,6 @@ public class Board {
      * char array (map) and assigns colors depending on the characters in the char array.
      * Additionally edge fields are set with the missing of a specific neighbour field.
      * E.g. The field H1 has no field above, so hasUpNeighbour is set false.
-     * @throws InvalidField Exception if the map contains a non valid character
      * @param map the map is a 2-dim char array which represents the map
      *              as characters depending on their color.
      */
@@ -59,7 +57,8 @@ public class Board {
                 } else if (mapCell == 'y' || mapCell == 'Y') {
                     tile = new Tile(javafx.scene.paint.Color.YELLOW, rowNr, colNr);
                 } else {
-                    throw new InvalidField("Invalid Field <101>");
+                    floor = null;
+                    break;
                 }
                 floor[rowNr][colNr] = tile;
                 if (tile.getColNr() == 0) {
@@ -278,5 +277,9 @@ public class Board {
 
     public void removeObserver(PropertyChangeListener observer) {
         observers.removePropertyChangeListener(observer);
+    }
+
+    public Tile[][] getFloor() {
+        return floor;
     }
 }

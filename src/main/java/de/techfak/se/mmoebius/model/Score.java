@@ -31,7 +31,7 @@ public class Score {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {
-                if (board.floor[j][i].getColor().equals(color)) {
+                if (board.getFloor()[j][i].getColor().equals(color)) {
                     counter++;
                 }
             }
@@ -49,7 +49,7 @@ public class Score {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {
-                if (board.floor[j][i].getColor().equals(color) && board.floor[j][i].isCrossed()) {
+                if (board.getFloor()[j][i].getColor().equals(color) && board.getFloor()[j][i].isCrossed()) {
                     counter++;
                 }
             }
@@ -69,7 +69,7 @@ public class Score {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {
-                if (board.floor[j][i].isCrossed()) {
+                if (board.getFloor()[j][i].isCrossed()) {
                     counter++;
                 }
             }
@@ -109,7 +109,7 @@ public class Score {
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
             for (int j = 0; j < board.getRowCount(); j++) {
-                if (board.floor[j][i].isCrossed()) {
+                if (board.getFloor()[j][i].isCrossed()) {
                     counter++;
                 }
             }

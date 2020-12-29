@@ -8,8 +8,6 @@ import de.techfak.se.mmoebius.model.Game;
 
 public final class Encore {
 
-    private static final int SYS_EXIT_FAILED = 100;
-
     private Encore() {
     }
 
@@ -20,8 +18,8 @@ public final class Encore {
     public static void main(final String... args) {
         Game game = new Game(args);
         int indicator = game.createBoard();
-        if (indicator == -1) {
-            System.exit(SYS_EXIT_FAILED);
+        if (indicator != 1) {
+            System.exit(indicator);
         }
         game.play();
     }

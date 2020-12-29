@@ -125,7 +125,7 @@ public class Controller {
             HBox containerH = new HBox();
             for (int j = 0; j < colCount; j++) {
                 Rectangle rectangle = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
-                rectangle.setFill(board.floor[i][j].getColor());
+                rectangle.setFill(board.getFloor()[i][j].getColor());
                 rectangle.setStroke(Color.BLACK);
                 rectangle.setStrokeType(StrokeType.INSIDE);
                 Group group = new Group();
@@ -287,7 +287,7 @@ public class Controller {
         for (int l = 0; l < completeColors.length; l++) {
             for (int i = 0; i < field.length; i++) {
                 for (int k = 0; k < field[i].length; k++) {
-                    if (board.floor[i][k].getColor().equals(completeColors[l])) {
+                    if (board.getFloor()[i][k].getColor().equals(completeColors[l])) {
                         Node node = field[i][k].getChildren().get(0);
                         if (node instanceof Rectangle) {
                             Platform.runLater(() -> ((Rectangle) node) .setFill(Color.DARKVIOLET));
