@@ -8,22 +8,8 @@ import javafx.scene.paint.Color;
 public class Score {
     private static final int WIN_THRESHOLD = 2;
     private static final int POINTS_FOR_COLOR = 5;
-    private static final int POINTS_FOR_AO = 5;
-    private static final int POINTS_FOR_BCD_LMN = 3;
-    private static final int POINTS_FOR_EFG_IJK = 2;
-    private static final int POINTS_FOR_H = 1;
     private static final int ROW_SUM = 7;
-    private static final int COL_A = 0;
-    private static final int COL_O = 15;
-    private static final int COL_B = 1;
-    private static final int COL_D = 3;
-    private static final int COL_L = 12;
-    private static final int COL_N = 14;
-    private static final int COL_E = 4;
-    private static final int COL_G = 6;
-    private static final int COL_I = 8;
-    private static final int COL_K = 11;
-    private static final int COL_H = 7;
+    private static final int[] POINT_ARR = {5, 3, 3, 3, 2, 2, 2, 1, 2, 2, 2, 3, 3, 3, 5};
 
     /**
      * Score attributes:
@@ -88,18 +74,7 @@ public class Score {
                 }
             }
             if (counter == ROW_SUM) {
-                if (i == COL_A || i == COL_O) {
-                    points += POINTS_FOR_AO;
-                }
-                if (i >= COL_B && i <= COL_D || i >= COL_L && i <= COL_N) {
-                    points += POINTS_FOR_BCD_LMN;
-                }
-                if (i >= COL_E && i <= COL_G || i >= COL_I && i <= COL_K) {
-                    points += POINTS_FOR_EFG_IJK;
-                }
-                if (i == COL_H) {
-                    points += POINTS_FOR_H;
-                }
+                points += POINT_ARR[i];
             }
             counter = 0;
         }

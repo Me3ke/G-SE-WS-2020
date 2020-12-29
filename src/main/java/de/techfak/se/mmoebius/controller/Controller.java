@@ -4,6 +4,7 @@ import de.techfak.se.mmoebius.model.Board;
 import de.techfak.se.mmoebius.model.Dice;
 import de.techfak.se.mmoebius.model.Player;
 import de.techfak.se.mmoebius.model.Score;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -96,9 +97,9 @@ public class Controller {
         field = new Group[rowCount][colCount];
         numbers = new int[DICE_COUNT];
         colors = new Color[DICE_COUNT];
-        throwDices();
         points.setFont(BASIC_FONT);
         points.setBorder(new Border(BORDER_STROKE_P));
+        throwDices();
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
             for (int j = 0; j < colCount; j++) {
@@ -135,6 +136,40 @@ public class Controller {
 
     /**
      *
+     * @param actionEvent
+     */
+    public void buttonClicked(ActionEvent actionEvent) {
+        if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
+            System.out.println("Passing play move");
+            throwDices();
+        } else {
+            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
+                board.printBoard();
+                if (score.testIfFinished(board)) {
+                    updatePoints();
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game Over");
+                    alert.setHeaderText(null);
+                    alert.setContentText("The game is over");
+                    alert.showAndWait();
+                    Platform.exit();
+                }
+                throwDices();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Turn");
+                alert.setHeaderText("The chosen move is invalid");
+                alert.setContentText("Crosses will be removed, try again.");
+                alert.showAndWait();
+                removeCrosses();
+            }
+            playMoveRow.clear();
+            playMoveCol.clear();
+        }
+    }
+
+    /**
+     *
      */
     private void createPointLabels() {
         //TODO über FXML?
@@ -155,6 +190,8 @@ public class Controller {
     private void throwDices() {
         HBox diceColors = new HBox();
         HBox diceNumbers = new HBox();
+        diceColors.setSpacing(DEFAULT_SPACING);
+        diceNumbers.setSpacing(DEFAULT_SPACING);
         for (int i = 0; i < DICE_COUNT; i++) {
             Dice dice = new Dice();
             numbers[i] = dice.getNumber();
@@ -194,43 +231,6 @@ public class Controller {
 
     /**
      *
-     * @param actionEvent
-     */
-    public void buttonClicked(ActionEvent actionEvent) {
-        if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
-            System.out.println("Passing play move");
-            throwDices();
-        } else {
-            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
-                board.printBoard();
-                if (score.testIfFinished(board)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game Over");
-                    alert.setHeaderText(null);
-                    alert.setContentText("The game is over");
-                    alert.showAndWait();
-                    while (true) {
-                        //TODO Anders implementieren (Spielende)
-                    }
-                }
-                playMoveRow.clear();
-                playMoveCol.clear();
-                throwDices();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Turn");
-                alert.setHeaderText("The chosen move is invalid");
-                alert.setContentText("Crosses will be removed, try again.");
-                alert.showAndWait();
-                removeCrosses();
-                playMoveRow.clear();
-                playMoveCol.clear();
-            }
-        }
-    }
-
-    /**
-     *
      */
     private void updateField() {
         updateColors();
@@ -259,7 +259,7 @@ public class Controller {
                     if (board.floor[i][k].getColor().equals(completeColors[l])) {
                         Node node = field[i][k].getChildren().get(0);
                         if (node instanceof Rectangle) {
-                            ((Rectangle) node) .setFill(Color.DARKVIOLET);
+                            Platform.runLater(() -> ((Rectangle) node) .setFill(Color.DARKVIOLET));
                         }
                     }
                 }
@@ -282,7 +282,7 @@ public class Controller {
                     if (nodeOut instanceof HBox) {
                         Node nodeIn = ((HBox) nodeOut).getChildren().get(completeCols[i] - 1);
                         if (nodeIn instanceof Label) {
-                            ((Label) nodeIn).setTextFill(Color.GOLD);
+                            Platform.runLater(() -> ((Label) nodeIn).setTextFill(Color.GOLD));
                         }
                     }
                 }
@@ -295,7 +295,7 @@ public class Controller {
      */
     private void updatePoints() {
         int currentPoints = score.calculatePoints(board);
-        points.setText("Points: " + currentPoints);
+        Platform.runLater(() -> points.setText("Points: " + currentPoints));
     }
 
     /**
