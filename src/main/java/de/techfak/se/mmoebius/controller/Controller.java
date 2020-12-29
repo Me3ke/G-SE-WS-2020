@@ -39,14 +39,14 @@ public class Controller {
     private static final int ROTATE_CONST = 45;
     private static final int DICE_COUNT = 3;
     private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
-    private static final BorderWidths WIDTH = BorderStroke.DEFAULT_WIDTHS;
-    private static final BorderStroke BORDER_STROKE = new BorderStroke(Color.BLACK, SOLID , CornerRadii.EMPTY, WIDTH);
+    private static final BorderWidths THIN = BorderStroke.THIN;
+    private static final BorderWidths THICK = BorderStroke.MEDIUM;
+    private static final BorderStroke BORDER_STROKE_D = new BorderStroke(Color.BLACK, SOLID, CornerRadii.EMPTY, THIN);
+    private static final BorderStroke BORDER_STROKE_P = new BorderStroke(Color.BLACK, SOLID, CornerRadii.EMPTY, THICK);
     private static final Font BASIC_FONT = new Font(32);
-    private static final int POINTS_FOR_COLOR = 5;
-    private static final int POINTS_FOR_AO = 5;
-    private static final int POINTS_FOR_BCD_LMN = 3;
-    private static final int POINTS_FOR_EFG_IJK = 2;
-    private static final int POINTS_FOR_H = 1;
+    private static final int[] POINT_ARR = {5, 3, 3, 3, 2, 2, 2, 1, 2, 2, 2, 3, 3, 3, 5};
+    private static final int DEFAULT_SPACING = 10;
+    private static final int POINT_SPACING = 30;
 
     @FXML
     private VBox containerV;
@@ -58,37 +58,14 @@ public class Controller {
     private HBox dices;
 
     @FXML
-    private Rectangle diceOneColor;
+    private Label points;
 
     @FXML
-    private Rectangle diceTwoColor;
+    private Label diceNumber;
 
     @FXML
-    private Rectangle diceThreeColor;
+    private Rectangle diceColor;
 
-    @FXML
-    private Label diceOneNumber;
-
-    @FXML
-    private Label diceTwoNumber;
-
-    @FXML
-    private Label diceThreeNumber;
-    private Label pointsForA;
-    private Label pointsForB;
-    private Label pointsForC;
-    private Label pointsForD;
-    private Label pointsForE;
-    private Label pointsForF;
-    private Label pointsForG;
-    private Label pointsForH;
-    private Label pointsForI;
-    private Label pointsForJ;
-    private Label pointsForK;
-    private Label pointsForL;
-    private Label pointsForM;
-    private Label pointsForN;
-    private Label pointsForO;
 
     /**
      *
@@ -120,6 +97,8 @@ public class Controller {
         numbers = new int[DICE_COUNT];
         colors = new Color[DICE_COUNT];
         throwDices();
+        points.setFont(BASIC_FONT);
+        points.setBorder(new Border(BORDER_STROKE_P));
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
             for (int j = 0; j < colCount; j++) {
@@ -159,92 +138,40 @@ public class Controller {
      */
     private void createPointLabels() {
         //TODO über FXML?
-        pointsForA = new Label(String.valueOf(POINTS_FOR_AO));
-        pointsForB = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForC = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForD= new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForE = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForF = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForG = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForH = new Label(String.valueOf(POINTS_FOR_H));
-        pointsForI = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForJ = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForK = new Label(String.valueOf(POINTS_FOR_EFG_IJK));
-        pointsForL = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForM = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForN = new Label(String.valueOf(POINTS_FOR_BCD_LMN));
-        pointsForO = new Label(String.valueOf(POINTS_FOR_AO));
-        pointsForA.setFont(BASIC_FONT);
-        pointsForB.setFont(BASIC_FONT);
-        pointsForC.setFont(BASIC_FONT);
-        pointsForD.setFont(BASIC_FONT);
-        pointsForE.setFont(BASIC_FONT);
-        pointsForF.setFont(BASIC_FONT);
-        pointsForG.setFont(BASIC_FONT);
-        pointsForH.setFont(BASIC_FONT);
-        pointsForI.setFont(BASIC_FONT);
-        pointsForJ.setFont(BASIC_FONT);
-        pointsForK.setFont(BASIC_FONT);
-        pointsForL.setFont(BASIC_FONT);
-        pointsForM.setFont(BASIC_FONT);
-        pointsForN.setFont(BASIC_FONT);
-        pointsForO.setFont(BASIC_FONT);
-        HBox points = new HBox(pointsForA,pointsForB,pointsForC,pointsForD,pointsForE,pointsForF,pointsForG,pointsForH);
-        points.setSpacing(30);
-        points.setPadding(new Insets(10));
-        points.getChildren().add(pointsForI);
-        points.getChildren().add(pointsForJ);
-        points.getChildren().add(pointsForK);
-        points.getChildren().add(pointsForL);
-        points.getChildren().add(pointsForM);
-        points.getChildren().add(pointsForN);
-        points.getChildren().add(pointsForO);
-        containerV.getChildren().add(points);
+        HBox pointsH = new HBox();
+        pointsH.setSpacing(POINT_SPACING);
+        pointsH.setPadding(new Insets(DEFAULT_SPACING));
+        for (int i = 0; i < colCount; i++) {
+            Label pointLabel = new Label(String.valueOf(POINT_ARR[i]));
+            pointLabel.setFont(BASIC_FONT);
+            pointsH.getChildren().add(pointLabel);
+        }
+        containerV.getChildren().add(pointsH);
     }
 
     /**
      *
      */
     private void throwDices() {
+        HBox diceColors = new HBox();
+        HBox diceNumbers = new HBox();
         for (int i = 0; i < DICE_COUNT; i++) {
             Dice dice = new Dice();
             numbers[i] = dice.getNumber();
-            System.out.print(dice.getNumber());
             colors[i] = dice.getColor();
-            System.out.println(" " + dice.getColor());
+            diceNumber = new Label(String.valueOf(numbers[i]));
+            diceNumber.setFont(BASIC_FONT);
+            diceNumber.setBorder(new Border(BORDER_STROKE_D));
+            diceColor = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
+            diceColor.setFill(colors[i]);
+            diceColor.setStrokeType(StrokeType.INSIDE);
+            diceColor.setStroke(Color.BLACK);
+            diceColors.getChildren().add(diceColor);
+            diceNumbers.getChildren().add(diceNumber);
         }
-        diceOneNumber.setText(String.valueOf(numbers[0]));
-        diceTwoNumber.setText(String.valueOf(numbers[1]));
-        diceThreeNumber.setText(String.valueOf(numbers[2]));
-        diceOneNumber.setFont(BASIC_FONT);
-        diceTwoNumber.setFont(BASIC_FONT);
-        diceThreeNumber.setFont(BASIC_FONT);
-        diceOneNumber.setBorder(new Border(BORDER_STROKE));
-        diceTwoNumber.setBorder(new Border(BORDER_STROKE));
-        diceThreeNumber.setBorder(new Border(BORDER_STROKE));
-        diceOneColor.setFill(colors[0]);
-        diceTwoColor.setFill(colors[1]);
-        diceThreeColor.setFill(colors[2]);
-        diceOneColor.setStroke(Color.BLACK);
-        diceOneColor.setStrokeType(StrokeType.INSIDE);
-        diceTwoColor.setStroke(Color.BLACK);
-        diceTwoColor.setStrokeType(StrokeType.INSIDE);
-        diceThreeColor.setStroke(Color.BLACK);
-        diceThreeColor.setStrokeType(StrokeType.INSIDE);
-        //TODO verschönern
-    }
-
-    /**
-     *
-     * @param list
-     * @return
-     */
-    private int[] toIntArray(List<Integer> list) {
-        int[] array = new int[list.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = list.get(i);
-        }
-        return array;
+        dices.getChildren().clear();
+        dices.getChildren().add(diceColors);
+        dices.getChildren().add(diceNumbers);
     }
 
     //TODO Methode funktioniert noch nicht vollständig
@@ -267,13 +194,6 @@ public class Controller {
 
     /**
      *
-     */
-    private void updateField() {
-        //TODO evtl implementieren. Vielleicht unsinnig
-    }
-
-    /**
-     *
      * @param actionEvent
      */
     public void buttonClicked(ActionEvent actionEvent) {
@@ -283,8 +203,6 @@ public class Controller {
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
-                updateColors();
-                updateColumns();
                 if (score.testIfFinished(board)) {
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
@@ -314,45 +232,10 @@ public class Controller {
     /**
      *
      */
-    private void updateColumns() {
-        int[] completeCols = score.getCompleteCols(board);
-        if(completeCols[0] == 0) {
-            return;
-        } else {
-            for (int i = 0; i < completeCols.length; i++) {
-                if (completeCols[i] == 1) {
-                    pointsForA.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 2) {
-                    pointsForB.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 3) {
-                    pointsForC.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 4) {
-                    pointsForD.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 5) {
-                    pointsForE.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 6) {
-                    pointsForF.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 7) {
-                    pointsForG.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 8) {
-                    pointsForH.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 9) {
-                    pointsForI.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 10) {
-                    pointsForJ.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 11) {
-                    pointsForK.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 12) {
-                    pointsForL.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 13) {
-                    pointsForM.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 14) {
-                    pointsForN.setTextFill(Color.GOLD);
-                } else if (completeCols[i] == 15) {
-                    pointsForO.setTextFill(Color.GOLD);
-                }
-            }
-        }
+    private void updateField() {
+        updateColors();
+        updateColumns();
+        updatePoints();
     }
 
     /**
@@ -362,7 +245,7 @@ public class Controller {
         Color[] completeColors = new Color[colors.length];
         int completeColorCount = 0;
         for (int i = 0; i < colors.length; i++) {
-            if (score.colorCountCrossed(board,colors[i]) == score.colorCount(board,colors[i])) {
+            if (score.colorCountCrossed(board, colors[i]) == score.colorCount(board, colors[i])) {
                 completeColors[completeColorCount] = colors[i];
                 completeColorCount++;
             }
@@ -370,17 +253,49 @@ public class Controller {
         if (completeColorCount == 0) {
             return;
         }
-        for (int l = 0; l < completeColors.length; l++)
+        for (int l = 0; l < completeColors.length; l++) {
             for (int i = 0; i < field.length; i++) {
                 for (int k = 0; k < field[i].length; k++) {
                     if (board.floor[i][k].getColor().equals(completeColors[l])) {
                         Node node = field[i][k].getChildren().get(0);
                         if (node instanceof Rectangle) {
-                            ((Rectangle)node).setFill(Color.DARKVIOLET);
+                            ((Rectangle) node) .setFill(Color.DARKVIOLET);
                         }
                     }
                 }
             }
+        }
+    }
+
+    /**
+     *
+     */
+    private void updateColumns() {
+        int[] completeCols = score.getCompleteCols(board);
+        int containerSize = containerV.getChildren().size();
+        if (completeCols[0] == 0) {
+            return;
+        } else {
+            for (int i = 0; i < completeCols.length; i++) {
+                if (completeCols[i] != 0) {
+                    Node nodeOut = containerV.getChildren().get(containerSize - 1);
+                    if (nodeOut instanceof HBox) {
+                        Node nodeIn = ((HBox) nodeOut).getChildren().get(completeCols[i] - 1);
+                        if (nodeIn instanceof Label) {
+                            ((Label) nodeIn).setTextFill(Color.GOLD);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private void updatePoints() {
+        int currentPoints = score.calculatePoints(board);
+        points.setText("Points: " + currentPoints);
     }
 
     /**
@@ -391,6 +306,19 @@ public class Controller {
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
         }
+    }
+
+    /**
+     *
+     * @param list
+     * @return
+     */
+    private int[] toIntArray(List<Integer> list) {
+        int[] array = new int[list.size()];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = list.get(i);
+        }
+        return array;
     }
 
     //TODO Javadoc + Checkstyle !!

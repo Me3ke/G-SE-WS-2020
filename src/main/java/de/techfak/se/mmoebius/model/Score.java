@@ -1,5 +1,7 @@
 package de.techfak.se.mmoebius.model;
 
+import javafx.scene.paint.Color;
+
 /**
  *
  */
@@ -101,19 +103,19 @@ public class Score {
             }
             counter = 0;
         }
-        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) {
+        if (colorCount(board, Color.RED) == colorCountCrossed(board, Color.RED)) {
             points += POINTS_FOR_COLOR;
         }
-        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) {
+        if (colorCount(board, Color.BLUE) == colorCountCrossed(board, Color.BLUE)) {
             points += POINTS_FOR_COLOR;
         }
-        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) {
+        if (colorCount(board, Color.GREEN) == colorCountCrossed(board, Color.GREEN)) {
             points += POINTS_FOR_COLOR;
         }
-        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) {
+        if (colorCount(board, Color.ORANGE) == colorCountCrossed(board, Color.ORANGE)) {
             points += POINTS_FOR_COLOR;
         }
-        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) {
+        if (colorCount(board, Color.YELLOW) == colorCountCrossed(board, Color.YELLOW)) {
             points += POINTS_FOR_COLOR;
         }
         return points;
@@ -125,7 +127,7 @@ public class Score {
      * @return
      */
     public int[] getCompleteCols(Board board) {
-        int [] completeCols = new int[board.getColCount()];
+        int[] completeCols = new int[board.getColCount()];
         int completeColCount = 0;
         int counter = 0;
         for (int i = 0; i < board.getColCount(); i++) {
@@ -134,8 +136,8 @@ public class Score {
                     counter++;
                 }
             }
-            if(counter == ROW_SUM) {
-                completeCols[completeColCount] = i+1;
+            if (counter == ROW_SUM) {
+                completeCols[completeColCount] = i + 1;
                 completeColCount++;
             } else {
                 counter = 0;
@@ -153,19 +155,19 @@ public class Score {
      */
     public boolean testIfFinished(Board board) {
         int counter = 0;
-        if (colorCount(board, javafx.scene.paint.Color.RED) == colorCountCrossed(board, javafx.scene.paint.Color.RED)) {
+        if (colorCount(board, Color.RED) == colorCountCrossed(board, Color.RED)) {
             counter++;
         }
-        if (colorCount(board, javafx.scene.paint.Color.BLUE) == colorCountCrossed(board, javafx.scene.paint.Color.BLUE)) {
+        if (colorCount(board, Color.BLUE) == colorCountCrossed(board, Color.BLUE)) {
             counter++;
         }
-        if (colorCount(board, javafx.scene.paint.Color.GREEN) == colorCountCrossed(board, javafx.scene.paint.Color.GREEN)) {
+        if (colorCount(board, Color.GREEN) == colorCountCrossed(board, Color.GREEN)) {
             counter++;
         }
-        if (colorCount(board, javafx.scene.paint.Color.ORANGE) == colorCountCrossed(board, javafx.scene.paint.Color.ORANGE)) {
+        if (colorCount(board, Color.ORANGE) == colorCountCrossed(board, Color.ORANGE)) {
             counter++;
         }
-        if (colorCount(board, javafx.scene.paint.Color.YELLOW) == colorCountCrossed(board, javafx.scene.paint.Color.YELLOW)) {
+        if (colorCount(board, Color.YELLOW) == colorCountCrossed(board, Color.YELLOW)) {
             counter++;
         }
         return counter >= WIN_THRESHOLD;
