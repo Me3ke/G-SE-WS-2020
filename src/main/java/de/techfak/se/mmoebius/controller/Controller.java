@@ -208,7 +208,7 @@ public class Controller {
             }
             containerV.getChildren().add(pointsH);
         } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("POINT_ARR in Controller class needs to be adjusted to column length.");
+            System.out.println("POINT_ARR in Controller/Score class needs to be adjusted to column length.");
             System.out.println("Terminating program...");
             Platform.exit();
         }

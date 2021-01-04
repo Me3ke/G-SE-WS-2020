@@ -22,11 +22,10 @@ public class GUI extends Application {
         Parameters parameters = getParameters();
         List<String> parameterList = parameters.getRaw();
         String[] args = parameterList.toArray(new String[0]);
+        int rowCount = Integer.parseInt(args[args.length - 2]);
+        int colCount = Integer.parseInt(args[args.length - 1]);
         Game game = new Game(args);
-        int indicator = game.createBoard();
-        if (indicator != 1) {
-            System.exit(indicator);
-        }
+        game.createBoard(rowCount, colCount);
         Controller controller = fxmlLoader.getController();
         controller.initialize(game.getBoard());
         Scene scene = new Scene(root);

@@ -30,9 +30,13 @@ public class Game {
      * Game attributes:
      * args: program arguments.
      * board: the board to be played on.
+     * rowCount: the amount of rows in the file.
+     * colCount: the amount of rows in the file.
      */
     private final String[] args;
     private Board board;
+    private int rowCount;
+    private int colCount;
 
     /**
      * Constructor for a game.
@@ -46,12 +50,16 @@ public class Game {
      * The createBoard method uses the program arguments to read in the given file
      * and creates a 2-dim char array of it. Then a board is created from it an printed.
      * If the parameters are not valid, the program exits with code 100.
+     * @param rows The rows of the board to be created from input data. If =0 there will be
+     *             query in the console.
+     * @param cols The rows of the board to be created from input data. If =0 there will be
+     *             query in the console.
      * @throws InvalidBoardLayout if the file does not correspond to the specifications.
      * @throws InvalidField if the file does not correspond to the specifications.
      * @return returns a value to indicate if creatingBoard was successful
      */
     @SuppressWarnings({"PMD.AvoidFileStream", "PMD.PreserveStackTrace"})
-    public int createBoard() {
+    public int createBoard(int rows, int cols) {
         try {
             System.out.println("Welcome to encore");
             if (args.length == 0) {
@@ -61,10 +69,15 @@ public class Game {
                 File file = new File(args[1]);
                 if (file.isFile() && file.canRead()) {
                     String line;
-                    System.out.println("Type in the number of rows in the given playing field: ");
-                    int rowCount = readRow();
-                    System.out.println("Type in the number of columns in the given playing field: ");
-                    int colCount = readCol();
+                    if (rows == 0 && cols == 0) {
+                        System.out.println("Type in the number of rows in the given playing field: ");
+                        rowCount = readRow();
+                        System.out.println("Type in the number of columns in the given playing field: ");
+                        colCount = readCol();
+                    } else {
+                        rowCount = rows;
+                        colCount = cols;
+                    }
                     char[][] map = new char[rowCount][colCount];
                     int rowCountCounter = 0;
                     int colCountCounter = 0;
@@ -212,6 +225,14 @@ public class Game {
 
     public Board getBoard() {
         return board;
+    }
+
+    public int getRowCount() {
+        return rowCount;
+    }
+
+    public int getColCount() {
+        return colCount;
     }
 }
 
