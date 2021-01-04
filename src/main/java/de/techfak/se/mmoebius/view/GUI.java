@@ -23,7 +23,10 @@ public class GUI extends Application {
         List<String> parameterList = parameters.getRaw();
         String[] args = parameterList.toArray(new String[0]);
         Game game = new Game(args);
-        game.createBoard();
+        int indicator = game.createBoard();
+        if (indicator != 1) {
+            System.exit(indicator);
+        }
         Controller controller = fxmlLoader.getController();
         controller.initialize(game.getBoard());
         Scene scene = new Scene(root);

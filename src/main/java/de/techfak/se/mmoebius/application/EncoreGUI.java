@@ -9,9 +9,6 @@ import de.techfak.se.mmoebius.view.GUI;
 
 public final class EncoreGUI {
 
-    private static final int SYS_EXIT_FAILED = 100;
-    private static final int SYS_EXIT_SUCCESS = 1;
-
     private EncoreGUI() {
     }
 

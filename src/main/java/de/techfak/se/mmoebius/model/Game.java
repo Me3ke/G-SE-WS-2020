@@ -10,7 +10,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Scanner;
 
-//TODO MS1 mit Fehlercode beenden (in Encore und EncoreGUI)
 /**
  * The game class is where the game runs in a loop. It is
  * instantiated first and instantiates all other components
@@ -24,6 +23,8 @@ public class Game {
     private static final int COL_COUNT = 15;
     private static final int MAX_ROW_COL_COUNT = 100;
     private static final int DICE_COUNT = 3;
+    private static final int SYS_EXIT_INVALID_SOURCE = 100;
+    private static final int SYS_EXIT_INVALID_FILE = 101;
 
     /**
      * Game attributes:
@@ -55,7 +56,7 @@ public class Game {
             System.out.println("Welcome to encore");
             if (args.length == 0) {
                 System.out.println("<100> No program arguments given. Type -f <filename>");
-                return 100;
+                return SYS_EXIT_INVALID_SOURCE;
             } else if (args[0].equals("-f")) {
                 File file = new File(args[1]);
                 if (file.isFile() && file.canRead()) {
@@ -96,7 +97,7 @@ public class Game {
                         }
                     }
                     Board board = new Board(map);
-                    if(board.getFloor() == null) {
+                    if (board.getFloor() == null) {
                         throw new InvalidField("Unexpected Character found in input file");
                     }
                     this.board = board;
@@ -104,14 +105,14 @@ public class Game {
                     return 1;
                 }
                 System.out.println("<100> no valid file found with filename: " + file.getName());
-                return 100;
+                return SYS_EXIT_INVALID_SOURCE;
             } else {
                 System.out.println("<100> unknown program argument. Type -f <filename>");
-                return 100;
+                return SYS_EXIT_INVALID_SOURCE;
             }
         } catch (InvalidBoardLayout | InvalidField e) {
             System.out.println(e);
-            return 101;
+            return SYS_EXIT_INVALID_FILE;
         }
     }
 

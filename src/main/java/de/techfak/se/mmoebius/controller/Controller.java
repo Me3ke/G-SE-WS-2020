@@ -171,11 +171,10 @@ public class Controller {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
                 if (score.testIfFinished(board)) {
-                    updatePoints();
                     Alert alert = new Alert(Alert.AlertType.INFORMATION);
                     alert.setTitle("Game Over");
-                    alert.setHeaderText(null);
-                    alert.setContentText("The game is over");
+                    alert.setHeaderText("The game is over");
+                    alert.setContentText("You achieved: " + updatePoints() + " points");
                     alert.showAndWait();
                     Platform.exit();
                 }
@@ -201,12 +200,18 @@ public class Controller {
         HBox pointsH = new HBox();
         pointsH.setSpacing(POINT_SPACING);
         pointsH.setPadding(new Insets(DEFAULT_SPACING));
-        for (int i = 0; i < colCount; i++) {
-            Label pointLabel = new Label(String.valueOf(POINT_ARR[i]));
-            pointLabel.setFont(BASIC_FONT);
-            pointsH.getChildren().add(pointLabel);
+        try {
+            for (int i = 0; i < colCount; i++) {
+                Label pointLabel = new Label(String.valueOf(POINT_ARR[i]));
+                pointLabel.setFont(BASIC_FONT);
+                pointsH.getChildren().add(pointLabel);
+            }
+            containerV.getChildren().add(pointsH);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("POINT_ARR in Controller class needs to be adjusted to column length.");
+            System.out.println("Terminating program...");
+            Platform.exit();
         }
-        containerV.getChildren().add(pointsH);
     }
 
     /**
@@ -237,7 +242,6 @@ public class Controller {
         dices.getChildren().add(diceNumbers);
     }
 
-    //TODO Methode funktioniert noch nicht vollständig
     /**
      * The testForEqual method checks if the current field the
      * player crossed, was already crossed beforehand.
@@ -247,14 +251,12 @@ public class Controller {
      *          already crossed and false if not.
      */
     private boolean testForEqual(int currentRow, int currentCol) {
-        for (int i = 0; i < playMoveRow.size(); i++) {
-            if (playMoveRow.get(i).equals(currentRow) && playMoveCol.get(i).equals(currentCol)) {
-                System.out.print(playMoveRow.get(i) + ", " + playMoveCol.get(i));
-                System.out.println(" is already crossed");
-                return true;
-            }
+        if (field[currentRow][currentCol].getChildren().size() > 1) {
+            System.out.println("Field " + currentRow + currentCol + " is already crossed.");
+            return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -327,9 +329,10 @@ public class Controller {
      * The updatePoints method uses the score.calculatePoints method to show the
      * current points of the player in the application.
      */
-    private void updatePoints() {
+    private int updatePoints() {
         int currentPoints = score.calculatePoints(board);
         Platform.runLater(() -> points.setText("Points: " + currentPoints));
+        return currentPoints;
     }
 
     /**
@@ -360,5 +363,7 @@ public class Controller {
 
     /*TODO Fragen im Tut:  -Controller zu viel View?
                            -DefinitionScope (Board)
+                           -Darf sys exit auch in EncoreGUI?
+                           -Zeile 10 wird nicht gold
      */
 

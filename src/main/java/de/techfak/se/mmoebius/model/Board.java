@@ -27,7 +27,6 @@ public class Board {
     private Tile[][] floor;
     private int rowCount;
     private int colCount;
-    //TODO definition scope
 
     /**
      * The Board constructor creates a 2-dim array of tiles (floor) from a given 2-dim
@@ -140,7 +139,6 @@ public class Board {
         observers.firePropertyChange("setCrossed", false, true);
     }
 
-    //TODO H1,, abfangen
     /**
      * The validate method consists of two sections. The method gets two arrays of
      * Integers which represent one play move consisting of several inputs.

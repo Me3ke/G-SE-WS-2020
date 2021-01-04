@@ -39,6 +39,7 @@ public class Player {
         points = 0;
     }
 
+    //TODO H1,, abfangen
     /**
      * The playMove method reads the user input and checks it.
      * The input is checked only on format. The validate method is called after
