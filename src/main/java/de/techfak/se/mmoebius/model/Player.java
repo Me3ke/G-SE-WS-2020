@@ -15,6 +15,7 @@ public class Player {
     private static final int ASCII_CODE_CONST_INT = 49;
     private static final int ASCII_THRESHOLD_COL = 14;
     private static final int ASCII_THRESHOLD_ROW = 6;
+    private static final String COMMA = ",";
 
     /**
      * Player attributes:
@@ -39,7 +40,6 @@ public class Player {
         points = 0;
     }
 
-    //TODO H1,, abfangen
     /**
      * The playMove method reads the user input and checks it.
      * The input is checked only on format. The validate method is called after
@@ -72,17 +72,20 @@ public class Player {
             System.out.println("Terminating program...");
         } else {
             try {
-                String[] inputArr = input.split(",");
+                if (input.endsWith(COMMA)) {
+                    throw new InvalidInput("InvalidInputException: Line ends with comma.");
+                }
+                String[] inputArr = input.split(COMMA);
                 int[] col = new int[inputArr.length];
                 int[] row = new int[inputArr.length];
                 for (int i = 0; i < inputArr.length; i++) {
-                    if (inputArr[i].length() != 2) {
-                        throw new InvalidInput("InvalidInputException: Wrong input format. Try e.g. H4,H5,G5,G4");
+                    if (inputArr[i].length() != 2 || inputArr[i].equals("")) {
+                        throw new InvalidInput("InvalidInputException: Wrong input format.");
                     } else {
                         col[i] = (int) inputArr[i].charAt(0) - ASCII_CODE_CONST_CHAR;
                         row[i] = inputArr[i].charAt(1) - ASCII_CODE_CONST_INT;
                         if (col[i] < 0 || col[i] > ASCII_THRESHOLD_COL || row[i] < 0 || row[i] > ASCII_THRESHOLD_ROW) {
-                            throw new InvalidInput("InvalidInputException: Unknown Symbol. Try e.g. H4,H5,G5,G4");
+                            throw new InvalidInput("InvalidInputException: Input not in range or no identifier.");
                         }
                     }
                 }
@@ -94,6 +97,7 @@ public class Player {
                 }
             } catch (InvalidInput e) {
                 System.out.println(e);
+                System.out.println("Try e.g. H4,H5,G5,G4");
                 return printIndex;
             }
         }

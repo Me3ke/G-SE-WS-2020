@@ -361,9 +361,6 @@ public class Controller {
     }
 }
 
-    /*TODO Fragen im Tut:  -Controller zu viel View?
-                           -DefinitionScope (Board)
-                           -Darf sys exit auch in EncoreGUI?
-                           -Zeile 10 wird nicht gold
+    /*TODO Fragen im Tut:   -Manche zeilen 10 werden nicht gold
      */
 
