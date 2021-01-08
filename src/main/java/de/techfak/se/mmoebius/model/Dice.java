@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Dice {
 
-    private static final int NUMBER_THRESHOLD = 4;
+    private static final int NUMBER_THRESHOLD = 5;
     private static final int COLOR_ORANGE = 1;
     private static final int COLOR_RED = 2;
     private static final int COLOR_GREEN = 4;
