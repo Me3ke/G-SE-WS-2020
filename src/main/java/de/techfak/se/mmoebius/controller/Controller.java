@@ -40,7 +40,7 @@ public class Controller {
     private static final int ROTATE_CONST = 45;
     private static final int DICE_COUNT = 3;
     private static final int COLOR_COUNT = 5;
-    private static final Color[] COLORS = {Color.BLUE,Color.YELLOW,Color.GREEN,Color.ORANGE,Color.RED};
+    private static final Color[] COLORS = {Color.BLUE, Color.YELLOW, Color.GREEN, Color.ORANGE, Color.RED};
     private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
     private static final BorderWidths THIN = BorderStroke.THIN;
     private static final BorderWidths THICK = BorderStroke.MEDIUM;
@@ -50,6 +50,7 @@ public class Controller {
     private static final int[] POINT_ARR = {5, 3, 3, 3, 2, 2, 2, 1, 2, 2, 2, 3, 3, 3, 5};
     private static final int DEFAULT_SPACING = 10;
     private static final int POINT_SPACING = 30;
+    private static final double STROKE_WIDTH_COMPLETE = 8;
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -218,7 +219,9 @@ public class Controller {
     }
 
     /**
-     *
+     * The createColorLabels method creates Rectangles below the playing field
+     * showing all the Colors of the playing field. If all fields with the same
+     * color are crossed, they will be highlighted.
      */
     private void createColorLabels() {
         HBox colorsH = new HBox();
@@ -235,7 +238,6 @@ public class Controller {
             containerV.getChildren().add(colorsH);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("ColorArray/Count in Controller/Score class needs to be adjusted to column length.");
-            System.out.println("Terminating program...");
             Platform.exit();
         }
     }
@@ -297,8 +299,8 @@ public class Controller {
 
     /**
      * The updateColors method uses the score.colorCountCrossed and the score.colorCount
-     * methods to check for completely crossed colors. If there is one it changes the
-     * color to violet.
+     * methods to check for completely crossed colors. If there is one it changes the rectangles
+     * below.
      */
     private void updateColors() {
         Color[] completeColors = new Color[colors.length];
@@ -320,11 +322,11 @@ public class Controller {
                         Node nodeOut = containerV.getChildren().get(containerSize - 1);
                         if (nodeOut instanceof HBox) {
                             for (int j = 0; j < COLOR_COUNT; j++) {
-                                Node nodeIn = ((HBox) nodeOut).getChildren().get(j);
-                                if(nodeIn instanceof Rectangle) {
-                                    if(completeColors[l].equals(((Rectangle)nodeIn).getFill())) {
+                                Node nodeIn = ((HBox) nodeOut) .getChildren().get(j);
+                                if (nodeIn instanceof Rectangle) {
+                                    if (completeColors[l].equals(((Rectangle) nodeIn).getFill())) {
                                         ((Rectangle) nodeIn).setStroke(Color.DARKVIOLET);
-                                        ((Rectangle) nodeIn).setStrokeWidth(8);
+                                        ((Rectangle) nodeIn).setStrokeWidth(STROKE_WIDTH_COMPLETE);
                                     }
                                 }
                             }
@@ -379,22 +381,6 @@ public class Controller {
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
         }
-    }
-
-    /**
-     *
-     */
-    private Group getCross() {
-        Group group = new Group();
-        Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
-        Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
-        crossTileOne.setRotate(ROTATE_CONST);
-        crossTileTwo.setRotate(ROTATE_CONST);
-        crossTileOne.setFill(Color.BLACK);
-        crossTileTwo.setFill(Color.BLACK);
-        group.getChildren().add(crossTileOne);
-        group.getChildren().add(crossTileTwo);
-        return group;
     }
 
     /**
