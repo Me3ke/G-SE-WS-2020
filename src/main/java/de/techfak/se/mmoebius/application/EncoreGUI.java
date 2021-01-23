@@ -18,7 +18,7 @@ public final class EncoreGUI {
      */
     public static void main(final String... args) {
         Game game = new Game(args);
-        int indicator = game.createBoard(0, 0);
+        int indicator = game.createBoard(7, 15);
         if (indicator != 1) {
             System.exit(indicator);
         }
@@ -29,6 +29,7 @@ public final class EncoreGUI {
         argv[args.length] = String.valueOf(game.getRowCount());
         argv[args.length + 1] = String.valueOf(game.getColCount());
         GUI.launch(GUI.class, argv);
+        System.exit(0);
     }
 }
 

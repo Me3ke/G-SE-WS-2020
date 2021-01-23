@@ -39,6 +39,8 @@ public class Controller {
     private static final int CROSS_H = 5;
     private static final int ROTATE_CONST = 45;
     private static final int DICE_COUNT = 3;
+    private static final int COLOR_COUNT = 5;
+    private static final Color[] COLORS = {Color.BLUE,Color.YELLOW,Color.GREEN,Color.ORANGE,Color.RED};
     private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
     private static final BorderWidths THIN = BorderStroke.THIN;
     private static final BorderWidths THICK = BorderStroke.MEDIUM;
@@ -152,6 +154,7 @@ public class Controller {
             containerV.getChildren().add(containerH);
         }
         createPointLabels();
+        createColorLabels();
         board.addObserver((PropertyChangeEvent evt) -> updateField());
     }
 
@@ -209,6 +212,29 @@ public class Controller {
             containerV.getChildren().add(pointsH);
         } catch (ArrayIndexOutOfBoundsException e) {
             System.out.println("POINT_ARR in Controller/Score class needs to be adjusted to column length.");
+            System.out.println("Terminating program...");
+            Platform.exit();
+        }
+    }
+
+    /**
+     *
+     */
+    private void createColorLabels() {
+        HBox colorsH = new HBox();
+        colorsH.setSpacing(POINT_SPACING);
+        colorsH.setPadding(new Insets(DEFAULT_SPACING));
+        try {
+            for (int i = 0; i < COLOR_COUNT; i++) {
+                Rectangle colorLabel = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
+                colorLabel.setFill(COLORS[i]);
+                colorLabel.setStroke(Color.BLACK);
+                colorLabel.setStrokeType(StrokeType.INSIDE);
+                colorsH.getChildren().add(colorLabel);
+            }
+            containerV.getChildren().add(colorsH);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            System.out.println("ColorArray/Count in Controller/Score class needs to be adjusted to column length.");
             System.out.println("Terminating program...");
             Platform.exit();
         }
@@ -276,6 +302,7 @@ public class Controller {
      */
     private void updateColors() {
         Color[] completeColors = new Color[colors.length];
+        int containerSize = containerV.getChildren().size();
         int completeColorCount = 0;
         for (int i = 0; i < colors.length; i++) {
             if (score.colorCountCrossed(board, colors[i]) == score.colorCount(board, colors[i])) {
@@ -290,9 +317,17 @@ public class Controller {
             for (int i = 0; i < field.length; i++) {
                 for (int k = 0; k < field[i].length; k++) {
                     if (board.getFloor()[i][k].getColor().equals(completeColors[l])) {
-                        Node node = field[i][k].getChildren().get(0);
-                        if (node instanceof Rectangle) {
-                            Platform.runLater(() -> ((Rectangle) node) .setFill(Color.DARKVIOLET));
+                        Node nodeOut = containerV.getChildren().get(containerSize - 1);
+                        if (nodeOut instanceof HBox) {
+                            for (int j = 0; j < COLOR_COUNT; j++) {
+                                Node nodeIn = ((HBox) nodeOut).getChildren().get(j);
+                                if(nodeIn instanceof Rectangle) {
+                                    if(completeColors[l].equals(((Rectangle)nodeIn).getFill())) {
+                                        ((Rectangle) nodeIn).setStroke(Color.DARKVIOLET);
+                                        ((Rectangle) nodeIn).setStrokeWidth(8);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -313,7 +348,7 @@ public class Controller {
         } else {
             for (int i = 0; i < completeCols.length; i++) {
                 if (completeCols[i] != 0) {
-                    Node nodeOut = containerV.getChildren().get(containerSize - 1);
+                    Node nodeOut = containerV.getChildren().get(containerSize - 2);
                     if (nodeOut instanceof HBox) {
                         Node nodeIn = ((HBox) nodeOut).getChildren().get(completeCols[i] - 1);
                         if (nodeIn instanceof Label) {
@@ -344,6 +379,22 @@ public class Controller {
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
         }
+    }
+
+    /**
+     *
+     */
+    private Group getCross() {
+        Group group = new Group();
+        Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
+        Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
+        crossTileOne.setRotate(ROTATE_CONST);
+        crossTileTwo.setRotate(ROTATE_CONST);
+        crossTileOne.setFill(Color.BLACK);
+        crossTileTwo.setFill(Color.BLACK);
+        group.getChildren().add(crossTileOne);
+        group.getChildren().add(crossTileTwo);
+        return group;
     }
 
     /**

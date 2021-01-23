@@ -69,15 +69,8 @@ public class Game {
                 File file = new File(args[1]);
                 if (file.isFile() && file.canRead()) {
                     String line;
-                    if (rows == 0 && cols == 0) {
-                        System.out.println("Type in the number of rows in the given playing field: ");
-                        rowCount = readRow();
-                        System.out.println("Type in the number of columns in the given playing field: ");
-                        colCount = readCol();
-                    } else {
-                        rowCount = rows;
-                        colCount = cols;
-                    }
+                    rowCount = rows;
+                    colCount = cols;
                     char[][] map = new char[rowCount][colCount];
                     int rowCountCounter = 0;
                     int colCountCounter = 0;
