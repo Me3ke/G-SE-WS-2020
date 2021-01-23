@@ -50,16 +50,12 @@ public class Game {
      * The createBoard method uses the program arguments to read in the given file
      * and creates a 2-dim char array of it. Then a board is created from it an printed.
      * If the parameters are not valid, the program exits with code 100.
-     * @param rows The rows of the board to be created from input data. If =0 there will be
-     *             query in the console.
-     * @param cols The rows of the board to be created from input data. If =0 there will be
-     *             query in the console.
      * @throws InvalidBoardLayout if the file does not correspond to the specifications.
      * @throws InvalidField if the file does not correspond to the specifications.
      * @return returns a value to indicate if creatingBoard was successful
      */
     @SuppressWarnings({"PMD.AvoidFileStream", "PMD.PreserveStackTrace"})
-    public int createBoard(int rows, int cols) {
+    public int createBoard() {
         try {
             System.out.println("Welcome to encore");
             if (args.length == 0) {
@@ -69,8 +65,8 @@ public class Game {
                 File file = new File(args[1]);
                 if (file.isFile() && file.canRead()) {
                     String line;
-                    rowCount = rows;
-                    colCount = cols;
+                    rowCount = ROW_COUNT;
+                    colCount = COL_COUNT;
                     char[][] map = new char[rowCount][colCount];
                     int rowCountCounter = 0;
                     int colCountCounter = 0;

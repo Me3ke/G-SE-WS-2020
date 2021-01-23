@@ -17,7 +17,7 @@ public final class Encore {
      */
     public static void main(final String... args) {
         Game game = new Game(args);
-        int indicator = game.createBoard(0, 0);
+        int indicator = game.createBoard();
         if (indicator != 1) {
             System.exit(indicator);
         }

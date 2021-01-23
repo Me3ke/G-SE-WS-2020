@@ -18,17 +18,11 @@ public final class EncoreGUI {
      */
     public static void main(final String... args) {
         Game game = new Game(args);
-        int indicator = game.createBoard(7, 15);
+        int indicator = game.createBoard();
         if (indicator != 1) {
             System.exit(indicator);
         }
-        String[] argv = new String[args.length + 2];
-        for (int i = 0; i < args.length; i++) {
-            argv[i] = args[i];
-        }
-        argv[args.length] = String.valueOf(game.getRowCount());
-        argv[args.length + 1] = String.valueOf(game.getColCount());
-        GUI.launch(GUI.class, argv);
+        GUI.launch(GUI.class, args);
         System.exit(0);
     }
 }

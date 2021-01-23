@@ -24,14 +24,14 @@ class MainTest {
 
     @BeforeAll
     static void beforeAll() {
-        game.createBoard(7,15);
+        game.createBoard();
         board = game.getBoard();
     }
 
     @AfterEach
     void afterEach() {
         board.printBoard();
-        game.createBoard(7,15);
+        game.createBoard();
         board = game.getBoard();
     }
     // ------------------------Scenario 1--------------------------------
