@@ -3,6 +3,7 @@ package de.techfak.se.mmoebius.application;
 import de.techfak.se.mmoebius.model.Game;
 import de.techfak.se.mmoebius.util.InvalidBoardLayout;
 import de.techfak.se.mmoebius.util.InvalidField;
+import de.techfak.se.mmoebius.view.ClientGUI;
 import de.techfak.se.mmoebius.view.GUI;
 import de.techfak.se.multiplayer.game.*;
 import de.techfak.se.multiplayer.game.exceptions.InvalidBoardLayoutException;
@@ -58,8 +59,9 @@ public class EncoreServer {
                            final Server server = new Server(game); //Neuen Server erstellen
                            server.start(port); //Server starten unter angegebenem port
                        }
-
+                       ClientGUI.launch(ClientGUI.class, args);
                        Thread.currentThread().join();
+
                    } catch (InvalidBoardLayoutException | InvalidFieldException e) {
                        System.out.println(e.getMessage());
                        System.exit(SYS_EXIT_INVALID_FILE);

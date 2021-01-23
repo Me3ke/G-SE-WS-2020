@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Label?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.TextField?>
+
+<?import javafx.scene.control.Button?>
+<VBox fx:controller="de.techfak.se.mmoebius.controller.ClientController" xmlns="http://javafx.com/javafx"
+      xmlns:fx="http://javafx.com/fxml" fx:id="containerV">
+    <padding>
+        <Insets topRightBottomLeft="10"/>
+    </padding>
+    <HBox spacing="10">
+        <Label fx:id="ipLabel"> Enter IP: </Label>
+        <TextField fx:id="ipField"> </TextField>
+    </HBox>
+    <HBox spacing="10">
+        <Label fx:id="portLabel"> Enter Port: </Label>
+        <TextField fx:id="portField"> </TextField>
+    </HBox>
+    <Button fx:id="button"> connect </Button>
+</VBox>
