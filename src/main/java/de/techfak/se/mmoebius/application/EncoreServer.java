@@ -24,24 +24,21 @@ public class EncoreServer {
         private static final int SYS_EXIT_INVALID_SOURCE = 100;
         private static final int SYS_EXIT_INVALID_FILE = 101;
 
+
         /**
          * The main method launches the Server.
          * @param args the program arguments which include the port of the Server
          */
         public static void main(final String... args) {
             int port;
+            boolean serverStarted = false;
            if (args.length == 0) {
                System.out.println("no parameters given.");
                System.out.println("use -f <board path> -p <port number>");
            }
-           else if (args.length == 2) {
-               System.out.println("Singleplayer mode. For Multiplayer add -p <port number>");
-               Game game = new Game(args);
-               int indicator = game.createBoard();
-               if (indicator != 1) {
-                   System.exit(indicator);
-               }
-               GUI.launch(GUI.class, args);
+           else if (args.length == 2) { //TODO einfach wie darunter nur ohne server start
+               System.out.println("Multiplayer mode. To start a Server type ~ -p <port number> as parameter");
+               ClientGUI.launch(ClientGUI.class, args);
            } else {
                if(args[0].equals("-f") && args[2].equals("-p")) {
                    System.out.println("Multiplayer mode");
@@ -58,6 +55,7 @@ public class EncoreServer {
                            final SynchronizedGame game = new SynchronizedGame(baseGame); //Synchronisiert das Spiel für eine Thread sichere Benutzung
                            final Server server = new Server(game); //Neuen Server erstellen
                            server.start(port); //Server starten unter angegebenem port
+                           serverStarted = true;
                        }
                        ClientGUI.launch(ClientGUI.class, args);
                        Thread.currentThread().join();

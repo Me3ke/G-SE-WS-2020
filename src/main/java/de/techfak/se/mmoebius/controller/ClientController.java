@@ -1,8 +1,8 @@
 package de.techfak.se.mmoebius.controller;
 
+import de.techfak.se.mmoebius.model.Client;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 /**
@@ -32,6 +32,7 @@ public class ClientController {
      *
      */
     public void initialize() {
+        Client client = new Client();
         button.setOnMouseClicked(mouseEvent -> {
             ip = ipField.getText();
             try {
@@ -41,16 +42,15 @@ public class ClientController {
             }
             System.out.println(ip);
             System.out.println(port);
-            connectToServer(ip,port);
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Serverconnection");
+            if(client.connectToServer(ip,port)) {
+                alert.setContentText("Connection to server established");
+            } else {
+                alert.setContentText("Server not available");
+            }
+            alert.showAndWait();
         });
     }
 
-    /**
-     *
-     * @param ip
-     * @param port
-     */
-    private void connectToServer(String ip, int port) {
-
-    }
 }
