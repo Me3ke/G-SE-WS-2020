@@ -46,7 +46,6 @@ public class ClientController {
      *
      */
     public void initialize(String[] args) {
-        Client client = new Client();
         buttonSP.setOnMouseClicked(mouseEvent -> {
             showGUI(args);
             Stage stage = (Stage) buttonSP.getScene().getWindow();
@@ -61,15 +60,17 @@ public class ClientController {
             }
             System.out.println(ip);
             System.out.println(port);
+            Client client = new Client(ip + port);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Server connection");
             alert.setHeaderText(null);
-            if(client.connectToServer(ip,port)) {
+            if(client.connectToServer()) {
                 alert.setContentText("Connection to server established");
                 alert.showAndWait();
                 Stage stage = (Stage) buttonC.getScene().getWindow();
                 name = showNameField();
                 System.out.println("Your name: " + name);
+                client.verifyName(name);
                 stage.hide();
             } else {
                 alert.setContentText("Server not available. Please try again");
