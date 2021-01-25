@@ -60,7 +60,8 @@ public class ClientController {
             }
             System.out.println(ip);
             System.out.println(port);
-            Client client = new Client(ip + port);
+            String url = "http://" + ip + ":" + port;
+            Client client = new Client(url);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Server connection");
             alert.setHeaderText(null);
@@ -70,13 +71,44 @@ public class ClientController {
                 Stage stage = (Stage) buttonC.getScene().getWindow();
                 name = showNameField();
                 System.out.println("Your name: " + name);
-                client.verifyName(name);
+                verifyNameGUI(client);
                 stage.hide();
             } else {
                 alert.setContentText("Server not available. Please try again");
                 alert.showAndWait();
             }
         });
+    }
+
+    /**
+     *
+     */
+    private void verifyNameGUI(Client client) {
+        Alert nameAlert = new Alert(Alert.AlertType.ERROR);
+        nameAlert.setTitle("Server connection");
+        nameAlert.setHeaderText("Connecting to Server with name: " + name);
+        int statusCode = client.verifyName(name);
+        if (statusCode == -1) {
+            nameAlert.setContentText("Verification failed. Please try again.");
+            nameAlert.showAndWait();
+        } else if (statusCode == 400) {
+            nameAlert.setContentText("Name cannot be empty.");
+            nameAlert.showAndWait();
+        } else if (statusCode == 409) {
+            nameAlert.setContentText("Name is already registered");
+            nameAlert.showAndWait();
+        } else {
+            if (client.isGameStarted(name)) {
+                nameAlert.setContentText("Game already started.");
+                nameAlert.showAndWait();
+            } else {
+                Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
+                nameAlertSuccess.setTitle("Server connection");
+                nameAlertSuccess.setHeaderText("Connecting to Server with name: " + name);
+                nameAlertSuccess.setContentText("Connection Successful");
+                nameAlertSuccess.showAndWait();
+            }
+        }
     }
 
     /**
@@ -90,8 +122,8 @@ public class ClientController {
         dialog.setHeaderText(null);
         dialog.setContentText("Please enter your name:");
         result = dialog.showAndWait();
-        if (result.get().equals("")) {
-            return DEFAULT_NAME;
+        if (result.isEmpty()) {
+            return "";
         }
         return result.get();
     }

@@ -69,7 +69,6 @@ public class EncoreServer {
            System.exit(0);
         }
 
-        //TODO wie wird -f behandelt bzw. das Spielfeld angegeben
-        // 2-mal die application starten ?
+        //TODO Evtl System prints überarbeiten.
 
 }

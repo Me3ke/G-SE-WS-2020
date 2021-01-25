@@ -11,15 +11,21 @@
     <padding>
         <Insets topRightBottomLeft="10"/>
     </padding>
-    <HBox spacing="10">
+    <HBox spacing="21">
+        <padding>
+            <Insets topRightBottomLeft="10"/>
+        </padding>
         <Label fx:id="ipLabel"> Enter IP:   </Label>
         <TextField fx:id="ipField"> </TextField>
     </HBox>
     <HBox spacing="10">
+        <padding>
+            <Insets topRightBottomLeft="10"/>
+        </padding>
         <Label fx:id="portLabel"> Enter Port: </Label>
         <TextField fx:id="portField"> </TextField>
     </HBox>
-    <HBox spacing="10">
+    <HBox spacing="30">
         <padding>
             <Insets topRightBottomLeft="10"/>
         </padding>
