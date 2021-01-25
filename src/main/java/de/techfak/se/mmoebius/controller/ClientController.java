@@ -12,17 +12,20 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Optional;
 
 /**
  *
  */
 public class ClientController {
 
+    private static final String DEFAULT_NAME = "Theben";
     /**
      *
      */
     private String ip;
     private int port;
+    private String name;
 
     @FXML
     private VBox containerV;
@@ -65,13 +68,31 @@ public class ClientController {
                 alert.setContentText("Connection to server established");
                 alert.showAndWait();
                 Stage stage = (Stage) buttonC.getScene().getWindow();
-                showGUI(args);
+                name = showNameField();
+                System.out.println("Your name: " + name);
                 stage.hide();
             } else {
                 alert.setContentText("Server not available. Please try again");
                 alert.showAndWait();
             }
         });
+    }
+
+    /**
+     *
+     * @return
+     */
+    private String showNameField() {
+        Optional<String> result = null;
+        TextInputDialog dialog = new TextInputDialog("");
+        dialog.setTitle("Encore Multiplayer");
+        dialog.setHeaderText(null);
+        dialog.setContentText("Please enter your name:");
+        result = dialog.showAndWait();
+        if (result.get().equals("")) {
+            return DEFAULT_NAME;
+        }
+        return result.get();
     }
 
     /**
