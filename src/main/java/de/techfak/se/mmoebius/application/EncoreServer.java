@@ -12,12 +12,13 @@ import java.io.IOException;
  * The main class, contains just the main method to start the application.
  */
 
-public class EncoreServer {
+public final class EncoreServer {
 
         private static final int DEFAULT_PORT = 8080;
         private static final int SYS_EXIT_FAILURE = -1;
         private static final int SYS_EXIT_INVALID_SOURCE = 100;
         private static final int SYS_EXIT_INVALID_FILE = 101;
+        private static final int ARGS_THREE = 3;
 
 
         /**
@@ -30,25 +31,24 @@ public class EncoreServer {
            if (args.length == 0) {
                System.out.println("no parameters given.");
                System.out.println("use -f <board path> -p <port number>");
-           }
-           else if (args.length == 2) {
+           } else if (args.length == 2) {
                System.out.println("To start a Server type ~ -p <port number> as parameter");
            } else {
-               if(args[0].equals("-f") && args[2].equals("-p")) {
+               if (args[0].equals("-f") && args[2].equals("-p")) {
                    System.out.println("Multiplayer mode");
                    File file = new File(args[1]);
-                   if (args.length == 3) {
+                   if (args.length == ARGS_THREE) {
                        port = DEFAULT_PORT;
                    } else {
-                       port = Integer.parseInt(args[3]);
+                       port = Integer.parseInt(args[ARGS_THREE]);
                    }
                    try {
                        if (file.isFile() && file.canRead()) {
                            final BoardParser boardParser = new BoardParserImpl();
-                           final BaseGame baseGame = new BaseGameImpl(boardParser.parse(file)); //Spielfeld aus angegebener Datei parsen und damit das Spiel initialisieren
-                           final SynchronizedGame game = new SynchronizedGame(baseGame); //Synchronisiert das Spiel für eine Thread sichere Benutzung
-                           final Server server = new Server(game); //Neuen Server erstellen
-                           server.start(port); //Server starten unter angegebenem port
+                           final BaseGame baseGame = new BaseGameImpl(boardParser.parse(file));
+                           final SynchronizedGame game = new SynchronizedGame(baseGame);
+                           final Server server = new Server(game);
+                           server.start(port);
                            serverStarted = true;
                        }
                        Thread.currentThread().join();

@@ -20,6 +20,8 @@ import java.util.Optional;
 public class ClientController {
 
     private static final String DEFAULT_NAME = "Theben";
+    private static final int STATUS_NONAME = 400;
+    private static final int STATUS_ALREADY_REGISTERED = 409;
     /**
      *
      */
@@ -65,13 +67,15 @@ public class ClientController {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Server connection");
             alert.setHeaderText(null);
-            if(client.connectToServer()) {
+            if (client.connectToServer()) {
                 alert.setContentText("Connection to server established");
                 alert.showAndWait();
                 Stage stage = (Stage) buttonC.getScene().getWindow();
                 name = showNameField();
                 System.out.println("Your name: " + name);
-                verifyNameGUI(client);
+                if (verifyNameGUI(client)) {
+                    showGUI(args);
+                }
                 stage.hide();
             } else {
                 alert.setContentText("Server not available. Please try again");
@@ -82,8 +86,10 @@ public class ClientController {
 
     /**
      *
+     * @param client
+     * @return
      */
-    private void verifyNameGUI(Client client) {
+    private boolean verifyNameGUI(Client client) {
         Alert nameAlert = new Alert(Alert.AlertType.ERROR);
         nameAlert.setTitle("Server connection");
         nameAlert.setHeaderText("Connecting to Server with name: " + name);
@@ -91,24 +97,27 @@ public class ClientController {
         if (statusCode == -1) {
             nameAlert.setContentText("Verification failed. Please try again.");
             nameAlert.showAndWait();
-        } else if (statusCode == 400) {
+        } else if (statusCode == STATUS_NONAME) {
             nameAlert.setContentText("Name cannot be empty.");
             nameAlert.showAndWait();
-        } else if (statusCode == 409) {
+        } else if (statusCode == STATUS_ALREADY_REGISTERED) {
             nameAlert.setContentText("Name is already registered");
             nameAlert.showAndWait();
         } else {
             if (client.isGameStarted(name)) {
                 nameAlert.setContentText("Game already started.");
                 nameAlert.showAndWait();
+                //Here Delete name again.
             } else {
                 Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
                 nameAlertSuccess.setTitle("Server connection");
                 nameAlertSuccess.setHeaderText("Connecting to Server with name: " + name);
                 nameAlertSuccess.setContentText("Connection Successful");
                 nameAlertSuccess.showAndWait();
+                return true;
             }
         }
+        return false;
     }
 
     /**

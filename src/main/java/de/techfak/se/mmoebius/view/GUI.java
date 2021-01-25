@@ -1,8 +1,6 @@
 package de.techfak.se.mmoebius.view;
 
 import de.techfak.se.mmoebius.controller.ClientController;
-import de.techfak.se.mmoebius.controller.Controller;
-import de.techfak.se.mmoebius.model.Game;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.layout.Pane;
