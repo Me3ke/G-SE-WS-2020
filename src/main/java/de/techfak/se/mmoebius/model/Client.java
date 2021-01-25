@@ -32,6 +32,7 @@ public class Client {
             } else {
                 return false;
             }
+            //TODO IP Adresse zu url? + Fehlermeldungen
         } else {
             System.out.println("Error in Server connection");
             return false;

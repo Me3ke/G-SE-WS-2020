@@ -12,12 +12,18 @@
         <Insets topRightBottomLeft="10"/>
     </padding>
     <HBox spacing="10">
-        <Label fx:id="ipLabel"> Enter IP: </Label>
+        <Label fx:id="ipLabel"> Enter IP:   </Label>
         <TextField fx:id="ipField"> </TextField>
     </HBox>
     <HBox spacing="10">
         <Label fx:id="portLabel"> Enter Port: </Label>
         <TextField fx:id="portField"> </TextField>
     </HBox>
-    <Button fx:id="button"> connect </Button>
+    <HBox spacing="10">
+        <padding>
+            <Insets topRightBottomLeft="10"/>
+        </padding>
+        <Button fx:id="buttonC"> Connect </Button>
+        <Button fx:id="buttonSP"> Singplayer </Button>
+    </HBox>
 </VBox>

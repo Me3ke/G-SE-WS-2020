@@ -1,5 +1,6 @@
 package de.techfak.se.mmoebius.view;
 
+import de.techfak.se.mmoebius.controller.ClientController;
 import de.techfak.se.mmoebius.controller.Controller;
 import de.techfak.se.mmoebius.model.Game;
 import javafx.application.Application;
@@ -17,17 +18,15 @@ public class GUI extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(GUI.class.getResource("/GUI.fxml"));
-        Pane root = fxmlLoader.load();
+        FXMLLoader clientFxmlLoader = new FXMLLoader(GUI.class.getResource("/ClientGUI.fxml"));
+        Pane clientRoot = clientFxmlLoader.load();
         Parameters parameters = getParameters();
         List<String> parameterList = parameters.getRaw();
         String[] args = parameterList.toArray(new String[0]);
-        Game game = new Game(args);
-        game.createBoard();
-        Controller controller = fxmlLoader.getController();
-        controller.initialize(game.getBoard());
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        ClientController clientController = clientFxmlLoader.getController();
+        clientController.initialize(args);
+        Scene clientScene = new Scene(clientRoot);
+        stage.setScene(clientScene);
         stage.show();
     }
 

@@ -1,9 +1,6 @@
 package de.techfak.se.mmoebius.controller;
 
-import de.techfak.se.mmoebius.model.Board;
-import de.techfak.se.mmoebius.model.Dice;
-import de.techfak.se.mmoebius.model.Player;
-import de.techfak.se.mmoebius.model.Score;
+import de.techfak.se.mmoebius.model.*;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -89,6 +86,8 @@ public class Controller {
      *  of the in the current play move crossed tiles.
      *  numbers: an array of the numbers of the dices.
      *  colors: an array of the colors of the dices.
+     *  ip:
+     *  port:
      */
     private int rowCount;
     private int colCount;
@@ -100,6 +99,8 @@ public class Controller {
     private List<Integer> playMoveCol;
     private int[] numbers;
     private Color[] colors;
+    private String ip;
+    private int port;
 
     /**
      * the initialize method creates the playing field.
