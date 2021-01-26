@@ -8,8 +8,14 @@
     <padding>
         <Insets topRightBottomLeft="10"/>
     </padding>
-    <Button onAction="#buttonClicked"
-            alignment="BOTTOM_RIGHT">Check Move</Button>
+    <HBox spacing="500">
+        <Button onAction="#buttonClicked"
+                alignment="BOTTOM_RIGHT">Check Move</Button>
+        <VBox spacing="20">
+            <Button onAction="#startGame"> Start Game </Button>
+            <Label fx:id="gameStatus">  </Label>
+        </VBox>
+    </HBox>
     <HBox fx:id="dices" spacing="10">
         <padding>
             <Insets topRightBottomLeft="10"/>

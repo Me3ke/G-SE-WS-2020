@@ -145,6 +145,18 @@ public class Client {
         }
     }
 
+    public GameStatus startGame(String name) {
+        HttpResponse<String> response;
+        try {
+            response = post("/api/game/status", GameStatus.RUNNING);
+            System.out.println(response.body() + " " + response.statusCode());
+            return null;
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Game cannot be started.");
+            return null;
+        }
+    }
+
     /**
      *
      * @param name
@@ -199,6 +211,7 @@ public class Client {
         }
     }
 
+//---------------------------------------Get Post Delete Methods-------------------------------------------
     /**
      *
      * @param url
@@ -246,5 +259,4 @@ public class Client {
             return null;
         }
     }
-
 }

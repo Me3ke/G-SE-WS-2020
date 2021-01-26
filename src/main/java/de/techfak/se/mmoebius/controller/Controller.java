@@ -1,8 +1,8 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.client.Client;
-import de.techfak.se.mmoebius.client.PollingHandler;
 import de.techfak.se.mmoebius.model.*;
+import de.techfak.se.multiplayer.game.GameStatus;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -78,6 +78,9 @@ public class Controller {
     @FXML
     private Rectangle diceColor;
 
+    @FXML
+    private Label gameStatus;
+
 
     /**
      *  Controller Attributes:
@@ -111,6 +114,7 @@ public class Controller {
     private Client client;
     private String name;
     private HBox multiplayerInfo;
+    private GameStatus gameStatusInfo;
 
     /**
      * the initialize method creates the playing field.
@@ -123,6 +127,9 @@ public class Controller {
      */
     public void initialize(Board board, String url, String name) {
         multiplayerInfo = new HBox();
+        gameStatus.setText(GameStatus.NOT_STARTED.name());
+        gameStatus.setTextFill(Color.RED);
+        gameStatus.setFont(BASIC_FONT);
         this.name = name;
         this.url = url;
         client = new Client(url);
@@ -169,6 +176,16 @@ public class Controller {
             }
             containerV.getChildren().add(containerH);
         }
+        createSurroundings();
+        board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+//---------------------------------------Create Methods-------------------------------------------
+
+    /**
+     *
+     */
+    private void createSurroundings() {
         createPointLabels();
         createColorLabels();
         List<PlayerResponse> playerList =  client.getPlayerList(name);
@@ -176,9 +193,12 @@ public class Controller {
         createPointList(playerList);
         createRunnables(playerList);
         containerV.getChildren().add(multiplayerInfo);
-        board.addObserver((PropertyChangeEvent evt) -> updateField());
     }
 
+    /**
+     *
+     * @param playerList
+     */
     private void createRunnables(List<PlayerResponse> playerList) {
         Runnable pointsAndNames = new Runnable() {
             @Override public void run() {
@@ -187,59 +207,10 @@ public class Controller {
                 createPointList(playerList);
             }
         };
+        //Status runnable
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
         exec.scheduleAtFixedRate(pointsAndNames, 0, 1, TimeUnit.SECONDS);
         //TODO exec shutdown bei programmende?
-    }
-
-    /**
-     *
-     */
-    private void clearPointList() {
-    }
-
-    /**
-     *
-     */
-    private void clearNameList() {
-
-    }
-
-    /**
-     * The buttonClicked method handles a click on the "check move" button.
-     * It gets the fields clicked in this move (playMoveRow, playMoveCol) and
-     * uses the board.validate method to validate the inputs if there were some.
-     * If the move was invalid it shows a dialog. After a move it rolls the dices again.
-     * Furthermore it tests if the game is over and shows a dialog then.
-     * @param actionEvent The event of the clicked Button.
-     */
-    public void buttonClicked(ActionEvent actionEvent) {
-        if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
-            System.out.println("Passing play move");
-            throwDices();
-        } else {
-            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
-                board.printBoard();
-                if (score.testIfFinished(board)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game Over");
-                    alert.setHeaderText("The game is over");
-                    alert.setContentText("You achieved: " + updatePoints() + " points");
-                    alert.showAndWait();
-                    Platform.exit();
-                }
-                throwDices();
-            } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Invalid Turn");
-                alert.setHeaderText("The chosen move is invalid");
-                alert.setContentText("Crosses will be removed, try again.");
-                alert.showAndWait();
-                removeCrosses();
-            }
-            playMoveRow.clear();
-            playMoveCol.clear();
-        }
     }
 
     /**
@@ -264,6 +235,10 @@ public class Controller {
         }
     }
 
+    /**
+     *
+     * @param playerList
+     */
     private void createNameList(List<PlayerResponse> playerList) {
        if (playerList != null) {
            Label header = new Label("Players:");
@@ -290,6 +265,10 @@ public class Controller {
        }
     }
 
+    /**
+     *
+     * @param playerList
+     */
     private void createPointList (List<PlayerResponse> playerList) {
         if (playerList != null) {
             Label header = new Label("Points:");
@@ -339,6 +318,59 @@ public class Controller {
         }
     }
 
+//---------------------------------------Button On Action Methods-------------------------------------------
+    /**
+     *
+     * @param actionEvent
+     */
+    public void startGame(ActionEvent actionEvent) {
+        gameStatusInfo = client.startGame(name);
+        if (!client.isGameStarted(name) && gameStatusInfo != null) {
+            //
+        } else {
+            //Game already started.
+        }
+    }
+
+    /**
+     * The buttonClicked method handles a click on the "check move" button.
+     * It gets the fields clicked in this move (playMoveRow, playMoveCol) and
+     * uses the board.validate method to validate the inputs if there were some.
+     * If the move was invalid it shows a dialog. After a move it rolls the dices again.
+     * Furthermore it tests if the game is over and shows a dialog then.
+     * @param actionEvent The event of the clicked Button.
+     */
+    public void buttonClicked(ActionEvent actionEvent) {
+        if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
+            System.out.println("Passing play move");
+            throwDices();
+        } else {
+            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
+                board.printBoard();
+                if (score.testIfFinished(board)) {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Game Over");
+                    alert.setHeaderText("The game is over");
+                    alert.setContentText("You achieved: " + updatePoints() + " points");
+                    alert.showAndWait();
+                    Platform.exit();
+                }
+                throwDices();
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Turn");
+                alert.setHeaderText("The chosen move is invalid");
+                alert.setContentText("Crosses will be removed, try again.");
+                alert.showAndWait();
+                removeCrosses();
+            }
+            playMoveRow.clear();
+            playMoveCol.clear();
+        }
+    }
+
+//---------------------------------------Update Methods-------------------------------------------
+
     /**
      *  The throwDices method creates a dice instances and visualizes
      *  the color and the number in the application.
@@ -365,23 +397,6 @@ public class Controller {
         dices.getChildren().clear();
         dices.getChildren().add(diceColors);
         dices.getChildren().add(diceNumbers);
-    }
-
-    /**
-     * The testForEqual method checks if the current field the
-     * player crossed, was already crossed beforehand.
-      * @param currentRow The row of the tile to be crossed.
-     * @param currentCol The column of the tile to be crossed.
-     * @return  Returns true if the current field to be crossed was
-     *          already crossed and false if not.
-     */
-    private boolean testForEqual(int currentRow, int currentCol) {
-        if (field[currentRow][currentCol].getChildren().size() > 1) {
-            System.out.println("Field " + currentRow + currentCol + " is already crossed.");
-            return true;
-        } else {
-            return false;
-        }
     }
 
     /**
@@ -469,6 +484,7 @@ public class Controller {
         return currentPoints;
     }
 
+//---------------------------------------Auxilary Methods-------------------------------------------
     /**
      * The removeCrosses method removes the cross of a tile if a play move was
      * considered invalid.
@@ -477,6 +493,23 @@ public class Controller {
         for (int i = 0; i < playMoveRow.size(); i++) {
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
             field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
+        }
+    }
+
+    /**
+     * The testForEqual method checks if the current field the
+     * player crossed, was already crossed beforehand.
+     * @param currentRow The row of the tile to be crossed.
+     * @param currentCol The column of the tile to be crossed.
+     * @return  Returns true if the current field to be crossed was
+     *          already crossed and false if not.
+     */
+    private boolean testForEqual(int currentRow, int currentCol) {
+        if (field[currentRow][currentCol].getChildren().size() > 1) {
+            System.out.println("Field " + currentRow + currentCol + " is already crossed.");
+            return true;
+        } else {
+            return false;
         }
     }
 
