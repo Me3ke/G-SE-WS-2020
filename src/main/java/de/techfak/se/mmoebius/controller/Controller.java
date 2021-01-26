@@ -183,6 +183,7 @@ public class Controller {
         Runnable pointsAndNames = new Runnable() {
             @Override public void run() {
                 multiplayerInfo.getChildren().clear();
+                createNameList(playerList);
                 createPointList(playerList);
             }
         };
