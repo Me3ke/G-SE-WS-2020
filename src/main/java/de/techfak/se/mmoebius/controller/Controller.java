@@ -324,11 +324,16 @@ public class Controller {
      * @param actionEvent
      */
     public void startGame(ActionEvent actionEvent) {
-        gameStatusInfo = client.startGame(name);
-        if (!client.isGameStarted(name) && gameStatusInfo != null) {
-            //
+        if (!client.isGameStarted(name)) {
+            gameStatusInfo = client.startGame(name);
+            if (gameStatusInfo != null) {
+                gameStatus.setText(gameStatusInfo.name());
+                gameStatus.setTextFill(Color.GREEN);
+            } else {
+                //Game could not be started
+            }
         } else {
-            //Game already started.
+            // Game already started
         }
     }
 

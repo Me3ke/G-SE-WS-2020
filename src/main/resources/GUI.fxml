@@ -11,7 +11,7 @@
     <HBox spacing="500">
         <Button onAction="#buttonClicked"
                 alignment="BOTTOM_RIGHT">Check Move</Button>
-        <VBox spacing="20">
+        <VBox spacing="5">
             <Button onAction="#startGame"> Start Game </Button>
             <Label fx:id="gameStatus">  </Label>
         </VBox>

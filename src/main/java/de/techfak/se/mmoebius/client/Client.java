@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.techfak.se.multiplayer.game.*;
 import de.techfak.se.multiplayer.game.Board;
 import de.techfak.se.multiplayer.game.Player;
+import de.techfak.se.multiplayer.server.request_body.StatusBody;
 import de.techfak.se.multiplayer.server.response_body.BoardResponse;
 import de.techfak.se.multiplayer.server.response_body.PlayerListResponse;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
@@ -147,10 +148,14 @@ public class Client {
 
     public GameStatus startGame(String name) {
         HttpResponse<String> response;
+        StatusResponse statusResponse = null;
+        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
         try {
-            response = post("/api/game/status", GameStatus.RUNNING);
+            StatusBody statusBody = new StatusBody(GameStatus.RUNNING, encodedName);
+            response = post("/api/game/status", statusBody);
             System.out.println(response.body() + " " + response.statusCode());
-            return null;
+            statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
+            return statusResponse.getStatus();
         } catch (IOException | InterruptedException e) {
             System.out.println("Game cannot be started.");
             return null;
