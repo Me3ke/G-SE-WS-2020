@@ -1,8 +1,7 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
-import de.techfak.se.mmoebius.model.Client;
-import de.techfak.se.mmoebius.model.Game;
+import de.techfak.se.mmoebius.client.Client;
 import de.techfak.se.mmoebius.view.GUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;

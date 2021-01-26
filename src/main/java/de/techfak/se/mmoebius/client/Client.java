@@ -1,4 +1,4 @@
-package de.techfak.se.mmoebius.model;
+package de.techfak.se.mmoebius.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;

@@ -1,5 +1,7 @@
 package de.techfak.se.mmoebius.controller;
 
+import de.techfak.se.mmoebius.client.Client;
+import de.techfak.se.mmoebius.client.PollingHandler;
 import de.techfak.se.mmoebius.model.*;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
@@ -16,11 +18,13 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -167,10 +171,37 @@ public class Controller {
         }
         createPointLabels();
         createColorLabels();
-        createNameList();
-        createPointList();
+        List<PlayerResponse> playerList =  client.getPlayerList(name);
+        createNameList(playerList);
+        createPointList(playerList);
+        createRunnables(playerList);
         containerV.getChildren().add(multiplayerInfo);
         board.addObserver((PropertyChangeEvent evt) -> updateField());
+    }
+
+    private void createRunnables(List<PlayerResponse> playerList) {
+        Runnable pointsAndNames = new Runnable() {
+            @Override public void run() {
+                multiplayerInfo.getChildren().clear();
+                createPointList(playerList);
+            }
+        };
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(pointsAndNames, 0, 1, TimeUnit.SECONDS);
+        //TODO exec shutdown bei programmende?
+    }
+
+    /**
+     *
+     */
+    private void clearPointList() {
+    }
+
+    /**
+     *
+     */
+    private void clearNameList() {
+
     }
 
     /**
@@ -232,8 +263,7 @@ public class Controller {
         }
     }
 
-    private void createNameList() {
-       List<PlayerResponse> playerList =  client.getPlayerList(name);
+    private void createNameList(List<PlayerResponse> playerList) {
        if (playerList != null) {
            Label header = new Label("Players:");
            header.setFont(BASIC_FONT);
@@ -259,8 +289,7 @@ public class Controller {
        }
     }
 
-    private void createPointList () {
-        List<PlayerResponse> playerList =  client.getPlayerList(name);
+    private void createPointList (List<PlayerResponse> playerList) {
         if (playerList != null) {
             Label header = new Label("Points:");
             header.setFont(BASIC_FONT);
