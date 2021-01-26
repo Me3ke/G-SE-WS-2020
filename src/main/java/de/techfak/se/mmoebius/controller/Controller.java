@@ -18,10 +18,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -56,6 +58,8 @@ public class Controller {
     private static final int POINT_SPACING = 30;
     private static final double STROKE_WIDTH_COMPLETE = 8;
     private static final int MAX_PLAYERS = 5;
+    private static final int CONTAINER_COLOR_LOCATION = 11;
+    private static final int CONTAINER_COLUMN_LOCATION = 10;
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -79,7 +83,10 @@ public class Controller {
     private Rectangle diceColor;
 
     @FXML
-    private Label gameStatus;
+    private Button startGame;
+
+    @FXML
+    private Label gameStatusLabel;
 
 
     /**
@@ -127,9 +134,9 @@ public class Controller {
      */
     public void initialize(Board board, String url, String name) {
         multiplayerInfo = new HBox();
-        gameStatus.setText(GameStatus.NOT_STARTED.name());
-        gameStatus.setTextFill(Color.RED);
-        gameStatus.setFont(BASIC_FONT);
+        gameStatusInfo = GameStatus.NOT_STARTED;
+        gameStatusLabel.setText(gameStatusInfo.name());
+        gameStatusLabel.setFont(BASIC_FONT);
         this.name = name;
         this.url = url;
         client = new Client(url);
@@ -202,14 +209,35 @@ public class Controller {
     private void createRunnables(List<PlayerResponse> playerList) {
         Runnable pointsAndNames = new Runnable() {
             @Override public void run() {
-                multiplayerInfo.getChildren().clear();
-                createNameList(playerList);
-                createPointList(playerList);
+                Platform.runLater(() -> {
+                    multiplayerInfo.getChildren().clear();
+                    createPointList(playerList);
+                    createNameList(playerList);
+                });
             }
         };
-        //Status runnable
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(pointsAndNames, 0, 1, TimeUnit.SECONDS);
+        Runnable statusQuery = new Runnable() {
+            @Override
+            public void run() {
+                GameStatus currentGameStatus = client.getServerStatus(name);
+                if (currentGameStatus != null) {
+                    Platform.runLater(() -> gameStatusLabel.setText(gameStatusInfo.name()));
+                    if (gameStatusInfo.equals(GameStatus.RUNNING)) {
+                        Platform.runLater(() -> gameStatusLabel.setTextFill(Color.GREEN));
+                    }
+                    else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
+                        Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
+                    } else {
+                        //TODO farbe falls game finished
+                    }
+                } else {
+                    System.out.println("Problem with current game status");
+                }
+            }
+        };
+        ScheduledExecutorService exec2 = Executors.newSingleThreadScheduledExecutor();
+        exec2.scheduleAtFixedRate(pointsAndNames, 100, 300, TimeUnit.MILLISECONDS);
+        exec2.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
         //TODO exec shutdown bei programmende?
     }
 
@@ -327,8 +355,9 @@ public class Controller {
         if (!client.isGameStarted(name)) {
             gameStatusInfo = client.startGame(name);
             if (gameStatusInfo != null) {
-                gameStatus.setText(gameStatusInfo.name());
-                gameStatus.setTextFill(Color.GREEN);
+                System.out.println(gameStatusInfo.name());
+                System.out.println("Game has been started");
+                startGame.setDisable(true);
             } else {
                 //Game could not be started
             }
@@ -436,7 +465,7 @@ public class Controller {
             for (int i = 0; i < field.length; i++) {
                 for (int k = 0; k < field[i].length; k++) {
                     if (board.getFloor()[i][k].getColor().equals(completeColors[l])) {
-                        Node nodeOut = containerV.getChildren().get(containerSize - 1);
+                        Node nodeOut = containerV.getChildren().get(CONTAINER_COLOR_LOCATION);
                         if (nodeOut instanceof HBox) {
                             for (int j = 0; j < COLOR_COUNT; j++) {
                                 Node nodeIn = ((HBox) nodeOut) .getChildren().get(j);
@@ -467,7 +496,7 @@ public class Controller {
         } else {
             for (int i = 0; i < completeCols.length; i++) {
                 if (completeCols[i] != 0) {
-                    Node nodeOut = containerV.getChildren().get(containerSize - 2);
+                    Node nodeOut = containerV.getChildren().get(CONTAINER_COLUMN_LOCATION);
                     if (nodeOut instanceof HBox) {
                         Node nodeIn = ((HBox) nodeOut).getChildren().get(completeCols[i] - 1);
                         if (nodeIn instanceof Label) {
@@ -478,7 +507,7 @@ public class Controller {
             }
         }
     }
-    //TODO containerV wurde länger. Wieder Anpassen, möglicherweise von oben statt von unten
+
     /**
      * The updatePoints method uses the score.calculatePoints method to show the
      * current points of the player in the application.
@@ -489,7 +518,7 @@ public class Controller {
         return currentPoints;
     }
 
-//---------------------------------------Auxilary Methods-------------------------------------------
+//---------------------------------------Auxiliary Methods-------------------------------------------
     /**
      * The removeCrosses method removes the cross of a tile if a play move was
      * considered invalid.

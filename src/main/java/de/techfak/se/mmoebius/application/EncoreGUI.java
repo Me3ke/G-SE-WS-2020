@@ -26,4 +26,4 @@ public final class EncoreGUI {
         System.exit(0);
     }
 }
-
+//TODO ändern dass er nicht den Pfad für singleplayer Brauch

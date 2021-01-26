@@ -11,10 +11,11 @@
     <HBox spacing="500">
         <Button onAction="#buttonClicked"
                 alignment="BOTTOM_RIGHT">Check Move</Button>
-        <VBox spacing="5">
-            <Button onAction="#startGame"> Start Game </Button>
-            <Label fx:id="gameStatus">  </Label>
+        <VBox spacing="10">
+            <Button onAction="#startGame" fx:id="startGame"> Start Game </Button>
+            <Label fx:id="gameStatusLabel"> </Label>
         </VBox>
+
     </HBox>
     <HBox fx:id="dices" spacing="10">
         <padding>
@@ -23,4 +24,5 @@
     </HBox>
     <Label fx:id="points"> Points: 0 </Label>
 </VBox>
+
 

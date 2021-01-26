@@ -124,7 +124,6 @@ public class Client {
         StatusResponse gameStatus;
         GameStatus status = null;
         String path = url + "/api/game/status?name=" + URLEncoder.encode(name, Charset.defaultCharset());
-        System.out.println(path);
         response = get(path);
         if (response != null) {
             try {
@@ -153,7 +152,6 @@ public class Client {
         try {
             StatusBody statusBody = new StatusBody(GameStatus.RUNNING, encodedName);
             response = post("/api/game/status", statusBody);
-            System.out.println(response.body() + " " + response.statusCode());
             statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
             return statusResponse.getStatus();
         } catch (IOException | InterruptedException e) {
@@ -181,6 +179,31 @@ public class Client {
         } else {
             System.out.println("Error in Server connection");
             return false;
+        }
+    }
+
+    public GameStatus getServerStatus(String name) {
+        HttpResponse<String> response;
+        StatusResponse gameStatus;
+        GameStatus status = null;
+        String path = url + "/api/game/status?name=" + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        if (response != null) {
+            try {
+                gameStatus = objectMapper.readValue(response.body(), StatusResponse.class);
+                status = gameStatus.getStatus();
+                if (response.statusCode() == STATUS_SUCCESS) {
+                    return status;
+                } else {
+                    return null;
+                }
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+        } else {
+            System.out.println("Error in Server connection");
+            return null;
         }
     }
 
@@ -263,5 +286,9 @@ public class Client {
         } catch (InterruptedException | IllegalArgumentException | IOException e) {
             return null;
         }
+    }
+
+    public String getUrl() {
+        return url;
     }
 }

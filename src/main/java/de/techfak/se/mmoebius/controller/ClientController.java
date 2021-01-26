@@ -51,6 +51,7 @@ public class ClientController {
     public void initialize(String[] args) {
         name = null;
         buttonSP.setOnMouseClicked(mouseEvent -> {
+            client = new Client("");
             showGUI(args, "", name);
             Stage stage = (Stage) buttonSP.getScene().getWindow();
             stage.hide();
@@ -103,21 +104,21 @@ public class ClientController {
             nameAlert.setContentText("Name cannot be empty.");
             nameAlert.showAndWait();
         } else if (statusCode == STATUS_ALREADY_REGISTERED) {
-            nameAlert.setContentText("Name is already registered");
-            nameAlert.showAndWait();
-        } else {
             if (client.isGameStarted(name)) {
                 nameAlert.setContentText("Game already started.");
                 nameAlert.showAndWait();
                 client.deletePlayer(name);
             } else {
-                Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
-                nameAlertSuccess.setTitle("Server connection");
-                nameAlertSuccess.setHeaderText("Connecting to Server with name: " + name);
-                nameAlertSuccess.setContentText("Connection Successful");
-                nameAlertSuccess.showAndWait();
-                return true;
+                nameAlert.setContentText("Name is already registered");
+                nameAlert.showAndWait();
             }
+        } else {
+            Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
+            nameAlertSuccess.setTitle("Server connection");
+            nameAlertSuccess.setHeaderText("Connecting to Server with name: " + name);
+            nameAlertSuccess.setContentText("Connection Successful");
+            nameAlertSuccess.showAndWait();
+            return true;
         }
         return false;
     }
@@ -151,6 +152,9 @@ public class ClientController {
             root = fxmlLoader.load();
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        if (client.getUrl().equals("")) {
+            // game von lokalem Parameter
         }
         String boardString = client.getBoard(name);
         stage.setOnCloseRequest(windowEvent -> {
