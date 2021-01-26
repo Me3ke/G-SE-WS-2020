@@ -26,7 +26,7 @@ public final class EncoreServer {
          * @param args the program arguments which include the port of the Server
          */
         public static void main(final String... args) {
-            int port;
+            int port = 0;
             boolean serverStarted = false;
            if (args.length == 0) {
                System.out.println("no parameters given.");
@@ -40,7 +40,12 @@ public final class EncoreServer {
                    if (args.length == ARGS_THREE) {
                        port = DEFAULT_PORT;
                    } else {
-                       port = Integer.parseInt(args[ARGS_THREE]);
+                       try {
+                           port = Integer.parseInt(args[ARGS_THREE]);
+                       } catch (NumberFormatException e) {
+                           System.out.println("Port is not valid");
+                           System.exit(SYS_EXIT_FAILURE);
+                       }
                    }
                    try {
                        if (file.isFile() && file.canRead()) {
@@ -60,7 +65,7 @@ public final class EncoreServer {
                        System.out.print(e.getMessage());
                        System.exit(SYS_EXIT_FAILURE);
                    } catch (InterruptedException e) {
-                       e.printStackTrace();
+                       System.out.println("Server was interrupted.");
                    }
                } else {
                    System.out.println("invalid parameters. Use -f <board path> -p <port number>");

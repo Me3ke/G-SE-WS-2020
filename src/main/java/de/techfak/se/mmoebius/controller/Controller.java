@@ -1,6 +1,7 @@
 package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.*;
+import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -15,6 +16,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +51,7 @@ public class Controller {
     private static final int DEFAULT_SPACING = 10;
     private static final int POINT_SPACING = 30;
     private static final double STROKE_WIDTH_COMPLETE = 8;
+    private static final int MAX_PLAYERS = 5;
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -99,8 +103,10 @@ public class Controller {
     private List<Integer> playMoveCol;
     private int[] numbers;
     private Color[] colors;
-    private String ip;
-    private int port;
+    private String url;
+    private Client client;
+    private String name;
+    private HBox multiplayerInfo;
 
     /**
      * the initialize method creates the playing field.
@@ -111,7 +117,11 @@ public class Controller {
      * @param board The board is initialized in the GUI class where a game
      *              starts. It is the current board to be played on.
      */
-    public void initialize(Board board) {
+    public void initialize(Board board, String url, String name) {
+        multiplayerInfo = new HBox();
+        this.name = name;
+        this.url = url;
+        client = new Client(url);
         this.board = board;
         player = new Player(1, board);
         score = new Score(player);
@@ -157,6 +167,9 @@ public class Controller {
         }
         createPointLabels();
         createColorLabels();
+        createNameList();
+        createPointList();
+        containerV.getChildren().add(multiplayerInfo);
         board.addObserver((PropertyChangeEvent evt) -> updateField());
     }
 
@@ -216,6 +229,59 @@ public class Controller {
             System.out.println("POINT_ARR in Controller/Score class needs to be adjusted to column length.");
             System.out.println("Terminating program...");
             Platform.exit();
+        }
+    }
+
+    private void createNameList() {
+       List<PlayerResponse> playerList =  client.getPlayerList(name);
+       if (playerList != null) {
+           Label header = new Label("Players:");
+           header.setFont(BASIC_FONT);
+           VBox names = new VBox(header);
+           names.setPadding(new Insets(DEFAULT_SPACING));
+           names.setSpacing(DEFAULT_SPACING);
+           if (playerList.size() <= MAX_PLAYERS) {
+               for (int i = 0; i < playerList.size(); i++) {
+                   Label name = new Label(playerList.get(i).getName());
+                   name.setFont(BASIC_FONT);
+                   names.getChildren().add(name);
+               }
+               multiplayerInfo.getChildren().add(names);
+           } else {
+               System.out.println("Maximum of Players reached. Only 5 Players allowed");
+               for (int i = 0; i < MAX_PLAYERS; i++) {
+                   Label name = new Label(playerList.get(i).getName());
+                   name.setFont(BASIC_FONT);
+                   names.getChildren().add(name);
+               }
+               multiplayerInfo.getChildren().add(names);
+           }
+       }
+    }
+
+    private void createPointList () {
+        List<PlayerResponse> playerList =  client.getPlayerList(name);
+        if (playerList != null) {
+            Label header = new Label("Points:");
+            header.setFont(BASIC_FONT);
+            VBox pointsAll = new VBox(header);
+            pointsAll.setPadding(new Insets(DEFAULT_SPACING));
+            pointsAll.setSpacing(DEFAULT_SPACING);
+            if (playerList.size() < MAX_PLAYERS) {
+                for (int i = 0; i < playerList.size(); i++) {
+                    Label thisPoints = new Label(String.valueOf(playerList.get(i).getPoints()));
+                    thisPoints.setFont(BASIC_FONT);
+                    pointsAll.getChildren().add(thisPoints);
+                }
+                multiplayerInfo.getChildren().add(pointsAll);
+            } else {
+                for (int i = 0; i < MAX_PLAYERS; i++) {
+                    Label thisPoints = new Label(String.valueOf(playerList.get(i).getPoints()));
+                    thisPoints.setFont(BASIC_FONT);
+                    pointsAll.getChildren().add(thisPoints);
+                }
+                multiplayerInfo.getChildren().add(pointsAll);
+            }
         }
     }
 
@@ -362,7 +428,7 @@ public class Controller {
             }
         }
     }
-
+    //TODO containerV wurde länger. Wieder Anpassen, möglicherweise von oben statt von unten
     /**
      * The updatePoints method uses the score.calculatePoints method to show the
      * current points of the player in the application.
@@ -398,7 +464,4 @@ public class Controller {
         return array;
     }
 }
-
-    /*TODO Fragen im Tut:   -Manche zeilen 10 werden nicht gold
-     */
 

@@ -1,8 +1,14 @@
 package de.techfak.se.mmoebius.model;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.techfak.se.multiplayer.game.*;
+import de.techfak.se.multiplayer.game.Board;
+import de.techfak.se.multiplayer.game.Player;
+import de.techfak.se.multiplayer.server.response_body.BoardResponse;
+import de.techfak.se.multiplayer.server.response_body.PlayerListResponse;
+import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import de.techfak.se.multiplayer.server.response_body.StatusResponse;
 
 import java.io.IOException;
@@ -12,6 +18,8 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -58,6 +66,36 @@ public class Client {
         }
     }
 
+    public List<PlayerResponse> getPlayerList(String name) {
+        if (name == null) {
+            return null;
+        }
+        HttpResponse<String> response;
+        PlayerListResponse playerListResponse;
+        List<PlayerResponse> playerList;
+        PlayerResponse playerResponse;
+        List<String> playerNameList = new ArrayList<String>();
+        String path = url + "/api/game/players?name=" + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        if (response != null) {
+            if (response.statusCode() == STATUS_SUCCESS) {
+                try {
+                    playerListResponse = objectMapper.readValue(response.body(), PlayerListResponse.class);
+                    playerList = playerListResponse.getPlayers();
+                    return playerList;
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            System.out.println("Error in Server connection");
+            return null;
+        }
+    }
+
     /**
      *
      * @param name
@@ -93,6 +131,7 @@ public class Client {
                 status = gameStatus.getStatus();
             } catch (JsonProcessingException e) {
                 e.printStackTrace();
+                return true;
             }
             if (response.statusCode() == STATUS_SUCCESS && status.equals(GameStatus.NOT_STARTED)) {
                 System.out.println("Game has not started yet.");
@@ -103,6 +142,60 @@ public class Client {
         } else {
             System.out.println("Error in Server connection");
             return true;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public boolean deletePlayer(String name) {
+        HttpResponse<String> response;
+        String path = url + "/api/game/players?name=";
+        response = delete(path, name);
+        if (response != null) {
+            if (response.statusCode() == STATUS_SUCCESS) {
+                System.out.println("Player deleted.");
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            System.out.println("Error in Server connection");
+            return false;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public String getBoard(String name) {
+        HttpResponse<String> response;
+        String path = url + "/api/game/board?name=" + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        System.out.println(response.body());
+        BoardResponse boardResponse = null;
+        String board = null;
+        if (response != null) {
+            try {
+                boardResponse = objectMapper.readValue(response.body(), BoardResponse.class);
+                board = boardResponse.getBoard();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+            if (response.statusCode() == STATUS_SUCCESS) {
+                System.out.println("Got board.");
+                return board;
+            } else {
+                return null;
+            }
+        } else {
+            System.out.println("Error in Server connection");
+            return null;
         }
     }
 
@@ -135,4 +228,23 @@ public class Client {
         HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
         return response;
     }
+
+    /**
+     *
+     * @param path
+     * @param name
+     * @return
+     */
+    public HttpResponse<String> delete(String path, String name) {
+        try {
+            HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(path + URLEncoder.encode(name, Charset.defaultCharset())))
+                .DELETE()
+                .build();
+            return httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (InterruptedException | IllegalArgumentException | IOException e) {
+            return null;
+        }
+    }
+
 }

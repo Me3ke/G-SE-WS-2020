@@ -1,5 +1,6 @@
 package de.techfak.se.mmoebius.controller;
 
+import de.techfak.se.mmoebius.model.Board;
 import de.techfak.se.mmoebius.model.Client;
 import de.techfak.se.mmoebius.model.Game;
 import de.techfak.se.mmoebius.view.GUI;
@@ -28,6 +29,7 @@ public class ClientController {
     private String ip;
     private int port;
     private String name;
+    private Client client;
 
     @FXML
     private VBox containerV;
@@ -48,8 +50,9 @@ public class ClientController {
      *
      */
     public void initialize(String[] args) {
+        name = null;
         buttonSP.setOnMouseClicked(mouseEvent -> {
-            showGUI(args);
+            showGUI(args, "", name);
             Stage stage = (Stage) buttonSP.getScene().getWindow();
             stage.hide();
         });
@@ -63,7 +66,7 @@ public class ClientController {
             System.out.println(ip);
             System.out.println(port);
             String url = "http://" + ip + ":" + port;
-            Client client = new Client(url);
+            client = new Client(url);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Server connection");
             alert.setHeaderText(null);
@@ -74,7 +77,7 @@ public class ClientController {
                 name = showNameField();
                 System.out.println("Your name: " + name);
                 if (verifyNameGUI(client)) {
-                    showGUI(args);
+                    showGUI(args, url, name);
                 }
                 stage.hide();
             } else {
@@ -107,7 +110,7 @@ public class ClientController {
             if (client.isGameStarted(name)) {
                 nameAlert.setContentText("Game already started.");
                 nameAlert.showAndWait();
-                //Here Delete name again.
+                client.deletePlayer(name);
             } else {
                 Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
                 nameAlertSuccess.setTitle("Server connection");
@@ -141,7 +144,7 @@ public class ClientController {
      *
      * @param args
      */
-    private void showGUI(String[] args) {
+    private void showGUI(String[] args, String url, String name) {
         Stage stage = new Stage();
         FXMLLoader fxmlLoader = new FXMLLoader(GUI.class.getResource("/GUI.fxml"));
         Pane root = null;
@@ -150,10 +153,23 @@ public class ClientController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Game game = new Game(args);
-        game.createBoard();
+        String boardString = client.getBoard(name);
+        stage.setOnCloseRequest(windowEvent -> {
+            client.deletePlayer(name);
+        });
+        System.out.println(boardString);
+        String lines[] = boardString.split("\\r?\\n");
+        int rowCount, colCount;
+        rowCount = lines.length;
+        colCount = lines[0].toCharArray().length;
+        char[][] map = new char[rowCount][colCount];
+        for (int i = 0; i < lines.length; i++) {
+            map[i] = lines[i].toCharArray();
+        }
+        Board board = new Board(map);
+        board.printBoard();
         Controller controller = fxmlLoader.getController();
-        controller.initialize(game.getBoard());
+        controller.initialize(board, url, name);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
