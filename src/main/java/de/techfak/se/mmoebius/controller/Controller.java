@@ -352,6 +352,9 @@ public class Controller {
      * @param actionEvent
      */
     public void startGame(ActionEvent actionEvent) {
+        Alert startAlert = new Alert(Alert.AlertType.ERROR);
+        startAlert.setTitle("Server start");
+        startAlert.setHeaderText(null);
         if (!client.isGameStarted(name)) {
             gameStatusInfo = client.startGame(name);
             if (gameStatusInfo != null) {
@@ -359,10 +362,12 @@ public class Controller {
                 System.out.println("Game has been started");
                 startGame.setDisable(true);
             } else {
-                //Game could not be started
+                startAlert.setContentText("Game could not be started.");
+                startAlert.showAndWait();
             }
         } else {
-            // Game already started
+            startAlert.setContentText("Game already started.");
+            startAlert.showAndWait();
         }
     }
 

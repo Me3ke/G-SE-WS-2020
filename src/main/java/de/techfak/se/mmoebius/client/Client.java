@@ -153,6 +153,9 @@ public class Client {
             StatusBody statusBody = new StatusBody(GameStatus.RUNNING, encodedName);
             response = post("/api/game/status", statusBody);
             statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
+            if (response.statusCode() != 200) {
+                return null;
+            }
             return statusResponse.getStatus();
         } catch (IOException | InterruptedException e) {
             System.out.println("Game cannot be started.");
