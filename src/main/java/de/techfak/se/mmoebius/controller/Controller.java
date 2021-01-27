@@ -121,7 +121,7 @@ public class Controller {
     private String name;
     private HBox multiplayerInfo;
     private GameStatus gameStatusInfo;
-    private Round round;
+    private int round;
     private boolean isSinglePlayer;
 
     /**
@@ -148,7 +148,7 @@ public class Controller {
             startGame.setDisable(true);
             button.setDisable(false);
         }
-        round = new Round();
+        round = 0;
         client = new Client(url);
         this.board = board;
         player = new Player(1, board);
@@ -174,7 +174,7 @@ public class Controller {
                 final int currentRow = i;
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
-                    if (!testForEqual(currentRow, currentCol)) {
+                    if (!testForEqual(currentRow, currentCol) && gameStatusInfo.equals(GameStatus.RUNNING)) {
                         Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
                         Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
                         crossTileOne.setRotate(ROTATE_CONST);
@@ -231,6 +231,7 @@ public class Controller {
             public void run() {
                 GameStatus currentGameStatus = client.getServerStatus(name);
                 if (currentGameStatus != null) {
+                    gameStatusInfo = currentGameStatus;
                     Platform.runLater(() -> gameStatusLabel.setText(gameStatusInfo.name()));
                     if (gameStatusInfo.equals(GameStatus.RUNNING)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.GREEN));
@@ -244,9 +245,20 @@ public class Controller {
                 }
             }
         };
+        Runnable roundQuery = new Runnable() {
+            @Override
+            public void run() {
+                int currentRound = client.getRound(name);
+                if (currentRound != 0) {
+                    round = currentRound;
+                    Platform.runLater(() -> points.setText("Round: " + round));
+                }
+            }
+        };
         ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(pointsAndNames, 100, 300, TimeUnit.MILLISECONDS);
+        exec.scheduleAtFixedRate(pointsAndNames, 0, 1, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
+        exec.scheduleAtFixedRate(roundQuery, 0, 1, TimeUnit.SECONDS);
         //TODO exec shutdown bei programmende?
     }
 
@@ -371,7 +383,7 @@ public class Controller {
                 System.out.println("Game has been started");
                 startGame.setDisable(true);
                 button.setDisable(false);
-                Platform.runLater(() -> points.setText("Round: " + round.getRound()));
+                Platform.runLater(() -> points.setText("Round: " + round));
             } else {
                 startAlert.setContentText("Game could not be started.");
                 startAlert.showAndWait();

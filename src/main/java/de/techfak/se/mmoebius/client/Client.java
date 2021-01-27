@@ -4,10 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import de.techfak.se.multiplayer.game.*;
 import de.techfak.se.multiplayer.server.request_body.StatusBody;
-import de.techfak.se.multiplayer.server.response_body.BoardResponse;
-import de.techfak.se.multiplayer.server.response_body.PlayerListResponse;
-import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
-import de.techfak.se.multiplayer.server.response_body.StatusResponse;
+import de.techfak.se.multiplayer.server.response_body.*;
 
 import java.io.IOException;
 import java.net.URI;
@@ -28,6 +25,7 @@ public class Client {
     private static final String PATH_TO_STATUS = "/api/game/status?name=";
     private static final String PATH_TO_PLAYER = "/api/game/players?name=";
     private static final String PATH_TO_BOARD = "/api/game/board?name=";
+    private static final String PATH_TO_ROUND = "/api/game/round?name=";
 
     /**
      *
@@ -262,6 +260,36 @@ public class Client {
         } else {
             System.out.println(DEFAULT_SERVER_COM_FAILED);
             return null;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public int getRound(String name) {
+        HttpResponse<String> response;
+        String path = url + PATH_TO_ROUND + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        RoundResponse roundResponse;
+        int round;
+        if (response != null) {
+            try {
+                roundResponse = objectMapper.readValue(response.body(), RoundResponse.class);
+                round = roundResponse.getRound();
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return 0;
+            }
+            if (response.statusCode() == STATUS_SUCCESS) {
+                return round;
+            } else {
+                return 0;
+            }
+        } else {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return 0;
         }
     }
 
