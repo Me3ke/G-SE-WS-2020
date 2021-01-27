@@ -20,6 +20,9 @@ public final class EncoreServer {
         private static final int SYS_EXIT_INVALID_FILE = 101;
         private static final int ARGS_THREE = 3;
 
+        private EncoreServer() {
+
+        }
 
         /**
          * The main method launches the Server.

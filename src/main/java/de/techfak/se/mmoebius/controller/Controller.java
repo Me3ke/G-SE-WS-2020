@@ -3,6 +3,7 @@ package de.techfak.se.mmoebius.controller;
 import de.techfak.se.mmoebius.client.Client;
 import de.techfak.se.mmoebius.model.*;
 import de.techfak.se.multiplayer.game.GameStatus;
+import de.techfak.se.multiplayer.game.Round;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -18,12 +19,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -122,6 +121,8 @@ public class Controller {
     private String name;
     private HBox multiplayerInfo;
     private GameStatus gameStatusInfo;
+    private Round round;
+    private boolean isSinglePlayer;
 
     /**
      * the initialize method creates the playing field.
@@ -131,6 +132,8 @@ public class Controller {
      * Additionally handles a click on one of the tiles by crossing them.
      * @param board The board is initialized in the GUI class where a game
      *              starts. It is the current board to be played on.
+     * @param url
+     * @param name
      */
     public void initialize(Board board, String url, String name) {
         multiplayerInfo = new HBox();
@@ -139,6 +142,13 @@ public class Controller {
         gameStatusLabel.setFont(BASIC_FONT);
         this.name = name;
         this.url = url;
+        button.setDisable(true);
+        if (url.equals("")) {
+            isSinglePlayer = true;
+            startGame.setDisable(true);
+            button.setDisable(false);
+        }
+        round = new Round();
         client = new Client(url);
         this.board = board;
         player = new Player(1, board);
@@ -224,8 +234,7 @@ public class Controller {
                     Platform.runLater(() -> gameStatusLabel.setText(gameStatusInfo.name()));
                     if (gameStatusInfo.equals(GameStatus.RUNNING)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.GREEN));
-                    }
-                    else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
+                    } else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
                     } else {
                         //TODO farbe falls game finished
@@ -235,9 +244,9 @@ public class Controller {
                 }
             }
         };
-        ScheduledExecutorService exec2 = Executors.newSingleThreadScheduledExecutor();
-        exec2.scheduleAtFixedRate(pointsAndNames, 100, 300, TimeUnit.MILLISECONDS);
-        exec2.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
+        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(pointsAndNames, 100, 300, TimeUnit.MILLISECONDS);
+        exec.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
         //TODO exec shutdown bei programmende?
     }
 
@@ -297,7 +306,7 @@ public class Controller {
      *
      * @param playerList
      */
-    private void createPointList (List<PlayerResponse> playerList) {
+    private void createPointList(List<PlayerResponse> playerList) {
         if (playerList != null) {
             Label header = new Label("Points:");
             header.setFont(BASIC_FONT);
@@ -361,6 +370,8 @@ public class Controller {
                 System.out.println(gameStatusInfo.name());
                 System.out.println("Game has been started");
                 startGame.setDisable(true);
+                button.setDisable(false);
+                Platform.runLater(() -> points.setText("Round: " + round.getRound()));
             } else {
                 startAlert.setContentText("Game could not be started.");
                 startAlert.showAndWait();
@@ -518,9 +529,12 @@ public class Controller {
      * current points of the player in the application.
      */
     private int updatePoints() {
-        int currentPoints = score.calculatePoints(board);
-        Platform.runLater(() -> points.setText("Points: " + currentPoints));
-        return currentPoints;
+        if (isSinglePlayer) {
+            int currentPoints = score.calculatePoints(board);
+            Platform.runLater(() -> points.setText("Points: " + currentPoints));
+            return currentPoints;
+        }
+        return 0;
     }
 
 //---------------------------------------Auxiliary Methods-------------------------------------------

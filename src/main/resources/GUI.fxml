@@ -10,7 +10,8 @@
     </padding>
     <HBox spacing="500">
         <Button onAction="#buttonClicked"
-                alignment="BOTTOM_RIGHT">Check Move</Button>
+                alignment="BOTTOM_RIGHT"
+                fx:id="button">Check Move</Button>
         <VBox spacing="10">
             <Button onAction="#startGame" fx:id="startGame"> Start Game </Button>
             <Label fx:id="gameStatusLabel"> </Label>

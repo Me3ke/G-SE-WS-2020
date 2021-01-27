@@ -2,6 +2,7 @@ package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.model.Board;
 import de.techfak.se.mmoebius.client.Client;
+import de.techfak.se.mmoebius.model.Game;
 import de.techfak.se.mmoebius.view.GUI;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -22,6 +23,8 @@ public class ClientController {
     private static final String DEFAULT_NAME = "Theben";
     private static final int STATUS_NONAME = 400;
     private static final int STATUS_ALREADY_REGISTERED = 409;
+    private static final String CONNECTION_TITLE = "Server Connection";
+    private static final String CONNECTION_HEADER = "Connecting to Server with name: ";
     /**
      *
      */
@@ -47,6 +50,7 @@ public class ClientController {
 
     /**
      *
+     * @param args
      */
     public void initialize(String[] args) {
         name = null;
@@ -68,7 +72,7 @@ public class ClientController {
             String url = "http://" + ip + ":" + port;
             client = new Client(url);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Server connection");
+            alert.setTitle(CONNECTION_TITLE);
             alert.setHeaderText(null);
             if (client.connectToServer()) {
                 alert.setContentText("Connection to server established");
@@ -94,8 +98,8 @@ public class ClientController {
      */
     private boolean verifyNameGUI(Client client) {
         Alert nameAlert = new Alert(Alert.AlertType.ERROR);
-        nameAlert.setTitle("Server connection");
-        nameAlert.setHeaderText("Connecting to Server with name: " + name);
+        nameAlert.setTitle(CONNECTION_TITLE);
+        nameAlert.setHeaderText(CONNECTION_HEADER + name);
         int statusCode = client.verifyName(name);
         if (statusCode == -1) {
             nameAlert.setContentText("Verification failed. Please try again.");
@@ -114,8 +118,8 @@ public class ClientController {
             }
         } else {
             Alert nameAlertSuccess = new Alert(Alert.AlertType.INFORMATION);
-            nameAlertSuccess.setTitle("Server connection");
-            nameAlertSuccess.setHeaderText("Connecting to Server with name: " + name);
+            nameAlertSuccess.setTitle(CONNECTION_TITLE);
+            nameAlertSuccess.setHeaderText(CONNECTION_HEADER + name);
             nameAlertSuccess.setContentText("Connection Successful");
             nameAlertSuccess.showAndWait();
             return true;
@@ -143,6 +147,8 @@ public class ClientController {
     /**
      *
      * @param args
+     * @param url
+     * @param name
      */
     private void showGUI(String[] args, String url, String name) {
         Stage stage = new Stage();
@@ -154,25 +160,27 @@ public class ClientController {
             e.printStackTrace();
         }
         if (client.getUrl().equals("")) {
-            // game von lokalem Parameter
+            Game game = new Game(args);
+            game.createBoard();
+            Controller controller = fxmlLoader.getController();
+            controller.initialize(game.getBoard(), url, name);
+        } else {
+            stage.setOnCloseRequest(windowEvent -> client.deletePlayer(name));
+            String boardString = client.getBoard(name);
+            String[] lines = boardString.split("\\r?\\n");
+            int rowCount;
+            int colCount;
+            rowCount = lines.length;
+            colCount = lines[0].toCharArray().length;
+            char[][] map = new char[rowCount][colCount];
+            for (int i = 0; i < lines.length; i++) {
+                map[i] = lines[i].toCharArray();
+            }
+            Board board = new Board(map);
+            board.printBoard();
+            Controller controller = fxmlLoader.getController();
+            controller.initialize(board, url, name);
         }
-        String boardString = client.getBoard(name);
-        stage.setOnCloseRequest(windowEvent -> {
-            client.deletePlayer(name);
-        });
-        System.out.println(boardString);
-        String lines[] = boardString.split("\\r?\\n");
-        int rowCount, colCount;
-        rowCount = lines.length;
-        colCount = lines[0].toCharArray().length;
-        char[][] map = new char[rowCount][colCount];
-        for (int i = 0; i < lines.length; i++) {
-            map[i] = lines[i].toCharArray();
-        }
-        Board board = new Board(map);
-        board.printBoard();
-        Controller controller = fxmlLoader.getController();
-        controller.initialize(board, url, name);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
