@@ -143,6 +143,7 @@ public class Controller {
         this.name = name;
         this.url = url;
         button.setDisable(true);
+        isSinglePlayer = false;
         if (url.equals("")) {
             isSinglePlayer = true;
             startGame.setDisable(true);
@@ -162,7 +163,6 @@ public class Controller {
         colors = new Color[DICE_COUNT];
         points.setFont(BASIC_FONT);
         points.setBorder(new Border(BORDER_STROKE_P));
-        throwDices();
         for (int i = 0; i < rowCount; i++) {
             HBox containerH = new HBox();
             for (int j = 0; j < colCount; j++) {
@@ -174,17 +174,19 @@ public class Controller {
                 final int currentRow = i;
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
-                    if (!testForEqual(currentRow, currentCol) && gameStatusInfo.equals(GameStatus.RUNNING)) {
-                        Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
-                        Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
-                        crossTileOne.setRotate(ROTATE_CONST);
-                        crossTileTwo.setRotate(ROTATE_CONST);
-                        crossTileOne.setFill(Color.BLACK);
-                        crossTileTwo.setFill(Color.BLACK);
-                        group.getChildren().add(crossTileOne);
-                        group.getChildren().add(crossTileTwo);
-                        playMoveRow.add(currentRow);
-                        playMoveCol.add(currentCol);
+                    if (!testForEqual(currentRow, currentCol)) {
+                        if (isSinglePlayer || gameStatusInfo.equals(GameStatus.RUNNING)) {
+                            Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
+                            Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
+                            crossTileOne.setRotate(ROTATE_CONST);
+                            crossTileTwo.setRotate(ROTATE_CONST);
+                            crossTileOne.setFill(Color.BLACK);
+                            crossTileTwo.setFill(Color.BLACK);
+                            group.getChildren().add(crossTileOne);
+                            group.getChildren().add(crossTileTwo);
+                            playMoveRow.add(currentRow);
+                            playMoveCol.add(currentCol);
+                        }
                     }
                 });
                 group.getChildren().add(rectangle);
@@ -203,22 +205,25 @@ public class Controller {
      *
      */
     private void createSurroundings() {
+        if (isSinglePlayer) {
+            throwDices();
+        }
         createPointLabels();
         createColorLabels();
         List<PlayerResponse> playerList =  client.getPlayerList(name);
         createNameList(playerList);
         createPointList(playerList);
-        createRunnables(playerList);
+        createRunnables();
         containerV.getChildren().add(multiplayerInfo);
     }
 
     /**
      *
-     * @param playerList
      */
-    private void createRunnables(List<PlayerResponse> playerList) {
+    private void createRunnables() {
         Runnable pointsAndNames = new Runnable() {
             @Override public void run() {
+                List<PlayerResponse> playerList =  client.getPlayerList(name);
                 Platform.runLater(() -> {
                     multiplayerInfo.getChildren().clear();
                     createPointList(playerList);
@@ -252,6 +257,10 @@ public class Controller {
                 if (currentRound != 0) {
                     round = currentRound;
                     Platform.runLater(() -> points.setText("Round: " + round));
+                    Dice[] dices = client.getDices(name);
+                    if (dices != null) {
+                        Platform.runLater(() -> createDices(dices));
+                    }
                 }
             }
         };
@@ -260,6 +269,30 @@ public class Controller {
         exec.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(roundQuery, 0, 1, TimeUnit.SECONDS);
         //TODO exec shutdown bei programmende?
+    }
+
+    private void createDices(Dice[] diceArr) {
+        HBox diceColors = new HBox();
+        HBox diceNumbers = new HBox();
+        diceColors.setSpacing(DEFAULT_SPACING);
+        diceNumbers.setSpacing(DEFAULT_SPACING);
+        for (int i = 0; i < DICE_COUNT; i++) {
+            Dice dice = diceArr[i];
+            numbers[i] = dice.getNumber();
+            colors[i] = dice.getColor();
+            diceNumber = new Label(String.valueOf(numbers[i]));
+            diceNumber.setFont(BASIC_FONT);
+            diceNumber.setBorder(new Border(BORDER_STROKE_D));
+            diceColor = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
+            diceColor.setFill(colors[i]);
+            diceColor.setStrokeType(StrokeType.INSIDE);
+            diceColor.setStroke(Color.BLACK);
+            diceColors.getChildren().add(diceColor);
+            diceNumbers.getChildren().add(diceNumber);
+        }
+        dices.getChildren().clear();
+        dices.getChildren().add(diceColors);
+        dices.getChildren().add(diceNumbers);
     }
 
     /**
@@ -393,7 +426,7 @@ public class Controller {
             startAlert.showAndWait();
         }
     }
-
+//TODO throw dices nur bei Singleplayer sonst vom Server. Methode muss durchleuchtet werden
     /**
      * The buttonClicked method handles a click on the "check move" button.
      * It gets the fields clicked in this move (playMoveRow, playMoveCol) and

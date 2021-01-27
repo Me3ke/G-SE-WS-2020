@@ -2,7 +2,9 @@ package de.techfak.se.mmoebius.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import de.techfak.se.mmoebius.model.Dice;
 import de.techfak.se.multiplayer.game.*;
+import de.techfak.se.multiplayer.game.Number;
 import de.techfak.se.multiplayer.server.request_body.StatusBody;
 import de.techfak.se.multiplayer.server.response_body.*;
 
@@ -26,6 +28,10 @@ public class Client {
     private static final String PATH_TO_PLAYER = "/api/game/players?name=";
     private static final String PATH_TO_BOARD = "/api/game/board?name=";
     private static final String PATH_TO_ROUND = "/api/game/round?name=";
+    private static final String PATH_TO_DICE = "/api/game/dice?name=";
+    private static final int NUMBER_THREE = 3;
+    private static final int NUMBER_FOUR = 4;
+    private static final int NUMBER_FIVE = 5;
 
     /**
      *
@@ -293,6 +299,40 @@ public class Client {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public Dice[] getDices(String name) {
+        HttpResponse<String> response;
+        String path = url + PATH_TO_DICE + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        DiceResponse diceResponse;
+        List<Color> colors;
+        List<Number> numbers;
+        Dice[] dices;
+        if (response != null) {
+            try {
+                diceResponse = objectMapper.readValue(response.body(), DiceResponse.class);
+                colors = diceResponse.getColors();
+                numbers = diceResponse.getNumbers();
+                dices = toDiceModel(colors, numbers);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+                return null;
+            }
+            if (response.statusCode() == STATUS_SUCCESS) {
+                return dices;
+            } else {
+                return null;
+            }
+        } else {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return null;
+        }
+    }
+
 //---------------------------------------Get Post Delete Methods-------------------------------------------
     /**
      *
@@ -342,7 +382,67 @@ public class Client {
         }
     }
 
+//---------------------------------------Auxiliary Methods-------------------------------------------
+    /**
+     *
+     * @param colors
+     * @param numbers
+     * @return
+     */
+    private Dice[] toDiceModel(List<Color> colors, List<Number> numbers) {
+        javafx.scene.paint.Color[] colorArr = new javafx.scene.paint.Color[colors.size()];
+        int[] numberArr = new int[numbers.size()];
+        for (int i = 0; i < colors.size(); i++) {
+            Color current = colors.get(i);
+            switch(current) {
+                case GREEN:
+                    colorArr[i] = javafx.scene.paint.Color.GREEN;
+                    break;
+                case RED:
+                    colorArr[i] = javafx.scene.paint.Color.RED;
+                    break;
+                case BLUE:
+                    colorArr[i] = javafx.scene.paint.Color.BLUE;
+                    break;
+                case YELLOW:
+                    colorArr[i] = javafx.scene.paint.Color.YELLOW;
+                    break;
+                default:
+                    colorArr[i] = javafx.scene.paint.Color.ORANGE;
+                    break;
+            }
+        }
+        for (int j = 0; j < numbers.size(); j++) {
+            Number current = numbers.get(j);
+            switch(current) {
+                case ONE:
+                    numberArr[j] = 1;
+                    break;
+                case TWO:
+                    numberArr[j] = 2;
+                    break;
+                case THREE:
+                    numberArr[j] = NUMBER_THREE;
+                    break;
+                case FOUR:
+                    numberArr[j] = NUMBER_FOUR;
+                    break;
+                case FIVE:
+                    numberArr[j] = NUMBER_FIVE;
+                    break;
+            }
+        }
+        Dice[] dices = new Dice[colors.size()];
+        for (int k = 0; k < dices.length; k++) {
+            dices[k] = new Dice(colorArr[k], numberArr[k]);
+        }
+        return dices;
+    }
+
     public String getUrl() {
         return url;
     }
 }
+
+//TODO Playerdelete Synchronisieren
+//TODO gucken was noch Synchronisiert werden muss
