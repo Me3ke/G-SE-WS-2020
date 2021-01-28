@@ -249,10 +249,11 @@ public class Controller {
                     } else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
                     } else {
-                        //TODO farbe falls game finished
+                        Platform.runLater(() -> gameStatusLabel.setTextFill(Color.BLUE));
                     }
                 } else {
                     System.out.println("Problem with current game status");
+                    end();
                 }
             }
         };
