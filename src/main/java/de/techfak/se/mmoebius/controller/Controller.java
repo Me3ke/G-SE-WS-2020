@@ -438,19 +438,39 @@ public class Controller {
     public void buttonClicked(ActionEvent actionEvent) {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
             System.out.println("Passing play move");
-            throwDices();
+            if (isSinglePlayer) {
+                throwDices();
+            } else {
+                System.out.println("Runde beendet");
+                // hier an Server senden
+                // spielfeld blocken
+                // Dann neue runde akutalisieren
+                // und neue WÜrfel holen
+            }
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
                 if (score.testIfFinished(board)) {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setTitle("Game Over");
-                    alert.setHeaderText("The game is over");
-                    alert.setContentText("You achieved: " + updatePoints() + " points");
-                    alert.showAndWait();
-                    Platform.exit();
+                    if (isSinglePlayer) {
+                        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                        alert.setTitle("Game Over");
+                        alert.setHeaderText("The game is over");
+                        alert.setContentText("You achieved: " + updatePoints() + " points");
+                        alert.showAndWait();
+                        Platform.exit();
+                    } else {
+                        // finished an Server senden
+                        // spielfeld blocken
+                    }
                 }
-                throwDices();
+                if (isSinglePlayer) {
+                    throwDices();
+                } else {
+                    // hier an Server senden
+                    // Dann neue runde akutalisieren
+                    // und neue WÜrfel holen
+                    // spielfeld blocken
+                }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setTitle("Invalid Turn");
