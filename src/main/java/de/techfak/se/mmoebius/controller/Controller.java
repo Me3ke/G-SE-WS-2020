@@ -454,7 +454,7 @@ public class Controller {
                 int currentPoints = score.calculatePoints(board);
                 int roundResponse = client.changeRound(name, currentPoints);
                 if (roundResponse == -1) {
-                    //Fehler hier
+                    end();
                 }
                 int currentRound = client.getRound(name);
                 if (currentRound != 0) {
@@ -462,7 +462,7 @@ public class Controller {
                     System.out.println(roundResponse);
                     isBlocked = true;
                 } else {
-                    //Fehler hier
+                    end();
                 }
             }
         } else {
@@ -489,7 +489,7 @@ public class Controller {
                     int currentPoints = score.calculatePoints(board);
                     int roundResponse = client.changeRound(name, currentPoints);
                     if (roundResponse == -1) {
-                        //Fehler hier
+                        end();
                     }
                     int currentRound = client.getRound(name);
                     if (currentRound != 0) {
@@ -497,7 +497,7 @@ public class Controller {
                         System.out.println(roundResponse);
                         isBlocked = true;
                     } else {
-                        //Fehler hier
+                        end();
                     }
                 }
             } else {
@@ -633,6 +633,22 @@ public class Controller {
     }
 
 //---------------------------------------Auxiliary Methods-------------------------------------------
+
+    /**
+     *
+     */
+    private void end() {
+        System.err.print("Unexpected Error with round synchronisation.");
+        client.deletePlayer(name);
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Error in Server Connection");
+        alert.setHeaderText(null);
+        alert.setContentText("There was a problem with synchronising the rounds of" +
+                                " you and other players. Hence you are disconnecting");
+        alert.showAndWait();
+        Platform.exit();
+    }
+
     /**
      * The removeCrosses method removes the cross of a tile if a play move was
      * considered invalid.
