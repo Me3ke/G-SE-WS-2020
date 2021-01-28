@@ -13,15 +13,16 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
+import javafx.stage.Stage;
 
 import java.beans.PropertyChangeEvent;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -58,6 +59,7 @@ public class Controller {
     private static final int MAX_PLAYERS = 5;
     private static final int CONTAINER_COLOR_LOCATION = 11;
     private static final int CONTAINER_COLUMN_LOCATION = 10;
+    private static final long ROUND_QUERY_DEFAULT_TIME = 500;
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -123,6 +125,7 @@ public class Controller {
     private int round;
     private boolean isSinglePlayer;
     private boolean isBlocked;
+    private ScheduledExecutorService exec;
 
     /**
      * the initialize method creates the playing field.
@@ -274,11 +277,10 @@ public class Controller {
                 }
             }
         };
-        ScheduledExecutorService exec = Executors.newSingleThreadScheduledExecutor();
-        exec.scheduleAtFixedRate(pointsAndNames, 0, 1, TimeUnit.SECONDS);
+        exec = Executors.newSingleThreadScheduledExecutor();
+        exec.scheduleAtFixedRate(pointsAndNames, 0, 2, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
-        exec.scheduleAtFixedRate(roundQuery, 0, 1, TimeUnit.SECONDS);
-        //TODO exec shutdown bei programmende?
+        exec.scheduleAtFixedRate(roundQuery, 0, ROUND_QUERY_DEFAULT_TIME, TimeUnit.MILLISECONDS);
     }
 
     private void createDices(Dice[] diceArr) {
@@ -353,6 +355,9 @@ public class Controller {
                    names.getChildren().add(name);
                }
                multiplayerInfo.getChildren().add(names);
+               Stage stage = (Stage) multiplayerInfo.getScene().getWindow();
+               stage.sizeToScene();
+               //TODO Größe anpassen
            }
        }
     }
@@ -408,6 +413,31 @@ public class Controller {
             System.out.println("ColorArray/Count in Controller/Score class needs to be adjusted to column length.");
             Platform.exit();
         }
+    }
+
+    /**
+     *
+      */
+    private void showEndScreen() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Game over");
+        alert.setHeaderText("You achieved " + updatePoints() + " points.");
+        alert.setContentText("To view ranking press details.");
+        String playerRanking = sortedPlayerListString();
+        Label label = new Label("Results: ");
+        TextArea textArea = new TextArea(playerRanking);
+        textArea.setEditable(false);
+        textArea.setWrapText(true);
+        textArea.setMaxWidth(Double.MAX_VALUE);
+        textArea.setMaxHeight(Double.MAX_VALUE);
+        GridPane.setVgrow(textArea, Priority.ALWAYS);
+        GridPane.setHgrow(textArea, Priority.ALWAYS);
+        GridPane expContent = new GridPane();
+        expContent.setMaxWidth(Double.MAX_VALUE);
+        expContent.add(label, 0, 0);
+        expContent.add(textArea, 0, 1);
+        alert.getDialogPane().setExpandableContent(expContent);
+        alert.showAndWait();
     }
 
 //---------------------------------------Button On Action Methods-------------------------------------------
@@ -481,7 +511,9 @@ public class Controller {
                         isBlocked = true;
                         GameStatus endStatus = client.changeGameStatus(name, GameStatus.FINISHED);
                         System.out.println(endStatus.name());
-                        // Anzeigen das Spiel vorbei @US20
+                        showEndScreen();
+                        exec.shutdown();
+                        Platform.exit();
                     }
                 }
                 if (isSinglePlayer) {
@@ -637,9 +669,29 @@ public class Controller {
 
     /**
      *
+     * @return
+     */
+    private String sortedPlayerListString() {
+        List<PlayerResponse> playerResponseList = client.getPlayerList(name);
+        Map<String,Integer> players = new HashMap<>();
+        TreeMap<String,Integer> sortedPlayers = new TreeMap<>();
+        for (int i = 0; i < playerResponseList.size(); i++) {
+            players.put(playerResponseList.get(i).getName(),playerResponseList.get(i).getPoints());
+        }
+        sortedPlayers.putAll(players);
+        String sortedPlayerListString = sortedPlayers.toString();
+        sortedPlayerListString = sortedPlayerListString.replaceAll("," ,"\n");
+        sortedPlayerListString = sortedPlayerListString.replaceAll("\\{", "");
+        sortedPlayerListString = sortedPlayerListString.replaceAll("}", "");
+        System.out.println(sortedPlayerListString);
+        return sortedPlayerListString;
+    }
+
+    /**
+     *
      */
     private void end() {
-        System.err.print("Unexpected Error with round synchronisation.");
+        System.err.println("Unexpected Error with round synchronisation.");
         client.deletePlayer(name);
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error in Server Connection");
