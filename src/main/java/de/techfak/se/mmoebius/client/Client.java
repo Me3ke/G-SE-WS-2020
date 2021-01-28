@@ -64,6 +64,102 @@ public class Client {
         httpClient = HttpClient.newHttpClient();
     }
 
+//---------------------------------------Methods using post/delete-------------------------------------------
+
+    //---------------------------------------Game-------------------------------------------
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public GameStatus changeGameStatus(String name, GameStatus gameStatus) {
+        HttpResponse<String> response;
+        StatusResponse statusResponse;
+        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
+        try {
+            StatusBody statusBody = new StatusBody(gameStatus, encodedName);
+            response = post("/api/game/status", statusBody);
+            statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
+            if (response.statusCode() != STATUS_SUCCESS) {
+                return null;
+            }
+            return statusResponse.getStatus();
+        } catch (IOException | InterruptedException e) {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return null;
+        }
+    }
+
+    //---------------------------------------Players-------------------------------------------
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public int verifyName(String name) {
+        HttpResponse<String> response;
+        try {
+            response = post("/api/game/players", name);
+            return response.statusCode();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Adding player failed.");
+            return -1;
+        }
+    }
+
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public boolean deletePlayer(String name) {
+        HttpResponse<String> response;
+        String path = url + PATH_TO_PLAYER;
+        response = delete(path, name);
+        if (response != null) {
+            if (response.statusCode() == STATUS_SUCCESS) {
+                System.out.println("Player deleted.");
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return false;
+        }
+    }
+
+    //---------------------------------------Round-------------------------------------------
+
+    /**
+     *
+     * @param name
+     * @param points
+     * @return
+     */
+    public int changeRound(String name, int points) {
+        HttpResponse<String> response;
+        RoundResponse roundResponse;
+        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
+        try {
+            EndRoundBody roundBody = new EndRoundBody(encodedName, points);
+            response = post("/api/game/round", roundBody);
+            roundResponse = objectMapper.readValue(response.body(), RoundResponse.class);
+            if (response.statusCode() == STATUS_SUCCESS) {
+                return roundResponse.getRound();
+            }
+            return roundResponse.getRound();
+        } catch (IOException | InterruptedException e) {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return -1;
+        }
+    }
+
+
+
+//---------------------------------------Methods using get-------------------------------------------
+
     /**
      *
      * @return
@@ -84,6 +180,7 @@ public class Client {
         }
     }
 
+    //TODO kann durch getServerstatus ausgetauscht werden.
     /**
      *
      * @param name
@@ -112,85 +209,6 @@ public class Client {
         } else {
             System.out.println(DEFAULT_SERVER_COM_FAILED);
             return true;
-        }
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public GameStatus startGame(String name) {
-        HttpResponse<String> response;
-        StatusResponse statusResponse;
-        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
-        try {
-            StatusBody statusBody = new StatusBody(GameStatus.RUNNING, encodedName);
-            response = post("/api/game/status", statusBody);
-            statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
-            if (response.statusCode() != STATUS_SUCCESS) {
-                return null;
-            }
-            return statusResponse.getStatus();
-        } catch (IOException | InterruptedException e) {
-            System.out.println(DEFAULT_SERVER_COM_FAILED);
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public int verifyName(String name) {
-        HttpResponse<String> response;
-        try {
-            response = post("/api/game/players", name);
-            return response.statusCode();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Adding player failed.");
-            return -1;
-        }
-    }
-
-    public int changeRound(String name, int points) {
-        HttpResponse<String> response;
-        RoundResponse roundResponse;
-        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
-        try {
-            EndRoundBody roundBody = new EndRoundBody(encodedName, points);
-            response = post("/api/game/round", roundBody);
-            roundResponse = objectMapper.readValue(response.body(), RoundResponse.class);
-            if (response.statusCode() != STATUS_SUCCESS) {
-                return 0;
-            }
-            return roundResponse.getRound();
-        } catch (IOException | InterruptedException e) {
-            System.out.println(DEFAULT_SERVER_COM_FAILED);
-            return 0;
-        }
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public boolean deletePlayer(String name) {
-        HttpResponse<String> response;
-        String path = url + PATH_TO_PLAYER;
-        response = delete(path, name);
-        if (response != null) {
-            if (response.statusCode() == STATUS_SUCCESS) {
-                System.out.println("Player deleted.");
-                return true;
-            } else {
-                return false;
-            }
-        } else {
-            System.out.println(DEFAULT_SERVER_COM_FAILED);
-            return false;
         }
     }
 
@@ -402,6 +420,7 @@ public class Client {
     }
 
 //---------------------------------------Auxiliary Methods-------------------------------------------
+
     /**
      *
      * @param colors
@@ -461,6 +480,7 @@ public class Client {
     public String getUrl() {
         return url;
     }
+
 }
 
 //TODO Playerdelete Synchronisieren

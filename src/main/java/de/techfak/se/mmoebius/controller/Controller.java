@@ -241,8 +241,11 @@ public class Controller {
                     gameStatusInfo = currentGameStatus;
                     Platform.runLater(() -> gameStatusLabel.setText(gameStatusInfo.name()));
                     if (gameStatusInfo.equals(GameStatus.RUNNING)) {
-                        startGame.setDisable(true);
-                        Platform.runLater(() -> gameStatusLabel.setTextFill(Color.GREEN));
+                        Platform.runLater(() -> {
+                            startGame.setDisable(true);
+                            button.setDisable(false);
+                            gameStatusLabel.setTextFill(Color.GREEN);
+                        });
                     } else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
                     } else {
@@ -416,7 +419,7 @@ public class Controller {
         startAlert.setTitle("Server start");
         startAlert.setHeaderText(null);
         if (!client.isGameStarted(name)) {
-            gameStatusInfo = client.startGame(name);
+            gameStatusInfo = client.changeGameStatus(name, GameStatus.RUNNING);
             if (gameStatusInfo != null) {
                 System.out.println(gameStatusInfo.name());
                 System.out.println("Game has been started");
@@ -448,9 +451,13 @@ public class Controller {
             if (isSinglePlayer) {
                 throwDices();
             } else {
-                int currentpoints = score.calculatePoints(board);
-                int roundResponse = client.changeRound(name, currentpoints);
-                if (roundResponse != 0) {
+                int currentPoints = score.calculatePoints(board);
+                int roundResponse = client.changeRound(name, currentPoints);
+                if (roundResponse == -1) {
+                    //Fehler hier
+                }
+                int currentRound = client.getRound(name);
+                if (currentRound != 0) {
                     System.out.println("Runde beendet");
                     System.out.println(roundResponse);
                     isBlocked = true;
@@ -471,7 +478,9 @@ public class Controller {
                         Platform.exit();
                     } else {
                         isBlocked = true;
-                        // finished an Server senden
+                        GameStatus endStatus = client.changeGameStatus(name, GameStatus.FINISHED);
+                        System.out.println(endStatus.name());
+                        // Anzeigen das Spiel vorbei @US20
                     }
                 }
                 if (isSinglePlayer) {
@@ -479,7 +488,11 @@ public class Controller {
                 } else {
                     int currentPoints = score.calculatePoints(board);
                     int roundResponse = client.changeRound(name, currentPoints);
-                    if (roundResponse != 0) {
+                    if (roundResponse == -1) {
+                        //Fehler hier
+                    }
+                    int currentRound = client.getRound(name);
+                    if (currentRound != 0) {
                         System.out.println("Runde beendet");
                         System.out.println(roundResponse);
                         isBlocked = true;
