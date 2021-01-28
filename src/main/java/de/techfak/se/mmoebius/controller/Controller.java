@@ -3,7 +3,6 @@ package de.techfak.se.mmoebius.controller;
 import de.techfak.se.mmoebius.client.Client;
 import de.techfak.se.mmoebius.model.*;
 import de.techfak.se.multiplayer.game.GameStatus;
-import de.techfak.se.multiplayer.game.Round;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -123,6 +122,7 @@ public class Controller {
     private GameStatus gameStatusInfo;
     private int round;
     private boolean isSinglePlayer;
+    private boolean isBlocked;
 
     /**
      * the initialize method creates the playing field.
@@ -144,10 +144,12 @@ public class Controller {
         this.url = url;
         button.setDisable(true);
         isSinglePlayer = false;
+        isBlocked = true;
         if (url.equals("")) {
             isSinglePlayer = true;
             startGame.setDisable(true);
             button.setDisable(false);
+            isBlocked = false;
         }
         round = 0;
         client = new Client(url);
@@ -175,7 +177,7 @@ public class Controller {
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
                     if (!testForEqual(currentRow, currentCol)) {
-                        if (isSinglePlayer || gameStatusInfo.equals(GameStatus.RUNNING)) {
+                        if (isSinglePlayer || !isBlocked) {
                             Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
                             Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
                             crossTileOne.setRotate(ROTATE_CONST);
@@ -255,11 +257,14 @@ public class Controller {
             public void run() {
                 int currentRound = client.getRound(name);
                 if (currentRound != 0) {
-                    round = currentRound;
-                    Platform.runLater(() -> points.setText("Round: " + round));
-                    Dice[] dices = client.getDices(name);
-                    if (dices != null) {
-                        Platform.runLater(() -> createDices(dices));
+                    if (currentRound != round) {
+                        round = currentRound;
+                        isBlocked = false;
+                        Platform.runLater(() -> points.setText("Round: " + round));
+                        Dice[] dices = client.getDices(name);
+                        if (dices != null) {
+                            Platform.runLater(() -> createDices(dices));
+                        }
                     }
                 }
             }
@@ -416,6 +421,7 @@ public class Controller {
                 System.out.println("Game has been started");
                 startGame.setDisable(true);
                 button.setDisable(false);
+                isBlocked = false;
                 Platform.runLater(() -> points.setText("Round: " + round));
             } else {
                 startAlert.setContentText("Game could not be started.");
@@ -442,6 +448,7 @@ public class Controller {
                 throwDices();
             } else {
                 System.out.println("Runde beendet");
+                isBlocked = true;
                 // hier an Server senden
                 // spielfeld blocken
                 // Dann neue runde akutalisieren
@@ -459,6 +466,7 @@ public class Controller {
                         alert.showAndWait();
                         Platform.exit();
                     } else {
+                        isBlocked = true;
                         // finished an Server senden
                         // spielfeld blocken
                     }
@@ -469,7 +477,6 @@ public class Controller {
                     // hier an Server senden
                     // Dann neue runde akutalisieren
                     // und neue WÜrfel holen
-                    // spielfeld blocken
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -598,8 +605,9 @@ public class Controller {
             int currentPoints = score.calculatePoints(board);
             Platform.runLater(() -> points.setText("Points: " + currentPoints));
             return currentPoints;
+        } else {
+            return score.calculatePoints(board);
         }
-        return 0;
     }
 
 //---------------------------------------Auxiliary Methods-------------------------------------------
