@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import de.techfak.se.mmoebius.model.Dice;
 import de.techfak.se.multiplayer.game.*;
 import de.techfak.se.multiplayer.game.Number;
+import de.techfak.se.multiplayer.server.request_body.EndRoundBody;
 import de.techfak.se.multiplayer.server.request_body.StatusBody;
 import de.techfak.se.multiplayer.server.response_body.*;
 
@@ -88,55 +89,6 @@ public class Client {
      * @param name
      * @return
      */
-    public List<PlayerResponse> getPlayerList(String name) {
-        if (name == null) {
-            return null;
-        }
-        HttpResponse<String> response;
-        PlayerListResponse playerListResponse;
-        List<PlayerResponse> playerList;
-        String path = url + PATH_TO_PLAYER + URLEncoder.encode(name, Charset.defaultCharset());
-        response = get(path);
-        if (response != null) {
-            if (response.statusCode() == STATUS_SUCCESS) {
-                try {
-                    playerListResponse = objectMapper.readValue(response.body(), PlayerListResponse.class);
-                    playerList = playerListResponse.getPlayers();
-                    return playerList;
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            } else {
-                return null;
-            }
-        } else {
-            System.out.println(DEFAULT_SERVER_COM_FAILED);
-            return null;
-        }
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
-    public int verifyName(String name) {
-        HttpResponse<String> response;
-        try {
-            response = post("/api/game/players", name);
-            return response.statusCode();
-        } catch (IOException | InterruptedException e) {
-            System.out.println("Adding player failed.");
-            return -1;
-        }
-    }
-
-    /**
-     *
-     * @param name
-     * @return
-     */
     public boolean isGameStarted(String name) {
         HttpResponse<String> response;
         StatusResponse gameStatus;
@@ -183,6 +135,40 @@ public class Client {
         } catch (IOException | InterruptedException e) {
             System.out.println(DEFAULT_SERVER_COM_FAILED);
             return null;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public int verifyName(String name) {
+        HttpResponse<String> response;
+        try {
+            response = post("/api/game/players", name);
+            return response.statusCode();
+        } catch (IOException | InterruptedException e) {
+            System.out.println("Adding player failed.");
+            return -1;
+        }
+    }
+
+    public int changeRound(String name, int points) {
+        HttpResponse<String> response;
+        RoundResponse roundResponse;
+        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
+        try {
+            EndRoundBody roundBody = new EndRoundBody(encodedName, points);
+            response = post("/api/game/round", roundBody);
+            roundResponse = objectMapper.readValue(response.body(), RoundResponse.class);
+            if (response.statusCode() != STATUS_SUCCESS) {
+                return 0;
+            }
+            return roundResponse.getRound();
+        } catch (IOException | InterruptedException e) {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return 0;
         }
     }
 
@@ -333,6 +319,39 @@ public class Client {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     */
+    public List<PlayerResponse> getPlayerList(String name) {
+        if (name == null) {
+            return null;
+        }
+        HttpResponse<String> response;
+        PlayerListResponse playerListResponse;
+        List<PlayerResponse> playerList;
+        String path = url + PATH_TO_PLAYER + URLEncoder.encode(name, Charset.defaultCharset());
+        response = get(path);
+        if (response != null) {
+            if (response.statusCode() == STATUS_SUCCESS) {
+                try {
+                    playerListResponse = objectMapper.readValue(response.body(), PlayerListResponse.class);
+                    playerList = playerListResponse.getPlayers();
+                    return playerList;
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                return null;
+            }
+        } else {
+            System.out.println(DEFAULT_SERVER_COM_FAILED);
+            return null;
+        }
+    }
+
 //---------------------------------------Get Post Delete Methods-------------------------------------------
     /**
      *
@@ -427,7 +446,7 @@ public class Client {
                 case FOUR:
                     numberArr[j] = NUMBER_FOUR;
                     break;
-                case FIVE:
+                default:
                     numberArr[j] = NUMBER_FIVE;
                     break;
             }

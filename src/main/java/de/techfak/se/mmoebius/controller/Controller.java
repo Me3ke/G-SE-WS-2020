@@ -241,6 +241,7 @@ public class Controller {
                     gameStatusInfo = currentGameStatus;
                     Platform.runLater(() -> gameStatusLabel.setText(gameStatusInfo.name()));
                     if (gameStatusInfo.equals(GameStatus.RUNNING)) {
+                        startGame.setDisable(true);
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.GREEN));
                     } else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
@@ -447,12 +448,15 @@ public class Controller {
             if (isSinglePlayer) {
                 throwDices();
             } else {
-                System.out.println("Runde beendet");
-                isBlocked = true;
-                // hier an Server senden
-                // spielfeld blocken
-                // Dann neue runde akutalisieren
-                // und neue WÜrfel holen
+                int currentpoints = score.calculatePoints(board);
+                int roundResponse = client.changeRound(name, currentpoints);
+                if (roundResponse != 0) {
+                    System.out.println("Runde beendet");
+                    System.out.println(roundResponse);
+                    isBlocked = true;
+                } else {
+                    //Fehler hier
+                }
             }
         } else {
             if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
@@ -468,15 +472,20 @@ public class Controller {
                     } else {
                         isBlocked = true;
                         // finished an Server senden
-                        // spielfeld blocken
                     }
                 }
                 if (isSinglePlayer) {
                     throwDices();
                 } else {
-                    // hier an Server senden
-                    // Dann neue runde akutalisieren
-                    // und neue WÜrfel holen
+                    int currentPoints = score.calculatePoints(board);
+                    int roundResponse = client.changeRound(name, currentPoints);
+                    if (roundResponse != 0) {
+                        System.out.println("Runde beendet");
+                        System.out.println(roundResponse);
+                        isBlocked = true;
+                    } else {
+                        //Fehler hier
+                    }
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
