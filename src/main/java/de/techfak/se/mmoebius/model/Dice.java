@@ -51,7 +51,7 @@ public class Dice {
         }
     }
 
-    public Dice (Color color, int number) {
+    public Dice(Color color, int number) {
         this.color = color;
         this.number = number;
     }

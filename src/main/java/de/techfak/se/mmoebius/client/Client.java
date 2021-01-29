@@ -19,7 +19,7 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
- *
+ * The client class provides all the methods to communicate to the server.
  */
 public class Client {
 
@@ -35,28 +35,23 @@ public class Client {
     private static final int NUMBER_FIVE = 5;
 
     /**
-     *
-     */
-    protected boolean isServerStarted;
-
-    /**
-     *
+     * the client which does the http requests.
      */
     protected HttpClient httpClient;
 
     /**
-     *
+     * the objectmapper which serialises and deserialises the jsons.
      */
     protected ObjectMapper objectMapper;
 
     /**
-     *
+     * the url of the server.
      */
     private String url;
 
     /**
-     *
-     * @param url
+     * The constructor for a client given an url.
+     * @param url the url of the server.
      */
     public Client(String url) {
         this.url = url;
@@ -68,9 +63,11 @@ public class Client {
 
     //---------------------------------------Game-------------------------------------------
     /**
-     *
-     * @param name
-     * @return
+     * The changeGameStatus method send a request to the server to change the
+     * game status of the server.
+     * @param name the name of the player who makes the request.
+     * @param gameStatus the new game status to be changed.
+     * @return the new game status of the server. Is null if the request failed.
      */
     public GameStatus changeGameStatus(String name, GameStatus gameStatus) {
         HttpResponse<String> response;
@@ -92,9 +89,10 @@ public class Client {
 
     //---------------------------------------Players-------------------------------------------
     /**
-     *
-     * @param name
-     * @return
+     * The verifyName method registers the name given in the server
+     * using a post request.
+     * @param name the name to be registered.
+     * @return returns the status code of the request or -1 if an error occurs.
      */
     public int verifyName(String name) {
         HttpResponse<String> response;
@@ -109,9 +107,10 @@ public class Client {
 
 
     /**
-     *
-     * @param name
-     * @return
+     * The deletePlayer method sends a delete request to the server
+     * to delete a player from the register.
+     * @param name the name of the player to be deleted.
+     * @return true if it was successful and false if not.
      */
     public boolean deletePlayer(String name) {
         HttpResponse<String> response;
@@ -133,10 +132,11 @@ public class Client {
     //---------------------------------------Round-------------------------------------------
 
     /**
-     *
-     * @param name
-     * @param points
-     * @return
+     * The change round method ends the round for the given player
+     * by doing a post request with the player name and points of the player.
+     * @param name the name of the player.
+     * @param points the total points of the player.
+     * @return the round in which the game is in or -1 if an error occured.
      */
     public int changeRound(String name, int points) {
         HttpResponse<String> response;
@@ -161,8 +161,9 @@ public class Client {
 //---------------------------------------Methods using get-------------------------------------------
 
     /**
-     *
-     * @return
+     * The connectToServer method takes the given url and tries to connect to
+     * the server at this address.
+     * @return true if the server approachable false if not.
      */
     public boolean connectToServer() {
         HttpResponse<String> response;
@@ -182,9 +183,10 @@ public class Client {
 
     //TODO kann durch getServerstatus ausgetauscht werden.
     /**
-     *
-     * @param name
-     * @return
+     * the isGameStarted method send a request to the server to get
+     * the game status. If the status shows that the game has started it returns true.
+     * @param name the name of the player.
+     * @return true if the game is started, false if not.
      */
     public boolean isGameStarted(String name) {
         HttpResponse<String> response;
@@ -213,9 +215,9 @@ public class Client {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * The getServerStatus requests the status from the server and return it.
+     * @param name the player doing the request.
+     * @return the current game status or null if an error occurred.
      */
     public GameStatus getServerStatus(String name) {
         HttpResponse<String> response;
@@ -243,9 +245,9 @@ public class Client {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * the getBoard method requests the board from server.
+     * @param name the name of the player doing the request.
+     * @return the board as a string or null if an error occurred.
      */
     public String getBoard(String name) {
         HttpResponse<String> response;
@@ -262,7 +264,6 @@ public class Client {
                 return null;
             }
             if (response.statusCode() == STATUS_SUCCESS) {
-                System.out.println("Got board.");
                 return board;
             } else {
                 return null;
@@ -274,9 +275,9 @@ public class Client {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * The getRound method requests the current round from the server.
+     * @param name the name of the player doing the request.
+     * @return the current round or 0 if an error occured.
      */
     public int getRound(String name) {
         HttpResponse<String> response;
@@ -304,9 +305,9 @@ public class Client {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * The getDices method requests the dices from the server.
+     * @param name the name of the player sending the request.
+     * @return an array with the dices or null if an error occurred.
      */
     public Dice[] getDices(String name) {
         HttpResponse<String> response;
@@ -338,9 +339,10 @@ public class Client {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * The getPlayerList method request a list of all current players
+     * from the server.
+     * @param name the name of the player sending the request.
+     * @return the list of players or null if an error occured.
      */
     public List<PlayerResponse> getPlayerList(String name) {
         if (name == null) {
@@ -372,9 +374,9 @@ public class Client {
 
 //---------------------------------------Get Post Delete Methods-------------------------------------------
     /**
-     *
-     * @param url
-     * @return
+     * The get methods does a get request to the server.
+     * @param url the url of the server.
+     * @return the response to the request.
      */
     public HttpResponse<String> get(String url) {
         try {
@@ -386,12 +388,12 @@ public class Client {
     }
 
     /**
-     *
-     * @param path
-     * @param parameters
-     * @return
-     * @throws
-     * @throws
+     * The post methods sends a post request to the server.
+     * @param path the path to the aimed directory on the server.
+     * @param parameters the json object containing the things to be changed.
+     * @return the response to the request.
+     * @throws IOException if an error occurs.
+     * @throws InterruptedException if the request was interrupted.
      */
     public HttpResponse<String> post(String path, Object parameters) throws IOException, InterruptedException {
         String jsonBody = objectMapper.writeValueAsString(parameters);
@@ -402,10 +404,10 @@ public class Client {
     }
 
     /**
-     *
-     * @param path
-     * @param name
-     * @return
+     * The delete method sends a delete request to the server.
+     * @param path the path to the aimed directory on the server.
+     * @param name the name of the player doing the delete request.
+     * @return the response to the request.
      */
     public HttpResponse<String> delete(String path, String name) {
         try {
@@ -422,17 +424,18 @@ public class Client {
 //---------------------------------------Auxiliary Methods-------------------------------------------
 
     /**
-     *
-     * @param colors
-     * @param numbers
-     * @return
+     * The toDiceModel method takes the Dices from the Server and converts
+     * them to dices of the model, so they can be used in the GUI.
+     * @param colors the colors of the dices from the server.
+     * @param numbers the numbers of the dices from the server.
+     * @return an array of the new dices from the model.
      */
     private Dice[] toDiceModel(List<Color> colors, List<Number> numbers) {
         javafx.scene.paint.Color[] colorArr = new javafx.scene.paint.Color[colors.size()];
         int[] numberArr = new int[numbers.size()];
         for (int i = 0; i < colors.size(); i++) {
             Color current = colors.get(i);
-            switch(current) {
+            switch (current) {
                 case GREEN:
                     colorArr[i] = javafx.scene.paint.Color.GREEN;
                     break;
@@ -452,7 +455,7 @@ public class Client {
         }
         for (int j = 0; j < numbers.size(); j++) {
             Number current = numbers.get(j);
-            switch(current) {
+            switch (current) {
                 case ONE:
                     numberArr[j] = 1;
                     break;

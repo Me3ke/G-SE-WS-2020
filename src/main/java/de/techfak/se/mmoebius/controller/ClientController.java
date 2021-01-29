@@ -9,14 +9,15 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.Optional;
 
 /**
- *
+ * The ClientController class is the controller for the initial window, in which
+ * ip, port and name are determined. It also starts the other GUI which shows the playing
+ * field in multi player or single player mode.
  */
 public class ClientController {
 
@@ -25,17 +26,21 @@ public class ClientController {
     private static final int STATUS_ALREADY_REGISTERED = 409;
     private static final String CONNECTION_TITLE = "Server Connection";
     private static final String CONNECTION_HEADER = "Connecting to Server with name: ";
+
     /**
-     *
+     * ip: the ip of the server.
+     * port: the port of the server.
+     * name: the name of the player.
+     * client: the client of the current game.
      */
     private String ip;
     private int port;
     private String name;
     private Client client;
 
-    @FXML
-    private VBox containerV;
-
+    /**
+     * All objects are initialised in the ClientGUI.fxml.
+     */
     @FXML
     private TextField ipField;
 
@@ -49,8 +54,13 @@ public class ClientController {
     private Button buttonSP;
 
     /**
-     *
-     * @param args
+     * the initialize method initializes the GUI. Here the GUI consists
+     * of a two basic inputs and two buttons. The basic inputs are for
+     * the ip and the port of the server. The first button is to confirm the
+     * inputs and the second one is to start a single player game. Depending on
+     * a the mode the paths are different, but in both cases the gui for the
+     * playing field is called to continue.
+     * @param args the arguments of the program, containing a playing field.
      */
     public void initialize(String[] args) {
         name = null;
@@ -67,8 +77,6 @@ public class ClientController {
             } catch (NumberFormatException e) {
                 System.out.println("invalid port");
             }
-            System.out.println(ip);
-            System.out.println(port);
             String url = "http://" + ip + ":" + port;
             client = new Client(url);
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -79,7 +87,6 @@ public class ClientController {
                 alert.showAndWait();
                 Stage stage = (Stage) buttonC.getScene().getWindow();
                 name = showNameField();
-                System.out.println("Your name: " + name);
                 if (verifyNameGUI(client)) {
                     showGUI(args, url, name);
                 }
@@ -92,9 +99,11 @@ public class ClientController {
     }
 
     /**
-     *
-     * @param client
-     * @return
+     * The verifyNameGUI creates a dialog depending on if the
+     * name can be registered on the server.
+     * @param client the client of the current game.
+     * @return true if the name is now registered on the server
+     *          false if not.
      */
     private boolean verifyNameGUI(Client client) {
         Alert nameAlert = new Alert(Alert.AlertType.ERROR);
@@ -128,8 +137,9 @@ public class ClientController {
     }
 
     /**
-     *
-     * @return
+     * The showNameField method shows the dialog in which you can type in
+     * the player name. It takes value and returns the name.
+     * @return the player name.
      */
     private String showNameField() {
         Optional<String> result = null;
@@ -145,10 +155,14 @@ public class ClientController {
     }
 
     /**
-     *
-     * @param args
-     * @param url
-     * @param name
+     * The showGUI method initialises the GUI of the playing field.
+     * If the current game is in single player mode the GUI is created from
+     * a board in the parameters of the program. Otherwise it gets the board for
+     * the GUI from the server. This requieres a transformation from a String
+     * into a char[][]. Finally the playing field is displayed.
+     * @param args the program arguments.
+     * @param url the url of the server.
+     * @param name the name of the player.
      */
     private void showGUI(String[] args, String url, String name) {
         Stage stage = new Stage();
@@ -177,7 +191,6 @@ public class ClientController {
                 map[i] = lines[i].toCharArray();
             }
             Board board = new Board(map);
-            board.printBoard();
             Controller controller = fxmlLoader.getController();
             controller.initialize(board, url, name);
         }

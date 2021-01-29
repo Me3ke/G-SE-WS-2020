@@ -77,6 +77,6 @@ public final class EncoreServer {
            System.exit(0);
         }
 
-        //TODO Evtl System prints überarbeiten.
+        //TODO Server beenden.
 
 }

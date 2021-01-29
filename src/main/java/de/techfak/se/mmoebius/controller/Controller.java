@@ -60,6 +60,7 @@ public class Controller {
     private static final int CONTAINER_COLOR_LOCATION = 11;
     private static final int CONTAINER_COLUMN_LOCATION = 10;
     private static final long ROUND_QUERY_DEFAULT_TIME = 500;
+    private static final String ROUND = "Round: ";
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -104,8 +105,15 @@ public class Controller {
      *  of the in the current play move crossed tiles.
      *  numbers: an array of the numbers of the dices.
      *  colors: an array of the colors of the dices.
-     *  ip:
-     *  port:
+     *  url: the url of the server.
+     *  client: the client of the game.
+     *  name: the name of the player.
+     *  multiplayerInfo: a hbox in which the multiplayer infos are.
+     *  gameStatusInfo: the status of the current game.
+     *  round: the current round.
+     *  isSinglePlayer: a boolean which displays if the current mode is singleplayer.
+     *  isBlocked: a boolean which displays if the playing field may be crossed.
+     *  exec: the executor which executes the threads.
      */
     private int rowCount;
     private int colCount;
@@ -135,8 +143,8 @@ public class Controller {
      * Additionally handles a click on one of the tiles by crossing them.
      * @param board The board is initialized in the GUI class where a game
      *              starts. It is the current board to be played on.
-     * @param url
-     * @param name
+     * @param url   The url from the server the client is connected with.
+     * @param name  The name of the player of the current client.
      */
     public void initialize(Board board, String url, String name) {
         multiplayerInfo = new HBox();
@@ -207,7 +215,9 @@ public class Controller {
 //---------------------------------------Create Methods-------------------------------------------
 
     /**
-     *
+     * The createSurroundings method creates all the labels etc. which are
+     * needed for a multiplayer game. If the current game is a single player game
+     * only the dices, which are generated locally are shown.
      */
     private void createSurroundings() {
         if (isSinglePlayer) {
@@ -218,14 +228,15 @@ public class Controller {
         List<PlayerResponse> playerList =  client.getPlayerList(name);
         createNameList(playerList);
         createPointList(playerList);
-        createRunnables();
+        createRunnable();
         containerV.getChildren().add(multiplayerInfo);
     }
 
     /**
-     *
+     *  The createRunnable creates the threads which update the names, points, rounds
+     *  and the game status. It also initialises the executor for them.
      */
-    private void createRunnables() {
+    private void createRunnable() {
         Runnable pointsAndNames = new Runnable() {
             @Override public void run() {
                 List<PlayerResponse> playerList =  client.getPlayerList(name);
@@ -268,7 +279,7 @@ public class Controller {
                     if (currentRound != round) {
                         round = currentRound;
                         isBlocked = false;
-                        Platform.runLater(() -> points.setText("Round: " + round));
+                        Platform.runLater(() -> points.setText(ROUND + round));
                         Dice[] dices = client.getDices(name);
                         if (dices != null) {
                             Platform.runLater(() -> createDices(dices));
@@ -283,6 +294,11 @@ public class Controller {
         exec.scheduleAtFixedRate(roundQuery, 0, ROUND_QUERY_DEFAULT_TIME, TimeUnit.MILLISECONDS);
     }
 
+    /**
+     * The createDices method is similar to the throw dices method, but instead of
+     * generating new dices it get the dices as parameters.
+     * @param diceArr the array of dices to be showed in the GUI.
+     */
     private void createDices(Dice[] diceArr) {
         HBox diceColors = new HBox();
         HBox diceNumbers = new HBox();
@@ -330,8 +346,9 @@ public class Controller {
     }
 
     /**
-     *
-     * @param playerList
+     * The createNameList method creates the list of names for every player
+     * in multiplayer mode.
+     * @param playerList the list of all players in the game.
      */
     private void createNameList(List<PlayerResponse> playerList) {
        if (playerList != null) {
@@ -357,14 +374,15 @@ public class Controller {
                multiplayerInfo.getChildren().add(names);
                Stage stage = (Stage) multiplayerInfo.getScene().getWindow();
                stage.sizeToScene();
-               //TODO Größe anpassen
+               //TODO Größe der Stage anpassen
            }
        }
     }
 
     /**
-     *
-     * @param playerList
+     * The createPointList method creates the list of points for every player
+     * in multiplayer mode.
+     * @param playerList the list of all players in the game.
      */
     private void createPointList(List<PlayerResponse> playerList) {
         if (playerList != null) {
@@ -416,8 +434,9 @@ public class Controller {
     }
 
     /**
-     *
-      */
+     * The showEndScreenMethod shows a dialog if the game is finished. The
+     * dialog contains a ranking of all players.
+     */
     private void showEndScreen() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Game over");
@@ -442,8 +461,12 @@ public class Controller {
 
 //---------------------------------------Button On Action Methods-------------------------------------------
     /**
-     *
-     * @param actionEvent
+     * The startGame method is called if the start game button is clicked.
+     * It will send a request to the server to start the game. Enables the
+     * check move button and disables the start game button if game started
+     * normally. This initialises the first round unblocks the playing field.
+     * It shows a dialog if something goes wrong.
+     * @param actionEvent The event of the button clicked.
      */
     public void startGame(ActionEvent actionEvent) {
         Alert startAlert = new Alert(Alert.AlertType.ERROR);
@@ -452,12 +475,11 @@ public class Controller {
         if (!client.isGameStarted(name)) {
             gameStatusInfo = client.changeGameStatus(name, GameStatus.RUNNING);
             if (gameStatusInfo != null) {
-                System.out.println(gameStatusInfo.name());
                 System.out.println("Game has been started");
                 startGame.setDisable(true);
                 button.setDisable(false);
                 isBlocked = false;
-                Platform.runLater(() -> points.setText("Round: " + round));
+                Platform.runLater(() -> points.setText(ROUND + round));
             } else {
                 startAlert.setContentText("Game could not be started.");
                 startAlert.showAndWait();
@@ -467,13 +489,14 @@ public class Controller {
             startAlert.showAndWait();
         }
     }
-//TODO throw dices nur bei Singleplayer sonst vom Server. Methode muss durchleuchtet werden
+
     /**
      * The buttonClicked method handles a click on the "check move" button.
      * It gets the fields clicked in this move (playMoveRow, playMoveCol) and
      * uses the board.validate method to validate the inputs if there were some.
-     * If the move was invalid it shows a dialog. After a move it rolls the dices again.
-     * Furthermore it tests if the game is over and shows a dialog then.
+     * If the move was invalid it shows a dialog. After a move it rolls the dices again
+     * if it is in single player mode. Otherwise it will send the results of the round
+     * to the server.Furthermore it tests if the game is over and shows a dialog then.
      * @param actionEvent The event of the clicked Button.
      */
     public void buttonClicked(ActionEvent actionEvent) {
@@ -489,7 +512,6 @@ public class Controller {
                 }
                 int currentRound = client.getRound(name);
                 if (currentRound != 0) {
-                    System.out.println("Runde beendet");
                     System.out.println(roundResponse);
                     isBlocked = true;
                 } else {
@@ -510,7 +532,6 @@ public class Controller {
                     } else {
                         isBlocked = true;
                         GameStatus endStatus = client.changeGameStatus(name, GameStatus.FINISHED);
-                        System.out.println(endStatus.name());
                         showEndScreen();
                         exec.shutdown();
                         Platform.exit();
@@ -526,8 +547,6 @@ public class Controller {
                     }
                     int currentRound = client.getRound(name);
                     if (currentRound != 0) {
-                        System.out.println("Runde beendet");
-                        System.out.println(roundResponse);
                         isBlocked = true;
                     } else {
                         end();
@@ -668,27 +687,30 @@ public class Controller {
 //---------------------------------------Auxiliary Methods-------------------------------------------
 
     /**
-     *
-     * @return
+     * The sortedPlayerListString method gets a list of all players on the server and
+     * converts them into a string which is sorted after the maximum of the points of
+     * the player.
+     * @return a string which contains the sorted player list.
      */
     private String sortedPlayerListString() {
         List<PlayerResponse> playerResponseList = client.getPlayerList(name);
-        Map<String,Integer> players = new HashMap<>();
-        TreeMap<String,Integer> sortedPlayers = new TreeMap<>();
+        Map<String, Integer> players = new HashMap<>();
+        TreeMap<String, Integer> sortedPlayers = new TreeMap<>();
         for (int i = 0; i < playerResponseList.size(); i++) {
-            players.put(playerResponseList.get(i).getName(),playerResponseList.get(i).getPoints());
+            players.put(playerResponseList.get(i).getName(), playerResponseList.get(i).getPoints());
         }
         sortedPlayers.putAll(players);
         String sortedPlayerListString = sortedPlayers.toString();
-        sortedPlayerListString = sortedPlayerListString.replaceAll("," ,"\n");
-        sortedPlayerListString = sortedPlayerListString.replaceAll("\\{", "");
-        sortedPlayerListString = sortedPlayerListString.replaceAll("}", "");
-        System.out.println(sortedPlayerListString);
+        sortedPlayerListString = sortedPlayerListString.replaceAll(",", "\n");
+        sortedPlayerListString = sortedPlayerListString.replaceAll("\\{",  "");
+        sortedPlayerListString = sortedPlayerListString.replaceAll("}",  "");
         return sortedPlayerListString;
     }
 
     /**
-     *
+     * The end method is called if something wrong happens with synchronisation, because
+     * there is no guideline to follow then. The end method informs the player about the
+     * circumstances and deletes the player from the Server after. Then the application is closed.
      */
     private void end() {
         System.err.println("Unexpected Error with round synchronisation.");
@@ -696,8 +718,8 @@ public class Controller {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error in Server Connection");
         alert.setHeaderText(null);
-        alert.setContentText("There was a problem with synchronising the rounds of" +
-                                " you and other players. Hence you are disconnecting");
+        alert.setContentText("There was a problem with synchronising the rounds of"
+                                + " you and other players. Hence you are disconnecting");
         alert.showAndWait();
         Platform.exit();
     }
