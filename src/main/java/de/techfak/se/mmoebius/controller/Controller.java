@@ -244,6 +244,8 @@ public class Controller {
                     multiplayerInfo.getChildren().clear();
                     createPointList(playerList);
                     createNameList(playerList);
+                    Stage stage = (Stage) multiplayerInfo.getScene().getWindow();
+                    stage.sizeToScene();
                 });
             }
         };
@@ -372,9 +374,6 @@ public class Controller {
                    names.getChildren().add(name);
                }
                multiplayerInfo.getChildren().add(names);
-               Stage stage = (Stage) multiplayerInfo.getScene().getWindow();
-               stage.sizeToScene();
-               //TODO Größe der Stage anpassen
            }
        }
     }
@@ -501,10 +500,14 @@ public class Controller {
      */
     public void buttonClicked(ActionEvent actionEvent) {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
-            System.out.println("Passing play move");
-            if (isSinglePlayer) {
+            if (isBlocked) {
+                System.out.println("doing nothing");
+            }
+            else if (isSinglePlayer) {
+                System.out.println("Passing play move");
                 throwDices();
             } else {
+                System.out.println("Passing play move");
                 int currentPoints = score.calculatePoints(board);
                 int roundResponse = client.changeRound(name, currentPoints);
                 if (roundResponse == -1) {
@@ -530,11 +533,20 @@ public class Controller {
                         alert.showAndWait();
                         Platform.exit();
                     } else {
+                        int currentPoints = score.calculatePoints(board);
+                        int roundResponse = client.changeRound(name, currentPoints);
+                        if (roundResponse == -1) {
+                            end();
+                        }
                         isBlocked = true;
                         GameStatus endStatus = client.changeGameStatus(name, GameStatus.FINISHED);
-                        showEndScreen();
-                        exec.shutdown();
-                        Platform.exit();
+                        if (endStatus.equals(GameStatus.FINISHED)) {
+                            showEndScreen();
+                            exec.shutdown();
+                            Platform.exit();
+                        } else {
+                            System.out.println("Game could not be finished.");
+                        }
                     }
                 }
                 if (isSinglePlayer) {
@@ -694,13 +706,11 @@ public class Controller {
      */
     private String sortedPlayerListString() {
         List<PlayerResponse> playerResponseList = client.getPlayerList(name);
-        Map<String, Integer> players = new HashMap<>();
-        TreeMap<String, Integer> sortedPlayers = new TreeMap<>();
+        Map<Integer, String> players = new TreeMap<>(Comparator.reverseOrder());
         for (int i = 0; i < playerResponseList.size(); i++) {
-            players.put(playerResponseList.get(i).getName(), playerResponseList.get(i).getPoints());
+            players.put(playerResponseList.get(i).getPoints(), playerResponseList.get(i).getName());
         }
-        sortedPlayers.putAll(players);
-        String sortedPlayerListString = sortedPlayers.toString();
+        String sortedPlayerListString = players.toString();
         sortedPlayerListString = sortedPlayerListString.replaceAll(",", "\n");
         sortedPlayerListString = sortedPlayerListString.replaceAll("\\{",  "");
         sortedPlayerListString = sortedPlayerListString.replaceAll("}",  "");

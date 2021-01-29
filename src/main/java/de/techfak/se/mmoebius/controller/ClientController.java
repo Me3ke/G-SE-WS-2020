@@ -90,7 +90,7 @@ public class ClientController {
                 if (verifyNameGUI(client)) {
                     showGUI(args, url, name);
                 }
-                //stage.hide();
+                stage.hide();
             } else {
                 alert.setContentText("Server not available. Please try again");
                 alert.showAndWait();

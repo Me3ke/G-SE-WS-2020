@@ -72,9 +72,8 @@ public class Client {
     public GameStatus changeGameStatus(String name, GameStatus gameStatus) {
         HttpResponse<String> response;
         StatusResponse statusResponse;
-        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
         try {
-            StatusBody statusBody = new StatusBody(gameStatus, encodedName);
+            StatusBody statusBody = new StatusBody(gameStatus, name);
             response = post("/api/game/status", statusBody);
             statusResponse = objectMapper.readValue(response.body(), StatusResponse.class);
             if (response.statusCode() != STATUS_SUCCESS) {
@@ -141,9 +140,8 @@ public class Client {
     public int changeRound(String name, int points) {
         HttpResponse<String> response;
         RoundResponse roundResponse;
-        String encodedName = URLEncoder.encode(name, Charset.defaultCharset());
         try {
-            EndRoundBody roundBody = new EndRoundBody(encodedName, points);
+            EndRoundBody roundBody = new EndRoundBody(name, points);
             response = post("/api/game/round", roundBody);
             roundResponse = objectMapper.readValue(response.body(), RoundResponse.class);
             if (response.statusCode() == STATUS_SUCCESS) {
@@ -181,7 +179,6 @@ public class Client {
         }
     }
 
-    //TODO kann durch getServerstatus ausgetauscht werden.
     /**
      * the isGameStarted method send a request to the server to get
      * the game status. If the status shows that the game has started it returns true.
@@ -486,5 +483,3 @@ public class Client {
 
 }
 
-//TODO Playerdelete Synchronisieren
-//TODO gucken was noch Synchronisiert werden muss

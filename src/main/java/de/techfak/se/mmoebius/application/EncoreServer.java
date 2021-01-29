@@ -57,7 +57,6 @@ public final class EncoreServer {
                            final SynchronizedGame game = new SynchronizedGame(baseGame);
                            final Server server = new Server(game);
                            server.start(port);
-                           serverStarted = true;
                        }
                        Thread.currentThread().join();
 
@@ -76,7 +75,4 @@ public final class EncoreServer {
            }
            System.exit(0);
         }
-
-        //TODO Server beenden.
-
 }
