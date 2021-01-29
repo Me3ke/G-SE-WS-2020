@@ -61,6 +61,7 @@ public class Controller {
     private static final int CONTAINER_COLUMN_LOCATION = 10;
     private static final long ROUND_QUERY_DEFAULT_TIME = 500;
     private static final String ROUND = "Round: ";
+    private static final String PASS = "Passing play move";
 
     /**
      * All the Objects here are initialized in the GUI.fxml.
@@ -502,12 +503,11 @@ public class Controller {
         if (playMoveRow.isEmpty() && playMoveCol.isEmpty()) {
             if (isBlocked) {
                 System.out.println("doing nothing");
-            }
-            else if (isSinglePlayer) {
-                System.out.println("Passing play move");
+            } else if (isSinglePlayer) {
+                System.out.println(PASS);
                 throwDices();
             } else {
-                System.out.println("Passing play move");
+                System.out.println(PASS);
                 int currentPoints = score.calculatePoints(board);
                 int roundResponse = client.changeRound(name, currentPoints);
                 if (roundResponse == -1) {
