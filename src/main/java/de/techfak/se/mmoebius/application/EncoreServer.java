@@ -31,25 +31,23 @@ public final class EncoreServer {
         public static void main(final String... args) {
             int port = 0;
             boolean serverStarted = false;
-           if (args.length == 0) {
+           if (args.length == 0 || args.length == 1) {
                System.out.println("no parameters given.");
                System.out.println("use -f <board path> -p <port number>");
-           } else if (args.length == 2) {
-               System.out.println("To start a Server type ~ -p <port number> as parameter");
            } else {
-               if (args[0].equals("-f") && args[2].equals("-p")) {
+               if (args.length == ARGS_THREE || args.length == 2) {
+                   port = DEFAULT_PORT;
+               } else {
+                   try {
+                       port = Integer.parseInt(args[ARGS_THREE]);
+                   } catch (NumberFormatException e) {
+                       System.out.println("Port is not valid");
+                       System.exit(SYS_EXIT_FAILURE);
+                   }
+               }
+               if (args[0].equals("-f")) {
                    System.out.println("Multiplayer mode");
                    File file = new File(args[1]);
-                   if (args.length == ARGS_THREE) {
-                       port = DEFAULT_PORT;
-                   } else {
-                       try {
-                           port = Integer.parseInt(args[ARGS_THREE]);
-                       } catch (NumberFormatException e) {
-                           System.out.println("Port is not valid");
-                           System.exit(SYS_EXIT_FAILURE);
-                       }
-                   }
                    try {
                        if (file.isFile() && file.canRead()) {
                            final BoardParser boardParser = new BoardParserImpl();

@@ -2,31 +2,30 @@ package de.techfak.se.mmoebius.controller;
 
 import de.techfak.se.mmoebius.client.Client;
 import de.techfak.se.mmoebius.model.*;
+import de.techfak.se.mmoebius.util.Creater;
+import de.techfak.se.mmoebius.util.Helper;
+import de.techfak.se.mmoebius.view.EndScreen;
 import de.techfak.se.multiplayer.game.GameStatus;
 import de.techfak.se.multiplayer.server.response_body.PlayerResponse;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
-
 import java.beans.PropertyChangeEvent;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-
 
 /**
  * The Controller class handles the interactions with the GUI
@@ -45,18 +44,14 @@ public class Controller {
     private static final int ROTATE_CONST = 45;
     private static final int DICE_COUNT = 3;
     private static final int COLOR_COUNT = 5;
-    private static final Color[] COLORS = {Color.BLUE, Color.YELLOW, Color.GREEN, Color.ORANGE, Color.RED};
     private static final BorderStrokeStyle SOLID = BorderStrokeStyle.SOLID;
     private static final BorderWidths THIN = BorderStroke.THIN;
     private static final BorderWidths THICK = BorderStroke.MEDIUM;
     private static final BorderStroke BORDER_STROKE_D = new BorderStroke(Color.BLACK, SOLID, CornerRadii.EMPTY, THIN);
     private static final BorderStroke BORDER_STROKE_P = new BorderStroke(Color.BLACK, SOLID, CornerRadii.EMPTY, THICK);
     private static final Font BASIC_FONT = new Font(32);
-    private static final int[] POINT_ARR = {5, 3, 3, 3, 2, 2, 2, 1, 2, 2, 2, 3, 3, 3, 5};
     private static final int DEFAULT_SPACING = 10;
-    private static final int POINT_SPACING = 30;
     private static final double STROKE_WIDTH_COMPLETE = 8;
-    private static final int MAX_PLAYERS = 5;
     private static final int CONTAINER_COLOR_LOCATION = 11;
     private static final int CONTAINER_COLUMN_LOCATION = 10;
     private static final long ROUND_QUERY_DEFAULT_TIME = 500;
@@ -89,7 +84,6 @@ public class Controller {
 
     @FXML
     private Label gameStatusLabel;
-
 
     /**
      *  Controller Attributes:
@@ -135,6 +129,8 @@ public class Controller {
     private boolean isSinglePlayer;
     private boolean isBlocked;
     private ScheduledExecutorService exec;
+    private Helper helper;
+    private Creater creater;
 
     /**
      * the initialize method creates the playing field.
@@ -148,6 +144,7 @@ public class Controller {
      * @param name  The name of the player of the current client.
      */
     public void initialize(Board board, String url, String name) {
+        helper = new Helper();
         multiplayerInfo = new HBox();
         gameStatusInfo = GameStatus.NOT_STARTED;
         gameStatusLabel.setText(gameStatusInfo.name());
@@ -188,7 +185,7 @@ public class Controller {
                 final int currentRow = i;
                 final int currentCol = j;
                 rectangle.setOnMouseClicked(mouseEvent -> {
-                    if (!testForEqual(currentRow, currentCol)) {
+                    if (!helper.testForEqual(field, currentRow, currentCol)) {
                         if (isSinglePlayer || !isBlocked) {
                             Rectangle crossTileOne = new Rectangle(CROSS_X_CONST, CROSS_Y_CONST, CROSS_W, CROSS_H);
                             Rectangle crossTileTwo = new Rectangle(CROSS_Y_CONST, CROSS_X_CONST, CROSS_H, CROSS_W);
@@ -221,14 +218,15 @@ public class Controller {
      * only the dices, which are generated locally are shown.
      */
     private void createSurroundings() {
+        creater = new Creater();
         if (isSinglePlayer) {
-            throwDices();
+            creater.throwDices(numbers, colors, diceNumber, diceColor, dices);
         }
-        createPointLabels();
-        createColorLabels();
+        creater.createPointLabels(colCount, containerV);
+        creater.createColorLabels(containerV);
         List<PlayerResponse> playerList =  client.getPlayerList(name);
-        createNameList(playerList);
-        createPointList(playerList);
+        creater.createNameList(playerList, multiplayerInfo);
+        creater.createPointList(playerList, multiplayerInfo);
         createRunnable();
         containerV.getChildren().add(multiplayerInfo);
     }
@@ -243,8 +241,8 @@ public class Controller {
                 List<PlayerResponse> playerList =  client.getPlayerList(name);
                 Platform.runLater(() -> {
                     multiplayerInfo.getChildren().clear();
-                    createPointList(playerList);
-                    createNameList(playerList);
+                    creater.createPointList(playerList, multiplayerInfo);
+                    creater.createNameList(playerList, multiplayerInfo);
                     Stage stage = (Stage) multiplayerInfo.getScene().getWindow();
                     stage.sizeToScene();
                 });
@@ -266,11 +264,16 @@ public class Controller {
                     } else if (gameStatusInfo.equals(GameStatus.NOT_STARTED)) {
                         Platform.runLater(() -> gameStatusLabel.setTextFill(Color.RED));
                     } else {
-                        Platform.runLater(() -> gameStatusLabel.setTextFill(Color.BLUE));
+                        Platform.runLater(() -> {
+                            gameStatusLabel.setTextFill(Color.BLUE);
+                            int currentPoints = score.calculatePoints(board);
+                            EndScreen endScreen = new EndScreen(helper, client, name, currentPoints, exec);
+                            Platform.exit();
+                        });
                     }
                 } else {
                     System.out.println("Problem with current game status");
-                    end();
+                    helper.end(client, name);
                 }
             }
         };
@@ -283,9 +286,11 @@ public class Controller {
                         round = currentRound;
                         isBlocked = false;
                         Platform.runLater(() -> points.setText(ROUND + round));
-                        Dice[] dices = client.getDices(name);
+                        Dice[] diceArr = client.getDices(name);
                         if (dices != null) {
-                            Platform.runLater(() -> createDices(dices));
+                            Platform.runLater(() ->  {
+                                creater.createDices(diceArr, numbers, colors, diceNumber, diceColor, dices);
+                            });
                         }
                     }
                 }
@@ -295,168 +300,6 @@ public class Controller {
         exec.scheduleAtFixedRate(pointsAndNames, 0, 2, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(statusQuery, 0, 1, TimeUnit.SECONDS);
         exec.scheduleAtFixedRate(roundQuery, 0, ROUND_QUERY_DEFAULT_TIME, TimeUnit.MILLISECONDS);
-    }
-
-    /**
-     * The createDices method is similar to the throw dices method, but instead of
-     * generating new dices it get the dices as parameters.
-     * @param diceArr the array of dices to be showed in the GUI.
-     */
-    private void createDices(Dice[] diceArr) {
-        HBox diceColors = new HBox();
-        HBox diceNumbers = new HBox();
-        diceColors.setSpacing(DEFAULT_SPACING);
-        diceNumbers.setSpacing(DEFAULT_SPACING);
-        for (int i = 0; i < DICE_COUNT; i++) {
-            Dice dice = diceArr[i];
-            numbers[i] = dice.getNumber();
-            colors[i] = dice.getColor();
-            diceNumber = new Label(String.valueOf(numbers[i]));
-            diceNumber.setFont(BASIC_FONT);
-            diceNumber.setBorder(new Border(BORDER_STROKE_D));
-            diceColor = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
-            diceColor.setFill(colors[i]);
-            diceColor.setStrokeType(StrokeType.INSIDE);
-            diceColor.setStroke(Color.BLACK);
-            diceColors.getChildren().add(diceColor);
-            diceNumbers.getChildren().add(diceNumber);
-        }
-        dices.getChildren().clear();
-        dices.getChildren().add(diceColors);
-        dices.getChildren().add(diceNumbers);
-    }
-
-    /**
-     * The createPointLabels method creates Labels below the playing field
-     * showing the points you get for filling the corresponding columns.
-     */
-    private void createPointLabels() {
-        HBox pointsH = new HBox();
-        pointsH.setSpacing(POINT_SPACING);
-        pointsH.setPadding(new Insets(DEFAULT_SPACING));
-        try {
-            for (int i = 0; i < colCount; i++) {
-                Label pointLabel = new Label(String.valueOf(POINT_ARR[i]));
-                pointLabel.setFont(BASIC_FONT);
-                pointsH.getChildren().add(pointLabel);
-            }
-            containerV.getChildren().add(pointsH);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("POINT_ARR in Controller/Score class needs to be adjusted to column length.");
-            System.out.println("Terminating program...");
-            Platform.exit();
-        }
-    }
-
-    /**
-     * The createNameList method creates the list of names for every player
-     * in multiplayer mode.
-     * @param playerList the list of all players in the game.
-     */
-    private void createNameList(List<PlayerResponse> playerList) {
-       if (playerList != null) {
-           Label header = new Label("Players:");
-           header.setFont(BASIC_FONT);
-           VBox names = new VBox(header);
-           names.setPadding(new Insets(DEFAULT_SPACING));
-           names.setSpacing(DEFAULT_SPACING);
-           if (playerList.size() <= MAX_PLAYERS) {
-               for (int i = 0; i < playerList.size(); i++) {
-                   Label name = new Label(playerList.get(i).getName());
-                   name.setFont(BASIC_FONT);
-                   names.getChildren().add(name);
-               }
-               multiplayerInfo.getChildren().add(names);
-           } else {
-               System.out.println("Maximum of Players reached. Only 5 Players allowed");
-               for (int i = 0; i < MAX_PLAYERS; i++) {
-                   Label name = new Label(playerList.get(i).getName());
-                   name.setFont(BASIC_FONT);
-                   names.getChildren().add(name);
-               }
-               multiplayerInfo.getChildren().add(names);
-           }
-       }
-    }
-
-    /**
-     * The createPointList method creates the list of points for every player
-     * in multiplayer mode.
-     * @param playerList the list of all players in the game.
-     */
-    private void createPointList(List<PlayerResponse> playerList) {
-        if (playerList != null) {
-            Label header = new Label("Points:");
-            header.setFont(BASIC_FONT);
-            VBox pointsAll = new VBox(header);
-            pointsAll.setPadding(new Insets(DEFAULT_SPACING));
-            pointsAll.setSpacing(DEFAULT_SPACING);
-            if (playerList.size() < MAX_PLAYERS) {
-                for (int i = 0; i < playerList.size(); i++) {
-                    Label thisPoints = new Label(String.valueOf(playerList.get(i).getPoints()));
-                    thisPoints.setFont(BASIC_FONT);
-                    pointsAll.getChildren().add(thisPoints);
-                }
-                multiplayerInfo.getChildren().add(pointsAll);
-            } else {
-                for (int i = 0; i < MAX_PLAYERS; i++) {
-                    Label thisPoints = new Label(String.valueOf(playerList.get(i).getPoints()));
-                    thisPoints.setFont(BASIC_FONT);
-                    pointsAll.getChildren().add(thisPoints);
-                }
-                multiplayerInfo.getChildren().add(pointsAll);
-            }
-        }
-    }
-
-    /**
-     * The createColorLabels method creates Rectangles below the playing field
-     * showing all the Colors of the playing field. If all fields with the same
-     * color are crossed, they will be highlighted.
-     */
-    private void createColorLabels() {
-        HBox colorsH = new HBox();
-        colorsH.setSpacing(POINT_SPACING);
-        colorsH.setPadding(new Insets(DEFAULT_SPACING));
-        try {
-            for (int i = 0; i < COLOR_COUNT; i++) {
-                Rectangle colorLabel = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
-                colorLabel.setFill(COLORS[i]);
-                colorLabel.setStroke(Color.BLACK);
-                colorLabel.setStrokeType(StrokeType.INSIDE);
-                colorsH.getChildren().add(colorLabel);
-            }
-            containerV.getChildren().add(colorsH);
-        } catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("ColorArray/Count in Controller/Score class needs to be adjusted to column length.");
-            Platform.exit();
-        }
-    }
-
-    /**
-     * The showEndScreenMethod shows a dialog if the game is finished. The
-     * dialog contains a ranking of all players.
-     */
-    private void showEndScreen() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Game over");
-        alert.setHeaderText("You achieved " + updatePoints() + " points.");
-        alert.setContentText("To view ranking press details.");
-        String playerRanking = sortedPlayerListString();
-        Label label = new Label("Results: ");
-        TextArea textArea = new TextArea(playerRanking);
-        textArea.setEditable(false);
-        textArea.setWrapText(true);
-        textArea.setMaxWidth(Double.MAX_VALUE);
-        textArea.setMaxHeight(Double.MAX_VALUE);
-        GridPane.setVgrow(textArea, Priority.ALWAYS);
-        GridPane.setHgrow(textArea, Priority.ALWAYS);
-        GridPane expContent = new GridPane();
-        expContent.setMaxWidth(Double.MAX_VALUE);
-        expContent.add(label, 0, 0);
-        expContent.add(textArea, 0, 1);
-        alert.getDialogPane().setExpandableContent(expContent);
-        alert.showAndWait();
     }
 
 //---------------------------------------Button On Action Methods-------------------------------------------
@@ -469,24 +312,12 @@ public class Controller {
      * @param actionEvent The event of the button clicked.
      */
     public void startGame(ActionEvent actionEvent) {
-        Alert startAlert = new Alert(Alert.AlertType.ERROR);
-        startAlert.setTitle("Server start");
-        startAlert.setHeaderText(null);
-        if (!client.isGameStarted(name)) {
-            gameStatusInfo = client.changeGameStatus(name, GameStatus.RUNNING);
-            if (gameStatusInfo != null) {
-                System.out.println("Game has been started");
-                startGame.setDisable(true);
-                button.setDisable(false);
-                isBlocked = false;
-                Platform.runLater(() -> points.setText(ROUND + round));
-            } else {
-                startAlert.setContentText("Game could not be started.");
-                startAlert.showAndWait();
-            }
-        } else {
-            startAlert.setContentText("Game already started.");
-            startAlert.showAndWait();
+        boolean started = helper.startGame(gameStatusInfo, client, name);
+        if (started) {
+            startGame.setDisable(true);
+            button.setDisable(false);
+            isBlocked = false;
+            Platform.runLater(() -> points.setText(ROUND + round));
         }
     }
 
@@ -505,24 +336,24 @@ public class Controller {
                 System.out.println("doing nothing");
             } else if (isSinglePlayer) {
                 System.out.println(PASS);
-                throwDices();
+                creater.throwDices(numbers, colors, diceNumber, diceColor, dices);
             } else {
                 System.out.println(PASS);
                 int currentPoints = score.calculatePoints(board);
                 int roundResponse = client.changeRound(name, currentPoints);
                 if (roundResponse == -1) {
-                    end();
+                    helper.end(client, name);
                 }
                 int currentRound = client.getRound(name);
                 if (currentRound != 0) {
                     System.out.println(roundResponse);
                     isBlocked = true;
                 } else {
-                    end();
+                    helper.end(client, name);
                 }
             }
         } else {
-            if (board.validate(toIntArray(playMoveRow), toIntArray(playMoveCol), numbers, colors)) {
+            if (board.validate(helper.toIntArray(playMoveRow), helper.toIntArray(playMoveCol), numbers, colors)) {
                 board.printBoard();
                 if (score.testIfFinished(board)) {
                     if (isSinglePlayer) {
@@ -536,32 +367,28 @@ public class Controller {
                         int currentPoints = score.calculatePoints(board);
                         int roundResponse = client.changeRound(name, currentPoints);
                         if (roundResponse == -1) {
-                            end();
+                            helper.end(client, name);
                         }
                         isBlocked = true;
                         GameStatus endStatus = client.changeGameStatus(name, GameStatus.FINISHED);
-                        if (endStatus.equals(GameStatus.FINISHED)) {
-                            showEndScreen();
-                            exec.shutdown();
-                            Platform.exit();
-                        } else {
+                        if (!endStatus.equals(GameStatus.FINISHED)) {
                             System.out.println("Game could not be finished.");
                         }
                     }
                 }
                 if (isSinglePlayer) {
-                    throwDices();
+                    creater.throwDices(numbers, colors, diceNumber, diceColor, dices);
                 } else {
                     int currentPoints = score.calculatePoints(board);
                     int roundResponse = client.changeRound(name, currentPoints);
                     if (roundResponse == -1) {
-                        end();
+                        helper.end(client, name);
                     }
                     int currentRound = client.getRound(name);
                     if (currentRound != 0) {
                         isBlocked = true;
                     } else {
-                        end();
+                        helper.end(client, name);
                     }
                 }
             } else {
@@ -570,7 +397,7 @@ public class Controller {
                 alert.setHeaderText("The chosen move is invalid");
                 alert.setContentText("Crosses will be removed, try again.");
                 alert.showAndWait();
-                removeCrosses();
+                helper.removeCrosses(field, playMoveRow, playMoveCol);
             }
             playMoveRow.clear();
             playMoveCol.clear();
@@ -578,34 +405,6 @@ public class Controller {
     }
 
 //---------------------------------------Update Methods-------------------------------------------
-
-    /**
-     *  The throwDices method creates a dice instances and visualizes
-     *  the color and the number in the application.
-     */
-    private void throwDices() {
-        HBox diceColors = new HBox();
-        HBox diceNumbers = new HBox();
-        diceColors.setSpacing(DEFAULT_SPACING);
-        diceNumbers.setSpacing(DEFAULT_SPACING);
-        for (int i = 0; i < DICE_COUNT; i++) {
-            Dice dice = new Dice();
-            numbers[i] = dice.getNumber();
-            colors[i] = dice.getColor();
-            diceNumber = new Label(String.valueOf(numbers[i]));
-            diceNumber.setFont(BASIC_FONT);
-            diceNumber.setBorder(new Border(BORDER_STROKE_D));
-            diceColor = new Rectangle(REC_X_CONST, REC_Y_CONST, REC_WIDTH_CONST, REC_HEIGHT_CONST);
-            diceColor.setFill(colors[i]);
-            diceColor.setStrokeType(StrokeType.INSIDE);
-            diceColor.setStroke(Color.BLACK);
-            diceColors.getChildren().add(diceColor);
-            diceNumbers.getChildren().add(diceNumber);
-        }
-        dices.getChildren().clear();
-        dices.getChildren().add(diceColors);
-        dices.getChildren().add(diceNumbers);
-    }
 
     /**
      *  The update field method is called after a change on the model.board has been made.
@@ -694,86 +493,6 @@ public class Controller {
         } else {
             return score.calculatePoints(board);
         }
-    }
-
-//---------------------------------------Auxiliary Methods-------------------------------------------
-
-    /**
-     * The sortedPlayerListString method gets a list of all players on the server and
-     * converts them into a string which is sorted after the maximum of the points of
-     * the player.
-     * @return a string which contains the sorted player list.
-     */
-    private String sortedPlayerListString() {
-        List<PlayerResponse> playerResponseList = client.getPlayerList(name);
-        Map<Integer, String> players = new TreeMap<>(Comparator.reverseOrder());
-        for (int i = 0; i < playerResponseList.size(); i++) {
-            players.put(playerResponseList.get(i).getPoints(), playerResponseList.get(i).getName());
-        }
-        String sortedPlayerListString = players.toString();
-        sortedPlayerListString = sortedPlayerListString.replaceAll(",", "\n");
-        sortedPlayerListString = sortedPlayerListString.replaceAll("\\{",  "");
-        sortedPlayerListString = sortedPlayerListString.replaceAll("}",  "");
-        return sortedPlayerListString;
-    }
-
-    /**
-     * The end method is called if something wrong happens with synchronisation, because
-     * there is no guideline to follow then. The end method informs the player about the
-     * circumstances and deletes the player from the Server after. Then the application is closed.
-     */
-    private void end() {
-        System.err.println("Unexpected Error with round synchronisation.");
-        client.deletePlayer(name);
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Error in Server Connection");
-        alert.setHeaderText(null);
-        alert.setContentText("There was a problem with synchronising the rounds of"
-                                + " you and other players. Hence you are disconnecting");
-        alert.showAndWait();
-        Platform.exit();
-    }
-
-    /**
-     * The removeCrosses method removes the cross of a tile if a play move was
-     * considered invalid.
-     */
-    private void removeCrosses() {
-        for (int i = 0; i < playMoveRow.size(); i++) {
-            field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(2);
-            field[playMoveRow.get(i)][playMoveCol.get(i)].getChildren().remove(1);
-        }
-    }
-
-    /**
-     * The testForEqual method checks if the current field the
-     * player crossed, was already crossed beforehand.
-     * @param currentRow The row of the tile to be crossed.
-     * @param currentCol The column of the tile to be crossed.
-     * @return  Returns true if the current field to be crossed was
-     *          already crossed and false if not.
-     */
-    private boolean testForEqual(int currentRow, int currentCol) {
-        if (field[currentRow][currentCol].getChildren().size() > 1) {
-            System.out.println("Field " + currentRow + currentCol + " is already crossed.");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * The toIntArray is and auxiliary method to convert an list of integers
-     * to an array of integers.
-     * @param list The list to be converted.
-     * @return The corresponding array.
-     */
-    private int[] toIntArray(List<Integer> list) {
-        int[] array = new int[list.size()];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = list.get(i);
-        }
-        return array;
     }
 }
 
